@@ -1,0 +1,7 @@
+.*cache
+logs
+venv
+.idea
+__pycache__
+*.db
+storage
