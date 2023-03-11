@@ -1,0 +1,5 @@
+APPLICATION = "Application"
+BUSINESS = "Business"
+DATA = "Data"
+PRESENTATION = "Presentation"
+CORE = "Core"
