@@ -1,7 +1,7 @@
 FROM node:20-alpine
 
-RUN mkdir -p /usr/home/app/dev && chown -R 777 /usr/home/app/dev
-RUN mkdir -p /usr/home/app/dev/
+RUN mkdir -p /usr/home/app/dev && chown -R 777 /usr/home/app/dev && \
+    mkdir -p /usr/home/app/dev/
 
 WORKDIR /usr/home/app/dev/
 
