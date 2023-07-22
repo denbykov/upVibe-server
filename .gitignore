@@ -8,3 +8,4 @@ build_debug
 dev-db
 launchScripts.bat
 .prettierrc
+package-lock.json
