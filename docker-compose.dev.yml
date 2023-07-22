@@ -1,0 +1,21 @@
+version: "0.0.1"
+
+services:
+  server-app:
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - ./server/:/usr/home/app/dev/
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    restart: always
+    command: npm run dev:docker:build && npm run dev:docker
+    container_name: app-server
+    expose:
+      - "3000"
+      - "9229"
+
+volumes:
+  ignore:
