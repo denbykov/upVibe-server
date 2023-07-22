@@ -1,0 +1,20 @@
+FROM node:20-alpine
+
+RUN mkdir -p /usr/home/app/dev && chown -R 777 /usr/home/app/dev
+RUN mkdir -p /usr/home/app/dev/
+
+WORKDIR /usr/home/app/dev/
+
+COPY package*.json ./
+RUN npm install
+
+# COPY . .
+COPY config ./config
+COPY custom_typings ./custom_typings
+COPY src ./src
+COPY tests ./tests
+COPY tsconfig.dev.json ./
+COPY package.json ./
+COPY package-lock.json ./
+
+EXPOSE 3000

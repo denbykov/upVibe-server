@@ -6,3 +6,5 @@ dist
 logs
 build_debug
 dev-db
+launchScripts.bat
+.prettierrc
