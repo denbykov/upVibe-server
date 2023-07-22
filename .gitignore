@@ -1,7 +1,8 @@
-.*cache
-logs
-venv
+.vscode
 .idea
-__pycache__
-*.db
-storage
+node_modules
+.env
+dist
+logs
+build_debug
+dev-db
