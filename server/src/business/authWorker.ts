@@ -12,7 +12,7 @@ export class AuthWorker {
     dataLogger.trace('AuthWorker initialized');
   }
 
-  public verifyExpiredAccessToken = (token: string): Boolean => {
+  public verifyAccessToken = (token: string): Boolean => {
     const secret = this.config.apiAccessTokenSecret;
     let verify: Boolean = true;
     jwt.verify(token, secret, (err: any) => {
@@ -27,7 +27,7 @@ export class AuthWorker {
     return verify;
   };
 
-  public verifyExpiredRefreshToken = (token: string): Boolean => {
+  public verifyRefreshToken = (token: string): Boolean => {
     const secret = this.config.apiRefreshTokenSecret;
     let verify: Boolean = true;
     jwt.verify(token, secret, (err: any) => {
@@ -100,7 +100,7 @@ export class AuthWorker {
       return null;
     }
 
-    if (!this.verifyExpiredRefreshToken(refreshToken)) {
+    if (!this.verifyRefreshToken(refreshToken)) {
       try {
         await this.db.deleteRefreshToken(refreshToken);
       } catch (err) {
@@ -144,7 +144,7 @@ export class AuthWorker {
       dataLogger.error('Access token not found');
       return false;
     }
-    if (!this.verifyExpiredAccessToken(token)) {
+    if (!this.verifyAccessToken(token)) {
       try {
         await this.db.deleteAccessToken(token);
       } catch (err) {
