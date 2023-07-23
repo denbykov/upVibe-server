@@ -150,7 +150,7 @@ export class AuthWorker {
       } catch (err) {
         dataLogger.error('Error deleting token');
       } finally {
-        dataLogger.trace('AuthWorker.auth completed');
+        dataLogger.trace('AuthWorker.auth quitting');
       }
       dataLogger.error('Access token expired');
       return false;
