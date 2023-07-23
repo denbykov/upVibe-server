@@ -5,8 +5,8 @@ node_modules
 dist
 logs
 build_debug
-dev-db
 launchScripts.bat
 .prettierrc
 package-lock.json
 rest
+scripts/db/data
