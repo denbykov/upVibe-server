@@ -24,4 +24,4 @@ services:
 
 networks:
   up-vibe-network:
-    driver: bridge
+    external: true

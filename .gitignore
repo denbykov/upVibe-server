@@ -5,7 +5,7 @@ node_modules
 dist
 logs
 build_debug
-launchScripts.bat
+launchScript.bat
 .prettierrc
 package-lock.json
 rest

@@ -6,11 +6,11 @@ services:
       - ./config/db.changelog-0.0.1.xml:/liquibase/db.changelog-0.0.1.xml
       - ./scripts/db/changelog/:/liquibase/db/changelog/
       - ./liquibase.properties:/liquibase/liquibase.properties
-    command: --changeLogFile=db.changelog-0.0.1.xml --url=jdbc:postgresql://192.168.1.17:5432/up-vibe-dev --username=admin --password=admin update
+    command: --changeLogFile=db.changelog-0.0.1.xml --url=jdbc:postgresql://postgresql:5432/up-vibe-dev --username=admin --password=admin update
     networks:
       - up-vibe-network
     container_name: liquibase
 
 networks:
   up-vibe-network:
-    driver: bridge
+    external: true
