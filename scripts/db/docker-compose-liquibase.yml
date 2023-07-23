@@ -1,0 +1,16 @@
+version: "0.0.1"
+services:
+  liquibase:
+    image: liquibase/liquibase:latest
+    volumes:
+      - ./config/db.changelog-0.0.1.xml:/liquibase/db.changelog-0.0.1.xml
+      - ./scripts/db/changelog/:/liquibase/db/changelog/
+      - ./liquibase.properties:/liquibase/liquibase.properties
+    command: --changeLogFile=db.changelog-0.0.1.xml --url=jdbc:postgresql://postgresql:5432/up-vibe-dev --username=admin --password=admin update
+    networks:
+      - up-vibe-network
+    container_name: liquibase
+
+networks:
+  up-vibe-network:
+    external: true

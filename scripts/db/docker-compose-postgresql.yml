@@ -1,0 +1,27 @@
+version: "0.0.1"
+services:
+  postgresql:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: up-vibe-dev
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "admin", "-d", "up-vibe-dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - up-vibe-network
+    container_name: postgresql
+
+networks:
+  up-vibe-network:
+    external: true

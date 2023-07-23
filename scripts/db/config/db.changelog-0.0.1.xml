@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <include file="db/changelog/changeset/0.0.1/create/1_users.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/2_file_types.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/3_file_statuses.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/4_files.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/5_user_files.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/6_tag_pictures.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/7_tag_statuses.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/8_tag_sources.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/9_tags.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/10_tag_mapping_priority.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/11_tag_mapp_ings.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/12_refresh_tokens.sql" relativeToChangelogFile="true" />
+    <include file="db/changelog/changeset/0.0.1/create/13_tokens.sql" relativeToChangelogFile="true" />
+</databaseChangeLog>
