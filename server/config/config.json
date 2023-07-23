@@ -1,0 +1,19 @@
+{
+  "APP": {
+    "name": "up-vibe",
+    "port": 3000,
+    "host": "127.0.0.1"
+  },
+  "API": {
+    "uri": "up-vibe",
+    "version": "v1",
+    "access_token_secret": "1234-5678-9012-3456"
+  },
+  "DB": {
+    "host": "host.docker.internal",
+    "port": 5432,
+    "user": "admin",
+    "password": "admin",
+    "name": "up-vibe-dev"
+  }
+}
