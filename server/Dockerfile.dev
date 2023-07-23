@@ -6,7 +6,8 @@ RUN mkdir -p /usr/home/app/dev && chown -R 777 /usr/home/app/dev && \
 WORKDIR /usr/home/app/dev/
 
 COPY package*.json ./
-RUN npm install
+RUN npm install \
+    && npm cache clean --force
 
 COPY config ./config
 COPY custom_typings ./custom_typings
