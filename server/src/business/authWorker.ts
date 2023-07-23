@@ -14,32 +14,32 @@ export class AuthWorker {
 
   public verifyAccessToken = (token: string): Boolean => {
     const secret = this.config.apiAccessTokenSecret;
-    let verify: Boolean = true;
+    let isValid: Boolean = true;
     jwt.verify(token, secret, (err: any) => {
       if (err) {
         dataLogger.info(`Error verifying token: ${err}`);
         if (err === 'TokenExpiredError') {
-          verify = false;
+          isValid = false;
         }
-        verify = false;
+        isValid = false;
       }
     });
-    return verify;
+    return isValid;
   };
 
   public verifyRefreshToken = (token: string): Boolean => {
     const secret = this.config.apiRefreshTokenSecret;
-    let verify: Boolean = true;
+    let isValid: Boolean = true;
     jwt.verify(token, secret, (err: any) => {
       if (err) {
         dataLogger.info(`Error verifying token: ${err}`);
         if (err === 'TokenExpiredError') {
-          verify = false;
+          isValid = false;
         }
-        verify = false;
+        isValid = false;
       }
     });
-    return verify;
+    return isValid;
   };
 
   public generateAccessToken = (userId: number): string => {
