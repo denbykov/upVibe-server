@@ -11,5 +11,3 @@ CREATE TABLE files (
     CONSTRAINT fk_source_type_files FOREIGN KEY (source_type) REFERENCES file_types(id),
     CONSTRAINT fk_status_id_files FOREIGN KEY (status_id) REFERENCES file_statuses(id)
 );
-
-

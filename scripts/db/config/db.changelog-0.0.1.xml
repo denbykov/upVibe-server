@@ -8,8 +8,6 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
-
-    
     <include file="db/changelog/changeset/0.0.1/create/1_users.sql" relativeToChangelogFile="true" />
     <include file="db/changelog/changeset/0.0.1/create/2_file_types.sql" relativeToChangelogFile="true" />
     <include file="db/changelog/changeset/0.0.1/create/3_file_statuses.sql" relativeToChangelogFile="true" />
@@ -23,5 +21,4 @@
     <include file="db/changelog/changeset/0.0.1/create/11_tag_mapp_ings.sql" relativeToChangelogFile="true" />
     <include file="db/changelog/changeset/0.0.1/create/12_refresh_tokens.sql" relativeToChangelogFile="true" />
     <include file="db/changelog/changeset/0.0.1/create/13_tokens.sql" relativeToChangelogFile="true" />
-
 </databaseChangeLog>
