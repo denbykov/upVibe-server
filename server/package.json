@@ -22,14 +22,12 @@
     "concurrently": "^8.2.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "i": "^0.3.7",
     "jsonwebtoken": "^9.0.0",
     "log4js": "^6.9.1",
     "npm": "^9.8.1",
     "pg": "^8.11.1",
     "prettier": "^2.8.8",
-    "ts-node": "^10.9.1",
-    "uninstall": "^0.0.0"
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.22.5",
