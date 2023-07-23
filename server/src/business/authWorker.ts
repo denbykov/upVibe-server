@@ -18,9 +18,6 @@ export class AuthWorker {
     jwt.verify(token, secret, (err: any) => {
       if (err) {
         dataLogger.info(`Error verifying token: ${err}`);
-        if (err === 'TokenExpiredError') {
-          isValid = false;
-        }
         isValid = false;
       }
     });
@@ -33,9 +30,6 @@ export class AuthWorker {
     jwt.verify(token, secret, (err: any) => {
       if (err) {
         dataLogger.info(`Error verifying token: ${err}`);
-        if (err === 'TokenExpiredError') {
-          isValid = false;
-        }
         isValid = false;
       }
     });
