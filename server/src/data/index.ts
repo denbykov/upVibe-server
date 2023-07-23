@@ -1,3 +1,3 @@
-import { Database } from "@src/data/Database";
+import { Database } from '@src/data/Database';
 
 export { Database };

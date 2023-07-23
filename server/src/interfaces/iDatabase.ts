@@ -1,5 +1,6 @@
-import { User } from "@src/entities/user";
-import { RefreshToken, Token } from "@src/entities/token";
+import { RefreshToken } from '@src/entities/refreshToken';
+import { AcceessToken } from '@src/entities/accessToken';
+import { User } from '@src/entities/user';
 
 export abstract class IDatabase {
   public abstract findUserByName(username: string): Promise<User | null>;
@@ -7,22 +8,21 @@ export abstract class IDatabase {
   public abstract findRefreshTokenId(
     refreshToken: string
   ): Promise<number | null>;
-  public abstract findToken(
-    token: string,
-    type: string
-  ): Promise<Token | RefreshToken | null>;
-  public abstract findTokenById(id: number): Promise<Token | null>;
-  public abstract findTokenByRefreshToken(token: number): Promise<Token | null>;
-  public abstract insertRefreshToken(refreshToken: string): Promise<number>;
-  public abstract insertToken(
+  public abstract findAccessToken(token: string): Promise<AcceessToken | null>;
+  public abstract findRefreshToken(token: string): Promise<RefreshToken | null>;
+  public abstract findTokenById(id: number): Promise<AcceessToken | null>;
+  public abstract findAccessTokenByRefreshTokenId(
+    token: number
+  ): Promise<AcceessToken | null>;
+  public abstract insertRefreshToken(
+    refreshToken: string,
+    userId: number
+  ): Promise<number>;
+  public abstract insertAccessToken(
     userId: number,
     accessToken: string,
     refreshTokenId: number
-  ): void;
-  public abstract updateToken(
-    refreshTokenId: number,
-    accessToken: string
-  ): void;
-  public abstract deleteToken(token: string, type: string): void;
-  public abstract closeConnection(): void;
+  ): Promise<number>;
+  public abstract deleteAccessToken(token: string): void;
+  public abstract deleteRefreshToken(token: string): void;
 }

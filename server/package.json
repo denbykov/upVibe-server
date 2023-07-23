@@ -10,7 +10,8 @@
     "dev:docker:build": "npx tsc -p tsconfig.dev.json && npx tsc-alias -p tsconfig.dev.json && node --inspect build_debug/server.js",
     "dev:docker": "node build_debug/server.js",
     "test:file": "nodemon --exec ts-node -r tsconfig-paths/register ./src/entities/constant.ts",
-    "test": "jest --watch --config jest.config.ts"
+    "test": "jest --watch --config jest.config.ts",
+    "preitter": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
   "author": "Volodymyr Fihurniak",

@@ -1,5 +1,5 @@
-import { CommonRoutesConfig } from "./base.route";
-import { AuthRoute } from "./auth.route.config";
-import { APIRoute } from "./api.route.config";
+import { BaseRoute } from './baseRoute';
+import { AuthRoute } from './auth.route.config';
+import { APIRoute } from './api.route.config';
 
-export { CommonRoutesConfig, AuthRoute, APIRoute };
+export { BaseRoute, AuthRoute, APIRoute };

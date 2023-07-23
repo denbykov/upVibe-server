@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { serverLogger } from "@src/utils/server/logger";
+import { Request, Response, NextFunction } from 'express';
+import { serverLogger } from '@src/utils/server/logger';
 
 export const requestLogger = (
   req: Request,

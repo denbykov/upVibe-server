@@ -1,13 +1,16 @@
-import { Config } from "@src/entities/config";
+import { Config } from '@src/entities/config';
+import pg from 'pg';
 
 class BaseController {
   protected apiURI: string;
   protected apiURIAuth: string;
-  protected _config: Config;
-  constructor(config: Config) {
+  protected config: Config;
+  protected databasePool: pg.Pool;
+  constructor(config: Config, databasePool: pg.Pool) {
     this.apiURI = `/${config.apiURI}/${config.apiVersion}`;
     this.apiURIAuth = `/${config.apiURI}/${config.apiVersion}/auth`;
-    this._config = config;
+    this.config = config;
+    this.databasePool = databasePool;
   }
 }
 

@@ -1,4 +1,4 @@
-import { APIController } from "./api.controller";
-import { AuthController } from "./auth.controller";
+import { APIController } from './api.controller';
+import { AuthController } from './auth.controller';
 
 export { APIController, AuthController };
