@@ -1,9 +1,9 @@
-import pg from 'pg';
 import { IDatabase } from '@src/interfaces/iDatabase';
 import { User } from '@src/entities/user';
 import { AcceessToken } from '@src/entities/accessToken';
 import { RefreshToken } from '@src/entities/refreshToken';
 import { dataLogger } from '@src/utils/server/logger';
+import pg from 'pg';
 
 export class Database implements IDatabase {
   public pool: pg.Pool;

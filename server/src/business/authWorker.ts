@@ -12,11 +12,8 @@ export class AuthWorker {
     dataLogger.trace('AuthWorker initialized');
   }
 
-  public verifyExpiredToken = (token: string, tokenType: string): Boolean => {
-    const secret =
-      tokenType === 'access'
-        ? this.config.apiAccessTokenSecret
-        : this.config.apiRefreshTokenSecret;
+  public verifyExpiredAccessToken = (token: string): Boolean => {
+    const secret = this.config.apiAccessTokenSecret;
     let verify: Boolean = true;
     jwt.verify(token, secret, (err: any) => {
       if (err) {
@@ -30,15 +27,33 @@ export class AuthWorker {
     return verify;
   };
 
-  public generateToken = (userId: number, tokenType: string): string => {
-    const secret =
-      tokenType === 'access'
-        ? this.config.apiAccessTokenSecret
-        : this.config.apiRefreshTokenSecret;
-    const expiresIn =
-      tokenType === 'access'
-        ? this.config.apiAccesTokenSecretExpires
-        : this.config.apiRefreshTokenSecretExpires;
+  public verifyExpiredRefreshToken = (token: string): Boolean => {
+    const secret = this.config.apiRefreshTokenSecret;
+    let verify: Boolean = true;
+    jwt.verify(token, secret, (err: any) => {
+      if (err) {
+        dataLogger.info(`Error verifying token: ${err}`);
+        if (err === 'TokenExpiredError') {
+          verify = false;
+        }
+        verify = false;
+      }
+    });
+    return verify;
+  };
+
+  public generateAccessToken = (userId: number): string => {
+    const secret = this.config.apiAccessTokenSecret;
+    const expiresIn = this.config.apiAccesTokenSecretExpires;
+    const token = jwt.sign({ userId }, secret, {
+      expiresIn,
+    });
+    return token;
+  };
+
+  public generateRefreshToken = (userId: number): string => {
+    const secret = this.config.apiRefreshTokenSecret;
+    const expiresIn = this.config.apiRefreshTokenSecretExpires;
     const token = jwt.sign({ userId }, secret, {
       expiresIn,
     });
@@ -57,8 +72,8 @@ export class AuthWorker {
       return null;
     }
 
-    const accessToken = this.generateToken(user.id, 'access');
-    const refreshToken = this.generateToken(user.id, 'refresh');
+    const accessToken = this.generateAccessToken(user.id);
+    const refreshToken = this.generateRefreshToken(user.id);
 
     try {
       const refreshTokenId = await this.db.insertRefreshToken(
@@ -85,7 +100,7 @@ export class AuthWorker {
       return null;
     }
 
-    if (!this.verifyExpiredToken(refreshToken, 'refresh')) {
+    if (!this.verifyExpiredRefreshToken(refreshToken)) {
       try {
         await this.db.deleteRefreshToken(refreshToken);
       } catch (err) {
@@ -104,9 +119,8 @@ export class AuthWorker {
       this.db.deleteRefreshToken(refreshToken);
       return null;
     }
-    const newAccessToken = this.generateToken(
-      <number>tmpRefreshToken.userId,
-      'access'
+    const newAccessToken = this.generateAccessToken(
+      <number>tmpRefreshToken.userId
     );
     try {
       await this.db.insertAccessToken(
@@ -130,7 +144,7 @@ export class AuthWorker {
       dataLogger.error('Access token not found');
       return false;
     }
-    if (!this.verifyExpiredToken(token, 'access')) {
+    if (!this.verifyExpiredAccessToken(token)) {
       try {
         await this.db.deleteAccessToken(token);
       } catch (err) {
