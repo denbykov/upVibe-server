@@ -11,14 +11,14 @@ class APIController extends BaseController {
   public getInfo = async (req: Request, res: Response) => {
     return res.send({
       message: `Welcome to ${this.config.apiURI} API! Version: ${this.config.apiVersion} 🚀 `,
-      _error: 0,
+      error: 0,
     });
   };
 
   public authTest = async (req: Request, res: Response) => {
     return res.send({
       message: 'Auth test passed!',
-      _error: 0,
+      error: 0,
     });
   };
 }

@@ -9,3 +9,4 @@ build_debug
 package-lock.json
 rest
 scripts/db/data
+ssl

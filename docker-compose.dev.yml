@@ -8,6 +8,8 @@ services:
     ports:
       - "3000:3000"
       - "9229:9229"
+    volumes:
+      - ./server/logs:/opt/app/logs
     restart: always
     command: npm run dev:docker
     container_name: app-server
