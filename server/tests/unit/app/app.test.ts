@@ -1,17 +1,32 @@
-import {expect, jest, test} from '@jest/globals';
-import {AuthWorker} from '../../../src/business/authWorker';
-import {Database} from '../../../src/data/database';
-import { Constants } from '../../../src/entities/constants';
+import { expect, jest, test } from '@jest/globals';
 import dotenv from 'dotenv';
+import pg from 'pg';
 
-const env = dotenv.config({path: 'config/.env'}).parsed || {};
+const { Config } = require('@src/entities/config');
+const { AuthWorker } = require('@src/business/authWorker');
+const { Database } = require('@src/data/database');
 
-const config = new Constants(env).init();
+const env = dotenv.config({ path: 'config/.env' }).parsed || {};
+const config = new Config(env, {});
 
 const authWorker = new AuthWorker(new Database(config), config);
 
-it('should verify a expired token', async () => {
-    const token = '31313';
-    const result = await authWorker.verifyExpiredToken(token, "access");
-    expect(result).toBe(true);
+test('verifyAccessToken', async () => {
+  const token = authWorker.generateAccessToken(1);
+  expect(authWorker.verifyAccessToken(token)).toBe(true);
+});
+
+test('verifyRefreshToken', async () => {
+  const token = authWorker.generateRefreshToken(1);
+  expect(authWorker.verifyRefreshToken(token)).toBe(true);
+});
+
+test('generateAccessToken', async () => {
+  const token = authWorker.generateAccessToken(1);
+  expect(token).toBeDefined();
+});
+
+test('generateRefreshToken', async () => {
+  const token = authWorker.generateRefreshToken(1);
+  expect(token).toBeDefined();
 });

@@ -36,11 +36,19 @@ class AuthController extends BaseController {
       await new Database(this.databasePool),
       this.config
     );
-    const refreshToken = req.body.refreshToken;
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(403).send({
+        message: 'Token is invalid',
+        error: 1,
+      });
+    }
+    const refreshToken = authHeader.split(' ')[1];
     const tokens = await authWorker.getAccessToken(refreshToken);
     if (!tokens) {
       return res.status(401).send({
-        message: 'Refresh token failed',
+        message: 'Refresh token is invalid',
+        error: 1,
       });
     }
     return res.status(200).send({

@@ -16,7 +16,7 @@ export class AuthRoute extends BaseRoute {
   }
   configureRoutes() {
     this.app.post(`${this.controller.apiURIAuth}/login`, this.controller.login);
-    this.app.post(
+    this.app.get(
       `${this.controller.apiURIAuth}/access-token`,
       this.controller.getAccessToken
     );

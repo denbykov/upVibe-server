@@ -12,7 +12,7 @@ IF %M%==3 GOTO :EXIT
 
 :BUILD
 ECHO "Launching docker-compose..."
-docker compose -f .\docker-compose.dev.yml -p dev-app up
+docker compose -f .\docker-compose.dev.yml -p dev-app up -d
 
 :EXIT
 ECHO "Exiting..."
