@@ -1,10 +1,12 @@
+import express, { Express } from 'express';
+import dotenv from 'dotenv';
+import https from 'https';
+import pg from 'pg';
+import fs from 'fs';
+
 import { APIRoute, AuthRoute, BaseRoute } from '@src/routes';
 import { requestLogger } from '@src/middlewares';
 import { Config } from './entities/config';
-import express, { Express } from 'express';
-import pg from 'pg';
-import dotenv from 'dotenv';
-import fs from 'fs';
 import { serverLogger } from '@src/utils/server/logger';
 import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
 
@@ -46,13 +48,30 @@ export class App {
       serverLogger.error('appPort and appHost are not defined');
       throw new Error('appPort and appHost are not defined');
     }
-    this.app.listen(config.appPort, config.appHost, () => {
-      this.routes.forEach((route) => {
-        serverLogger.info(`Routes configured for ${route.getName()}`);
+    if (config.appUseHttps) {
+      const httpsOptions = {
+        key: fs.readFileSync('config/ssl/privatekey.pem'),
+        cert: fs.readFileSync('config/ssl/certificate.pem'),
+      };
+      https
+        .createServer(httpsOptions, this.app)
+        .listen(config.appPort, config.appHost, () => {
+          this.routes.forEach((route) => {
+            serverLogger.info(`Routes configured for ${route.getName()}`);
+          });
+          serverLogger.info(
+            `Server is running at https://${config.appHost}:${config.appPort}`
+          );
+        });
+    } else {
+      this.app.listen(config.appPort, config.appHost, () => {
+        this.routes.forEach((route) => {
+          serverLogger.info(`Routes configured for ${route.getName()}`);
+        });
+        serverLogger.info(
+          `Server is running at http://${config.appHost}:${config.appPort}`
+        );
       });
-      serverLogger.info(
-        `Server is running at http://${config.appHost}:${config.appPort}`
-      );
-    });
+    }
   };
 }
