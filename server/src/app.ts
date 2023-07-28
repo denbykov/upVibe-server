@@ -73,14 +73,5 @@ export class App {
         );
       });
     }
-
-    // this.app.listen(config.appPort, config.appHost, () => {
-    //   this.routes.forEach((route) => {
-    //     serverLogger.info(`Routes configured for ${route.getName()}`);
-    //   });
-    //   serverLogger.info(
-    //     `Server is running at http://${config.appHost}:${config.appPort}`
-    //   );
-    // });
   };
 }
