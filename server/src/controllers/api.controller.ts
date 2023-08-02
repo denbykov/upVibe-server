@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
+import Express from 'express';
 import { BaseController } from './base.controller';
 import { Config } from '@src/entities/config';
+import { Response } from '@src/entities/response';
 import pg from 'pg';
 
 class APIController extends BaseController {
@@ -8,18 +9,19 @@ class APIController extends BaseController {
     super(config, databasePool);
   }
 
-  public getInfo = async (req: Request, res: Response) => {
-    return res.send({
-      message: `Welcome to ${this.config.apiURI} API! Version: ${this.config.apiVersion} 🚀 `,
-      error: 0,
+  public getInfo = async (req: Express.Request, res: Express.Response) => {
+    const response: Response = new Response(Response.Code.Ok, {
+      message: `Welcome to ${this.config.apiURI} API! Version: ${this.config.apiVersion} 🚀`,
     });
+    return res.status(response.httpCode).send(response.serialize());
   };
 
-  public authTest = async (req: Request, res: Response) => {
-    return res.send({
-      message: 'Auth test passed!',
-      error: 0,
-    });
+  public authTest = async (req: Express.Request, res: Express.Response) => {
+    const response: Response = new Response(
+      Response.Code.Ok,
+      'Auth test passed!'
+    );
+    return res.status(response.httpCode).send(response.serialize());
   };
 }
 

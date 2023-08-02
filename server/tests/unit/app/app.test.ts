@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { expect, jest, test } from '@jest/globals';
 import dotenv from 'dotenv';
-import pg from 'pg';
+// import pg from 'pg';
 
 const { Config } = require('@src/entities/config');
 const { AuthWorker } = require('@src/business/authWorker');

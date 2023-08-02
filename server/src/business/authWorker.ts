@@ -1,6 +1,9 @@
 import { LoginRequest } from '@src/entities/user';
 import { IDatabase } from '@src/interfaces/iDatabase';
 import { dataLogger } from '@src/utils/server/logger';
+import { Response } from '@src/entities/response';
+import { RefreshToken } from '@src/entities/refreshToken';
+import { AccessToken } from '@src/entities/accessToken';
 import jwt from 'jsonwebtoken';
 
 export class AuthWorker {
@@ -12,24 +15,24 @@ export class AuthWorker {
     dataLogger.trace('AuthWorker initialized');
   }
 
-  public verifyAccessToken = (token: string): Boolean => {
+  public verifyAccessToken = (token: string): boolean => {
     const secret = this.config.apiAccessTokenSecret;
-    let isValid: Boolean = true;
-    jwt.verify(token, secret, (err: any) => {
+    let isValid: boolean = true;
+    jwt.verify(token, secret, (err: jwt.VerifyErrors | null) => {
       if (err) {
-        dataLogger.info(`Error verifying token: ${err}`);
+        dataLogger.warn(`Error verifying token: ${err}`);
         isValid = false;
       }
     });
     return isValid;
   };
 
-  public verifyRefreshToken = (token: string): Boolean => {
+  public verifyRefreshToken = (token: string): boolean => {
     const secret = this.config.apiRefreshTokenSecret;
-    let isValid: Boolean = true;
-    jwt.verify(token, secret, (err: any) => {
+    let isValid: boolean = true;
+    jwt.verify(token, secret, (err: jwt.VerifyErrors | null) => {
       if (err) {
-        dataLogger.info(`Error verifying token: ${err}`);
+        dataLogger.warn(`Error verifying token: ${err}`);
         isValid = false;
       }
     });
@@ -54,102 +57,187 @@ export class AuthWorker {
     return token;
   };
 
+  public invalidateTokenTree = async (refreshToken: RefreshToken) => {
+    const commonAncestorId = refreshToken.commonAncestorId
+      ? refreshToken.commonAncestorId
+      : refreshToken.id;
+    await this.db.deleteRefreshToken(commonAncestorId);
+  };
+
   public login = async (LoginRequest: LoginRequest) => {
     const { name, password } = LoginRequest;
     const user = await this.db.findUserByName(name);
+
     if (!user) {
-      dataLogger.error('User not found');
-      return null;
-    }
-    if (user.password !== password) {
-      dataLogger.error('Password invalid');
-      return null;
+      dataLogger.debug('User not found');
+      return new Response(Response.Code.Forbidden, 'User not found');
     }
 
-    const accessToken = this.generateAccessToken(user.id);
-    const refreshToken = this.generateRefreshToken(user.id);
+    if (user.password !== password) {
+      dataLogger.debug('Password invalid');
+      return new Response(Response.Code.Forbidden, 'Password invalid');
+    }
+
+    const refreshToken: RefreshToken = new RefreshToken(
+      0,
+      this.generateRefreshToken(user.id),
+      null,
+      user.id,
+      null,
+      'A'
+    );
 
     try {
-      const refreshTokenId = await this.db.insertRefreshToken(
-        refreshToken,
+      const refreshTokenId = await this.db.insertRefreshToken(refreshToken);
+      const accessToken: AccessToken = new AccessToken(
+        0,
+        this.generateAccessToken(user.id),
+        refreshTokenId,
         user.id
       );
-      await this.db.insertAccessToken(user.id, accessToken, refreshTokenId);
+      await this.db.insertAccessToken(accessToken);
+      return new Response(Response.Code.Ok, {
+        accessToken: accessToken.token,
+        refreshToken: refreshToken.token,
+      });
     } catch (err) {
-      dataLogger.error('Error inserting token');
-      throw new Error('Error inserting token');
+      dataLogger.error('AuthWorker.login failed');
+      throw new Error('AuthWorker.login failed');
     } finally {
       dataLogger.trace('AuthWorker.login quitting');
     }
-    return {
-      accessToken,
-      refreshToken,
-    };
   };
 
   public getAccessToken = async (refreshToken: string) => {
     const tmpRefreshToken = await this.db.findRefreshToken(refreshToken);
     if (!tmpRefreshToken) {
-      dataLogger.error('Refresh token not found');
-      return null;
+      return new Response(Response.Code.Forbidden, 'RefreshToken not found');
     }
 
     if (!this.verifyRefreshToken(refreshToken)) {
-      try {
-        await this.db.deleteRefreshToken(refreshToken);
-      } catch (err) {
-        dataLogger.error('Error deleting token');
-      } finally {
-        dataLogger.trace('AuthWorker.getAccessToken quitting');
-      }
-      dataLogger.error('Refresh token expired');
-      return null;
-    }
-    const accessToken = await this.db.findAccessTokenByRefreshTokenId(
-      <number>tmpRefreshToken.id
-    );
-    if (accessToken) {
-      dataLogger.error('Access token found');
-      this.db.deleteRefreshToken(refreshToken);
-      return null;
-    }
-    const newAccessToken = this.generateAccessToken(
-      <number>tmpRefreshToken.userId
-    );
-    try {
-      await this.db.insertAccessToken(
-        <number>tmpRefreshToken.userId,
-        newAccessToken,
-        <number>tmpRefreshToken.id
+      this.invalidateTokenTree(tmpRefreshToken);
+      return new Response(
+        Response.Code.Unauthorized,
+        'Authorization is expired'
       );
-    } catch (err) {
-      dataLogger.error('Error inserting token');
-      throw new Error('Error inserting token');
-    } finally {
-      dataLogger.trace('AuthWorker.getAccessToken quitting');
     }
+    const childAccessToken = await this.db.findAccessTokenByRefreshTokenId(
+      tmpRefreshToken.id
+    );
 
-    return newAccessToken;
+    if (childAccessToken) {
+      dataLogger.warn('Trying to reuse refresh token');
+      this.invalidateTokenTree(tmpRefreshToken);
+      return new Response(
+        Response.Code.Unauthorized,
+        'Authorization is expired'
+      );
+    }
+    const newAccessToken: AccessToken = new AccessToken(
+      0,
+      this.generateAccessToken(tmpRefreshToken.userId),
+      tmpRefreshToken.id,
+      tmpRefreshToken.userId
+    );
+    await this.db.insertAccessToken(newAccessToken);
+    return new Response(Response.Code.Ok, {
+      accessToken: newAccessToken.token,
+    });
   };
 
-  public auth = async (token: string): Promise<Boolean> => {
+  public getRefreshToken = async (refreshToken: string) => {
+    const tmpRefreshToken = await this.db.findRefreshToken(refreshToken);
+    if (!tmpRefreshToken) {
+      return new Response(Response.Code.Forbidden, 'RefreshToken is not found');
+    }
+    if (tmpRefreshToken.status === 'I') {
+      this.invalidateTokenTree(tmpRefreshToken);
+      return new Response(
+        Response.Code.Unauthorized,
+        'Authorization is expired'
+      );
+    }
+
+    if (!this.verifyRefreshToken(refreshToken)) {
+      this.invalidateTokenTree(tmpRefreshToken);
+      return new Response(
+        Response.Code.Unauthorized,
+        'Authorization is expired'
+      );
+    }
+
+    const childToken = await this.db.findRefreshTokenByParentId(
+      tmpRefreshToken.id
+    );
+
+    if (childToken) {
+      dataLogger.warn('Trying to reuse refreshToken');
+      this.invalidateTokenTree(tmpRefreshToken);
+      return new Response(
+        Response.Code.Unauthorized,
+        'Authorization is expired'
+      );
+    }
+    const newRefreshToken: RefreshToken = new RefreshToken(
+      0,
+      this.generateRefreshToken(tmpRefreshToken.userId),
+      tmpRefreshToken.id,
+      tmpRefreshToken.userId,
+      tmpRefreshToken.commonAncestorId,
+      'A'
+    );
+
+    const newRefreshTokenId = await this.db.updateRefreshToken(
+      newRefreshToken,
+      tmpRefreshToken
+    );
+
+    let tmpAccessToken = await this.db.findAccessTokenByRefreshTokenId(
+      newRefreshToken.id
+    );
+
+    if (!tmpAccessToken) {
+      tmpAccessToken = new AccessToken(
+        0,
+        this.generateAccessToken(tmpRefreshToken.userId),
+        newRefreshTokenId,
+        tmpRefreshToken.userId
+      );
+    }
+
+    return new Response(Response.Code.Ok, {
+      accessToken: tmpAccessToken.token,
+      refreshToken: newRefreshToken.token,
+    });
+  };
+
+  public auth = async (token: string): Promise<boolean> => {
     const tokenObj = await this.db.findAccessToken(token);
     if (!tokenObj) {
-      dataLogger.error('Access token not found');
       return false;
     }
     if (!this.verifyAccessToken(token)) {
       try {
-        await this.db.deleteAccessToken(token);
+        await this.db.deleteAccessToken(tokenObj.id);
+        return false;
       } catch (err) {
-        dataLogger.error('Error deleting token');
-      } finally {
-        dataLogger.trace('AuthWorker.auth quitting');
+        dataLogger.error('AuthWorker.auth failed updating token status');
       }
-      dataLogger.error('Access token expired');
+      dataLogger.debug('AuthWorker.auth token expired');
       return false;
     }
-    dataLogger.trace('AuthWorker.auth quitting');
     return true;
+  };
+
+  public logout = async (refreshToken: string) => {
+    const token = await this.db.findRefreshToken(refreshToken);
+    if (!token) {
+      return new Response(
+        Response.Code.BadRequest,
+        'RefreshToken is not found'
+      );
+    }
+    await this.invalidateTokenTree(token);
+    return new Response(Response.Code.Ok, 'Logout success');
   };
 }

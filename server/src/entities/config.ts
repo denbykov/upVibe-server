@@ -8,6 +8,8 @@ export class Config {
   public appPort: number = 0;
   public appHost: string = '';
   public appUseHttps: boolean = false;
+  public appHttpsKey: string = '';
+  public appHttpsCert: string = '';
   public dbHost: string = '';
   public dbPort: number = 0;
   public dbUser: string = '';
@@ -47,6 +49,14 @@ export class Config {
       process.env.APP_USE_HTTPS ||
       configEnv.APP_USE_HTTPS ||
       configJson.APP_USE_HTTPS;
+    this.appHttpsKey =
+      process.env.APP_HTTPS_KEY ||
+      configEnv.APP_HTTPS_KEY ||
+      configJson.APP_HTTPS_KEY;
+    this.appHttpsCert =
+      process.env.APP_HTTPS_CERT ||
+      configEnv.APP_HTTPS_CERT ||
+      configJson.APP_HTTPS_CERT;
     this.dbHost =
       process.env.DB_HOST || configEnv.DB_HOST || configJson.DB_HOST;
     this.dbPort =
