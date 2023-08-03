@@ -1,25 +1,15 @@
-export class AcceessToken {
+export class AccessToken {
   id: number;
-  userId: number;
   token: string;
-  refreshTokenId: number;
-  constructor(
-    id: number,
-    userId: number,
-    token: string,
-    refreshTokenId: number
-  ) {
+  parentId: number;
+  userId: number;
+  constructor(id: number, token: string, parentId: number, userId: number) {
     this.id = id;
-    this.userId = userId;
     this.token = token;
-    this.refreshTokenId = refreshTokenId;
+    this.parentId = parentId;
+    this.userId = userId;
   }
-  public static fromJSON(json: JSON.JSONObject): AcceessToken {
-    return new AcceessToken(
-      json.id,
-      json.user_id,
-      json.token,
-      json.refresh_token_id
-    );
+  public static fromJSON(json: JSON.JSONObject): AccessToken {
+    return new AccessToken(json.id, json.token, json.parent_id, json.user_id);
   }
 }

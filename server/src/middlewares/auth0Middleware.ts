@@ -1,6 +1,7 @@
 import { AuthWorker } from '@src/business/authWorker';
 import { Database } from '@src/data';
 import { Config } from '@src/entities/config';
+import { Response } from '@src/entities/response';
 import Express from 'express';
 import pg from 'pg';
 
@@ -11,20 +12,15 @@ const auth0Middleware = (config: Config, databasePool: pg.Pool) => {
     next: Express.NextFunction
   ) => {
     const authWorker = new AuthWorker(await new Database(databasePool), config);
+    const response = new Response(Response.Code.Unauthorized, 'Unauthorized');
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(403).send({
-        message: 'Token is invalid',
-        _error: 1,
-      });
+      return res.status(response.httpCode).send(response.serialize());
     }
     const token = authHeader.split(' ')[1];
     const auth = await authWorker.auth(token);
     if (!auth) {
-      return res.status(403).send({
-        message: 'Token is invalid',
-        _error: 1,
-      });
+      return res.status(response.httpCode).send(response.serialize());
     }
     next();
   };

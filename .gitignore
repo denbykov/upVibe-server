@@ -1,12 +1,14 @@
 .vscode
 .idea
 node_modules
-.env
 dist
 logs
 build_debug
-.prettierrc
-package-lock.json
 rest
 scripts/db/data
 ssl
+.env
+.prettierrc
+.editorconfig
+.eslintrc.js
+package-lock.json
