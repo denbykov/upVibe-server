@@ -1,6 +1,6 @@
 import Express from 'express';
 import { BaseController } from './base.controller';
-import { Database } from '@src/data';
+import { AuthorizationRepository } from '@src/data';
 import { LoginRequest } from '@src/entities/user';
 import { AuthWorker } from '@src/business/authWorker';
 import { Config } from '@src/entities/config';
@@ -14,7 +14,7 @@ class AuthController extends BaseController {
 
   public login = async (req: Express.Request, res: Express.Response) => {
     const authWorker = new AuthWorker(
-      await new Database(this.databasePool),
+      await new AuthorizationRepository(this.databasePool),
       this.config
     );
     const tokens = await authWorker.login(
@@ -29,7 +29,7 @@ class AuthController extends BaseController {
     res: Express.Response
   ) => {
     const authWorker = new AuthWorker(
-      await new Database(this.databasePool),
+      await new AuthorizationRepository(this.databasePool),
       this.config
     );
     const authHeader = req.headers.authorization;
@@ -46,7 +46,7 @@ class AuthController extends BaseController {
     res: Express.Response
   ) => {
     const authWorker = new AuthWorker(
-      await new Database(this.databasePool),
+      await new AuthorizationRepository(this.databasePool),
       this.config
     );
     const authHeader = req.headers.authorization;
@@ -57,9 +57,13 @@ class AuthController extends BaseController {
     const tokens = await authWorker.getRefreshToken(refreshToken);
     return res.status(tokens.httpCode).send(tokens.serialize());
   };
-  public logout = async (req: Express.Request, res: Express.Response) => {
+
+  public deleteAccessToken = async (
+    req: Express.Request,
+    res: Express.Response
+  ) => {
     const authWorker = new AuthWorker(
-      await new Database(this.databasePool),
+      await new AuthorizationRepository(this.databasePool),
       this.config
     );
     const authHeader = req.headers.authorization;
@@ -67,7 +71,24 @@ class AuthController extends BaseController {
       return res.status(Response.Code.Forbidden).send({ message: 'Forbidden' });
     }
     const refreshToken = authHeader.split(' ')[1];
-    const response = await authWorker.logout(refreshToken);
+    const response = await authWorker.deleteAccessToken(refreshToken);
+    return res.status(response.httpCode).send(response.serialize());
+  };
+
+  public deleteRefreshToken = async (
+    req: Express.Request,
+    res: Express.Response
+  ) => {
+    const authWorker = new AuthWorker(
+      await new AuthorizationRepository(this.databasePool),
+      this.config
+    );
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(Response.Code.Forbidden).send({ message: 'Forbidden' });
+    }
+    const refreshToken = authHeader.split(' ')[1];
+    const response = await authWorker.deleteRefreshToken(refreshToken);
     return res.status(response.httpCode).send(response.serialize());
   };
 }

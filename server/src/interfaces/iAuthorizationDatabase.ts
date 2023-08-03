@@ -2,7 +2,7 @@ import { RefreshToken } from '@src/entities/refreshToken';
 import { AccessToken } from '@src/entities/accessToken';
 import { User } from '@src/entities/user';
 
-export abstract class IDatabase {
+export abstract class IAuthorizationDatabase {
   public abstract findUserByName(name: string): Promise<User | null>;
   public abstract findRefreshTokenId(
     refreshToken: string
