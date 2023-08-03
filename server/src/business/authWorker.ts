@@ -1,5 +1,5 @@
 import { LoginRequest } from '@src/entities/user';
-import { IDatabase } from '@src/interfaces/iDatabase';
+import { IAuthorizationDatabase } from '@src/interfaces/iAuthorizationDatabase';
 import { dataLogger } from '@src/utils/server/logger';
 import { Response } from '@src/entities/response';
 import { RefreshToken } from '@src/entities/refreshToken';
@@ -7,9 +7,9 @@ import { AccessToken } from '@src/entities/accessToken';
 import jwt from 'jsonwebtoken';
 
 export class AuthWorker {
-  private db: IDatabase;
+  private db: IAuthorizationDatabase;
   private config: JSON.JSONObject;
-  constructor(db: IDatabase, config: JSON.JSONObject) {
+  constructor(db: IAuthorizationDatabase, config: JSON.JSONObject) {
     this.db = db;
     this.config = config;
     dataLogger.trace('AuthWorker initialized');
@@ -198,7 +198,9 @@ export class AuthWorker {
     );
 
     if (!tmpAccessToken) {
-      dataLogger.debug('AuthWorker.getRefreshToken access token not found, creating new');
+      dataLogger.debug(
+        'AuthWorker.getRefreshToken access token not found, creating new'
+      );
       tmpAccessToken = new AccessToken(
         0,
         this.generateAccessToken(tmpRefreshToken.userId),
@@ -208,7 +210,9 @@ export class AuthWorker {
       try {
         await this.db.insertAccessToken(tmpAccessToken);
       } catch (err) {
-        dataLogger.error('AuthWorker.getRefreshToken failed to insert new access token');
+        dataLogger.error(
+          'AuthWorker.getRefreshToken failed to insert new access token'
+        );
       }
     }
 
@@ -236,7 +240,25 @@ export class AuthWorker {
     return true;
   };
 
-  public logout = async (refreshToken: string) => {
+  public deleteAccessToken = async (refreshToken: string) => {
+    const token = await this.db.findRefreshToken(refreshToken);
+    if (!token) {
+      return new Response(
+        Response.Code.BadRequest,
+        'RefreshToken is not found'
+      );
+    }
+    const tmpAccessToken = await this.db.findAccessTokenByRefreshTokenId(
+      token.id
+    );
+    if (!tmpAccessToken) {
+      return new Response(Response.Code.BadRequest, 'AccessToken is not found');
+    }
+    await this.db.deleteAccessToken(tmpAccessToken.id);
+    return new Response(Response.Code.Ok, 'Logout success');
+  };
+
+  public deleteRefreshToken = async (refreshToken: string) => {
     const token = await this.db.findRefreshToken(refreshToken);
     if (!token) {
       return new Response(

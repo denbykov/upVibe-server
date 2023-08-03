@@ -1,11 +1,11 @@
-import { IDatabase } from '@src/interfaces/iDatabase';
+import { IAuthorizationDatabase } from '@src/interfaces/iAuthorizationDatabase';
 import { User } from '@src/entities/user';
 import { AccessToken } from '@src/entities/accessToken';
 import { RefreshToken } from '@src/entities/refreshToken';
 import { dataLogger } from '@src/utils/server/logger';
 import pg from 'pg';
 
-export class Database implements IDatabase {
+export class AuthorizationRepository implements IAuthorizationDatabase {
   public pool: pg.Pool;
   constructor(pool: pg.Pool) {
     this.pool = pool;

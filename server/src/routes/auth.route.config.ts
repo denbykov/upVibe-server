@@ -24,9 +24,13 @@ export class AuthRoute extends BaseRoute {
       `${this.controller.apiURIAuth}/refresh-token`,
       this.controller.getRefreshToken
     );
-    this.app.get(
-      `${this.controller.apiURIAuth}/logout`,
-      this.controller.logout
+    this.app.delete(
+      `${this.controller.apiURIAuth}/access-token`,
+      this.controller.deleteAccessToken
+    );
+    this.app.delete(
+      `${this.controller.apiURIAuth}/refresh-token`,
+      this.controller.deleteRefreshToken
     );
     return this.app;
   }
