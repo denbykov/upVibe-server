@@ -6,10 +6,8 @@ RUN mkdir -p /opt/app && chown -R 777 /opt/app && \
 WORKDIR /opt/app
 
 COPY package*.json ./
-RUN npm install \
-    && npm cache clean --force
+RUN npm install
 
-COPY config ./config
 COPY custom_typings ./custom_typings
 COPY src ./src
 COPY tests ./tests

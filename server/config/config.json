@@ -3,7 +3,9 @@
     "name": "up-vibe",
     "port": 3000,
     "host": "0.0.0.0",
-    "use_https": true
+    "use_https": true,
+    "https_key": "/etc/ssl/cert.pem",
+    "https_cert": "/etc/ssl/certs/ca-certificates.crt"
   },
   "API": {
     "uri": "up-vibe",

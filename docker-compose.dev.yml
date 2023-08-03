@@ -10,6 +10,7 @@ services:
       - "9229:9229"
     volumes:
       - ./server/logs:/opt/app/logs
+      - ./server/config:/opt/app/config
     restart: always
     command: npm run dev:docker
     container_name: app-server

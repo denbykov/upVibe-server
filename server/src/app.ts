@@ -5,8 +5,8 @@ import pg from 'pg';
 import fs from 'fs';
 
 import { APIRoute, AuthRoute, BaseRoute } from '@src/routes';
-import { requestLogger } from '@src/middlewares';
-import { Config } from './entities/config';
+import { requestLogger, unmatchedRoutesMiddleware } from '@src/middlewares';
+import { Config } from '@src/entities/config';
 import { serverLogger } from '@src/utils/server/logger';
 import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
 
@@ -34,6 +34,7 @@ export class App {
     });
     this.routes.push(new APIRoute(this.app, config, this.pool));
     this.routes.push(new AuthRoute(this.app, config, this.pool));
+    this.app.use(unmatchedRoutesMiddleware);
   }
   public getApp(): Express {
     return this.app;
@@ -50,8 +51,8 @@ export class App {
     }
     if (config.appUseHttps) {
       const httpsOptions = {
-        key: fs.readFileSync('config/ssl/privatekey.pem'),
-        cert: fs.readFileSync('config/ssl/certificate.pem'),
+        key: fs.readFileSync(config.appHttpsKey),
+        cert: fs.readFileSync(config.appHttpsCert),
       };
       https
         .createServer(httpsOptions, this.app)

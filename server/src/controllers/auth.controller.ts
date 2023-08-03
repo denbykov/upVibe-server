@@ -1,9 +1,10 @@
-import { Request, Response } from 'express';
+import Express from 'express';
 import { BaseController } from './base.controller';
 import { Database } from '@src/data';
 import { LoginRequest } from '@src/entities/user';
 import { AuthWorker } from '@src/business/authWorker';
 import { Config } from '@src/entities/config';
+import { Response } from '@src/entities/response';
 import pg from 'pg';
 
 class AuthController extends BaseController {
@@ -11,7 +12,7 @@ class AuthController extends BaseController {
     super(config, databasePool);
   }
 
-  public login = async (req: Request, res: Response) => {
+  public login = async (req: Express.Request, res: Express.Response) => {
     const authWorker = new AuthWorker(
       await new Database(this.databasePool),
       this.config
@@ -20,40 +21,54 @@ class AuthController extends BaseController {
       new LoginRequest(req.body.name, req.body.password)
     );
 
-    if (!tokens) {
-      return res.status(401).send({
-        message: 'Login failed',
-      });
-    }
-
-    return res.status(200).send({
-      tokens,
-    });
+    return res.status(tokens.httpCode).send(tokens.serialize());
   };
 
-  public getAccessToken = async (req: Request, res: Response) => {
+  public getAccessToken = async (
+    req: Express.Request,
+    res: Express.Response
+  ) => {
     const authWorker = new AuthWorker(
       await new Database(this.databasePool),
       this.config
     );
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(403).send({
-        message: 'Token is invalid',
-        error: 1,
-      });
+      return res.status(Response.Code.Forbidden).send({ message: 'Forbidden' });
     }
     const refreshToken = authHeader.split(' ')[1];
     const tokens = await authWorker.getAccessToken(refreshToken);
-    if (!tokens) {
-      return res.status(401).send({
-        message: 'Refresh token is invalid',
-        error: 1,
-      });
+    return res.status(tokens.httpCode).send(tokens.serialize());
+  };
+
+  public getRefreshToken = async (
+    req: Express.Request,
+    res: Express.Response
+  ) => {
+    const authWorker = new AuthWorker(
+      await new Database(this.databasePool),
+      this.config
+    );
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(Response.Code.Forbidden).send({ message: 'Forbidden' });
     }
-    return res.status(200).send({
-      tokens,
-    });
+    const refreshToken = authHeader.split(' ')[1];
+    const tokens = await authWorker.getRefreshToken(refreshToken);
+    return res.status(tokens.httpCode).send(tokens.serialize());
+  };
+  public logout = async (req: Express.Request, res: Express.Response) => {
+    const authWorker = new AuthWorker(
+      await new Database(this.databasePool),
+      this.config
+    );
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(Response.Code.Forbidden).send({ message: 'Forbidden' });
+    }
+    const refreshToken = authHeader.split(' ')[1];
+    const response = await authWorker.logout(refreshToken);
+    return res.status(response.httpCode).send(response.serialize());
   };
 }
 
