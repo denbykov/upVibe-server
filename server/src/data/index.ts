@@ -1,3 +1,3 @@
-import { Database } from '@src/data/Database';
+import { AuthorizationRepository } from '@src/data/AuthorizationRepository';
 
-export { Database };
+export { AuthorizationRepository };

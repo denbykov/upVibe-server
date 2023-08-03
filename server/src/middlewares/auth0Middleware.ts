@@ -1,5 +1,5 @@
 import { AuthWorker } from '@src/business/authWorker';
-import { Database } from '@src/data';
+import { AuthorizationRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
 import Express from 'express';
@@ -11,7 +11,10 @@ const auth0Middleware = (config: Config, databasePool: pg.Pool) => {
     res: Express.Response,
     next: Express.NextFunction
   ) => {
-    const authWorker = new AuthWorker(await new Database(databasePool), config);
+    const authWorker = new AuthWorker(
+      await new AuthorizationRepository(databasePool),
+      config
+    );
     const response = new Response(Response.Code.Unauthorized, 'Unauthorized');
     const authHeader = req.headers.authorization;
     if (!authHeader) {
