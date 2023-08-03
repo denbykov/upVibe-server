@@ -178,6 +178,7 @@ export class AuthWorker {
         'Authorization is expired'
       );
     }
+    tmpRefreshToken.status = 'I';
     const newRefreshToken: RefreshToken = new RefreshToken(
       0,
       this.generateRefreshToken(tmpRefreshToken.userId),
@@ -193,16 +194,22 @@ export class AuthWorker {
     );
 
     let tmpAccessToken = await this.db.findAccessTokenByRefreshTokenId(
-      newRefreshToken.id
+      newRefreshTokenId
     );
 
     if (!tmpAccessToken) {
+      dataLogger.debug('AuthWorker.getRefreshToken access token not found, creating new');
       tmpAccessToken = new AccessToken(
         0,
         this.generateAccessToken(tmpRefreshToken.userId),
         newRefreshTokenId,
         tmpRefreshToken.userId
       );
+      try {
+        await this.db.insertAccessToken(tmpAccessToken);
+      } catch (err) {
+        dataLogger.error('AuthWorker.getRefreshToken failed to insert new access token');
+      }
     }
 
     return new Response(Response.Code.Ok, {
