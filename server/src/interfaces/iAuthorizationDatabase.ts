@@ -1,5 +1,5 @@
-import { RefreshToken } from '@src/entities/refreshToken';
 import { AccessToken } from '@src/entities/accessToken';
+import { RefreshToken } from '@src/entities/refreshToken';
 import { User } from '@src/entities/user';
 
 export abstract class IAuthorizationDatabase {

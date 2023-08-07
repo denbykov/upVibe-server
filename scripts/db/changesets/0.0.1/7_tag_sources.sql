@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:8
+--changeset sowa:7
 
 CREATE TABLE tag_sources (
     id SERIAL PRIMARY KEY,

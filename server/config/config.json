@@ -3,9 +3,15 @@
     "name": "up-vibe",
     "port": 3000,
     "host": "0.0.0.0",
-    "use_https": false,
-    "https_key": "/etc/ssl/cert.pem",
-    "https_cert": "/etc/ssl/certs/ca-certificates.crt"
+    "use_https": true,
+    "https_key": "config/ssl/privatekey.pem",
+    "https_cert": "config/ssl/certificate.pem",
+    "path_storage": "/opt/app/storage",
+    "brocker_host": "host.docker.internal",
+    "brocker_port": 5672,
+    "brocker_user": "admin",
+    "brocker_password": "admin",
+    "brocker_queue": "up-vibe-queue"
   },
   "API": {
     "uri": "up-vibe",

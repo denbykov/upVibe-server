@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:12
+--changeset sowa:11
 
 CREATE TABLE token_statuses (
     status CHAR(1) PRIMARY KEY,

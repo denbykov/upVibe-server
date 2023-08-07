@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:11
+--changeset sowa:10
 
 CREATE TABLE tag_mapp_ings (
     user_id SERIAL PRIMARY KEY,

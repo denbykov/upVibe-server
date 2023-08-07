@@ -12,7 +12,7 @@ IF %M%==3 GOTO :EXIT
 
 :BUILD
 ECHO "Launching docker-compose..."
-docker compose -f .\docker-compose.dev.yml -p dev-app up --force-recreate -d
+docker compose -f .\docker-compose.dev.yml -p dev-app up --force-recreate --build -d
 
 :EXIT
 ECHO "Exiting..."

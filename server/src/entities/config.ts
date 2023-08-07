@@ -10,6 +10,12 @@ export class Config {
   public appUseHttps: boolean = false;
   public appHttpsKey: string = '';
   public appHttpsCert: string = '';
+  public appPathStorage: string = '';
+  public appBrockerHost: string = '';
+  public appBrockerPort: number = 0;
+  public appBrockerUser: string = '';
+  public appBrockerPassword: string = '';
+  public appBrockerQueue: string = '';
   public dbHost: string = '';
   public dbPort: number = 0;
   public dbUser: string = '';
@@ -57,6 +63,10 @@ export class Config {
       process.env.APP_HTTPS_CERT ||
       configEnv.APP_HTTPS_CERT ||
       configJson.APP_HTTPS_CERT;
+    this.appPathStorage =
+      process.env.APP_PATH_STORAGE ||
+      configEnv.APP_PATH_STORAGE ||
+      configJson.APP_PATH_STORAGE;
     this.dbHost =
       process.env.DB_HOST || configEnv.DB_HOST || configJson.DB_HOST;
     this.dbPort =
@@ -75,5 +85,25 @@ export class Config {
       parseInt(<string>process.env.DB_MAX) ||
       parseInt(configEnv.DB_MAX) ||
       parseInt(configJson.DB_MAX);
+    this.appBrockerHost =
+      process.env.APP_BROCKER_HOST ||
+      configEnv.APP_BROCKER_HOST ||
+      configJson.APP_BROCKER_HOST;
+    this.appBrockerPort =
+      parseInt(<string>process.env.APP_BROCKER_PORT) ||
+      parseInt(configEnv.APP_BROCKER_PORT) ||
+      parseInt(configJson.APP_BROCKER_PORT);
+    this.appBrockerUser =
+      process.env.APP_BROCKER_USER ||
+      configEnv.APP_BROCKER_USER ||
+      configJson.APP_BROCKER_USER;
+    this.appBrockerPassword =
+      process.env.APP_BROCKER_PASSWORD ||
+      configEnv.APP_BROCKER_PASSWORD ||
+      configJson.APP_BROCKER_PASSWORD;
+    this.appBrockerQueue =
+      process.env.APP_BROCKER_QUEUE ||
+      configEnv.APP_BROCKER_QUEUE ||
+      configJson.APP_BROCKER_QUEUE;
   }
 }

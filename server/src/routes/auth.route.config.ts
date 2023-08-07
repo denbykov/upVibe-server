@@ -1,37 +1,44 @@
 import express from 'express';
-import { AuthController } from '@src/controllers';
-import { BaseRoute } from './baseRoute';
-import { Config } from '@src/entities/config';
 import pg from 'pg';
+
+import { AuthController } from '@src/controllers';
+import { Config } from '@src/entities/config';
+
+import { BaseRoute } from './baseRoute';
 
 export class AuthRoute extends BaseRoute {
   constructor(app: express.Application, config: Config, databasePool: pg.Pool) {
-    super(
-      app,
-      'AuthRoute',
-      config,
-      databasePool,
-      new AuthController(config, databasePool)
-    );
+    super(app, 'AuthRoute', config, databasePool);
   }
+
   configureRoutes() {
-    this.app.post(`${this.controller.apiURIAuth}/login`, this.controller.login);
+    const controller: AuthController = new AuthController(
+      this.config,
+      this.databasePool
+    );
+
+    this.app.post(`${controller.apiURIAuth}/login`, controller.login);
+
     this.app.get(
-      `${this.controller.apiURIAuth}/access-token`,
-      this.controller.getAccessToken
+      `${controller.apiURIAuth}/access-token`,
+      controller.getAccessToken
     );
+
     this.app.get(
-      `${this.controller.apiURIAuth}/refresh-token`,
-      this.controller.getRefreshToken
+      `${controller.apiURIAuth}/refresh-token`,
+      controller.getRefreshToken
     );
+
     this.app.delete(
-      `${this.controller.apiURIAuth}/access-token`,
-      this.controller.deleteAccessToken
+      `${controller.apiURIAuth}/access-token`,
+      controller.deleteAccessToken
     );
+
     this.app.delete(
-      `${this.controller.apiURIAuth}/refresh-token`,
-      this.controller.deleteRefreshToken
+      `${controller.apiURIAuth}/refresh-token`,
+      controller.deleteRefreshToken
     );
+
     return this.app;
   }
 }

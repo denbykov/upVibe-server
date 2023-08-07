@@ -1,10 +1,11 @@
+import jwt from 'jsonwebtoken';
+
+import { AccessToken } from '@src/entities/accessToken';
+import { RefreshToken } from '@src/entities/refreshToken';
+import { Response } from '@src/entities/response';
 import { LoginRequest } from '@src/entities/user';
 import { IAuthorizationDatabase } from '@src/interfaces/iAuthorizationDatabase';
 import { dataLogger } from '@src/utils/server/logger';
-import { Response } from '@src/entities/response';
-import { RefreshToken } from '@src/entities/refreshToken';
-import { AccessToken } from '@src/entities/accessToken';
-import jwt from 'jsonwebtoken';
 
 export class AuthWorker {
   private db: IAuthorizationDatabase;
@@ -70,12 +71,12 @@ export class AuthWorker {
 
     if (!user) {
       dataLogger.debug('User not found');
-      return new Response(Response.Code.Forbidden, 'User not found');
+      return new Response(Response.Code.Forbidden, 'User not found', 1);
     }
 
     if (user.password !== password) {
       dataLogger.debug('Password invalid');
-      return new Response(Response.Code.Forbidden, 'Password invalid');
+      return new Response(Response.Code.Forbidden, 'Password invalid', 1);
     }
 
     const refreshToken: RefreshToken = new RefreshToken(
@@ -111,14 +112,15 @@ export class AuthWorker {
   public getAccessToken = async (refreshToken: string) => {
     const tmpRefreshToken = await this.db.findRefreshToken(refreshToken);
     if (!tmpRefreshToken) {
-      return new Response(Response.Code.Forbidden, 'RefreshToken not found');
+      return new Response(Response.Code.Forbidden, 'RefreshToken not found', 1);
     }
 
     if (!this.verifyRefreshToken(refreshToken)) {
       this.invalidateTokenTree(tmpRefreshToken);
       return new Response(
         Response.Code.Unauthorized,
-        'Authorization is expired'
+        'Authorization is expired',
+        1
       );
     }
     const childAccessToken = await this.db.findAccessTokenByRefreshTokenId(
@@ -130,7 +132,8 @@ export class AuthWorker {
       this.invalidateTokenTree(tmpRefreshToken);
       return new Response(
         Response.Code.Unauthorized,
-        'Authorization is expired'
+        'Authorization is expired',
+        1
       );
     }
     const newAccessToken: AccessToken = new AccessToken(
@@ -148,13 +151,18 @@ export class AuthWorker {
   public getRefreshToken = async (refreshToken: string) => {
     const tmpRefreshToken = await this.db.findRefreshToken(refreshToken);
     if (!tmpRefreshToken) {
-      return new Response(Response.Code.Forbidden, 'RefreshToken is not found');
+      return new Response(
+        Response.Code.Forbidden,
+        'RefreshToken is not found',
+        1
+      );
     }
     if (tmpRefreshToken.status === 'I') {
       this.invalidateTokenTree(tmpRefreshToken);
       return new Response(
         Response.Code.Unauthorized,
-        'Authorization is expired'
+        'Authorization is expired',
+        1
       );
     }
 
@@ -162,7 +170,8 @@ export class AuthWorker {
       this.invalidateTokenTree(tmpRefreshToken);
       return new Response(
         Response.Code.Unauthorized,
-        'Authorization is expired'
+        'Authorization is expired',
+        1
       );
     }
 
@@ -175,7 +184,8 @@ export class AuthWorker {
       this.invalidateTokenTree(tmpRefreshToken);
       return new Response(
         Response.Code.Unauthorized,
-        'Authorization is expired'
+        'Authorization is expired',
+        1
       );
     }
     tmpRefreshToken.status = 'I';
@@ -245,17 +255,22 @@ export class AuthWorker {
     if (!token) {
       return new Response(
         Response.Code.BadRequest,
-        'RefreshToken is not found'
+        'RefreshToken is not found',
+        1
       );
     }
     const tmpAccessToken = await this.db.findAccessTokenByRefreshTokenId(
       token.id
     );
     if (!tmpAccessToken) {
-      return new Response(Response.Code.BadRequest, 'AccessToken is not found');
+      return new Response(
+        Response.Code.BadRequest,
+        'AccessToken is not found',
+        1
+      );
     }
     await this.db.deleteAccessToken(tmpAccessToken.id);
-    return new Response(Response.Code.Ok, 'Logout success');
+    return new Response(Response.Code.Ok, 'AccessToken deleted');
   };
 
   public deleteRefreshToken = async (refreshToken: string) => {
@@ -263,10 +278,11 @@ export class AuthWorker {
     if (!token) {
       return new Response(
         Response.Code.BadRequest,
-        'RefreshToken is not found'
+        'RefreshToken is not found',
+        1
       );
     }
     await this.invalidateTokenTree(token);
-    return new Response(Response.Code.Ok, 'Logout success');
+    return new Response(Response.Code.Ok, 'RefreshToken deleted');
   };
 }

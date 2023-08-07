@@ -1,11 +1,13 @@
 import Express from 'express';
-import { BaseController } from './base.controller';
-import { AuthorizationRepository } from '@src/data';
-import { LoginRequest } from '@src/entities/user';
+import pg from 'pg';
+
 import { AuthWorker } from '@src/business/authWorker';
+import { AuthorizationRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
-import pg from 'pg';
+import { LoginRequest } from '@src/entities/user';
+
+import { BaseController } from './base.controller';
 
 class AuthController extends BaseController {
   constructor(config: Config, databasePool: pg.Pool) {

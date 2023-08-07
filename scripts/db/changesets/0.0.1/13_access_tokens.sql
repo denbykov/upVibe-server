@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:14
+--changeset sowa:13
 
 CREATE TABLE access_tokens (
     id SERIAL PRIMARY KEY,

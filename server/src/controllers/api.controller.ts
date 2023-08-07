@@ -1,8 +1,11 @@
 import Express from 'express';
-import { BaseController } from './base.controller';
+import pg from 'pg';
+
+import { PublisherMQTTRepository } from '@src/data/PublisherMQTTRepository';
 import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
-import pg from 'pg';
+
+import { BaseController } from './base.controller';
 
 class APIController extends BaseController {
   constructor(config: Config, databasePool: pg.Pool) {
@@ -21,6 +24,13 @@ class APIController extends BaseController {
       Response.Code.Ok,
       'Auth test passed!'
     );
+    const publisher = new PublisherMQTTRepository(this.config);
+    publisher.publish({
+      topic: 'authTest',
+      payload: {
+        message: 'Auth test passed!',
+      },
+    });
     return res.status(response.httpCode).send(response.serialize());
   };
 }
