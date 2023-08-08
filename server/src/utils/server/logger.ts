@@ -1,5 +1,5 @@
-import { getLogger, configure } from 'log4js';
 import fs from 'fs';
+import { configure, getLogger } from 'log4js';
 
 const config = JSON.parse(fs.readFileSync('config/log4j.properties', 'utf8'));
 configure(config);

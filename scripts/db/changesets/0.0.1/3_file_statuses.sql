@@ -2,6 +2,6 @@
 --changeset sowa:3
 
 CREATE TABLE file_statuses (
-    id SERIAL PRIMARY KEY,
+    status VARCHAR(1) PRIMARY KEY,
     description VARCHAR(255) NOT NULL
 );

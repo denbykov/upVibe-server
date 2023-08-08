@@ -1,7 +1,7 @@
 --liquibase formatted sql
---changeset sowa:2
+--changeset sowa:6
 
-CREATE TABLE file_types (
+CREATE TABLE tag_statuses (
     id SERIAL PRIMARY KEY,
     description VARCHAR(255) NOT NULL
 );

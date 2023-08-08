@@ -1,9 +1,10 @@
-import { IAuthorizationDatabase } from '@src/interfaces/iAuthorizationDatabase';
-import { User } from '@src/entities/user';
+import pg from 'pg';
+
 import { AccessToken } from '@src/entities/accessToken';
 import { RefreshToken } from '@src/entities/refreshToken';
+import { User } from '@src/entities/user';
+import { IAuthorizationDatabase } from '@src/interfaces/iAuthorizationDatabase';
 import { dataLogger } from '@src/utils/server/logger';
-import pg from 'pg';
 
 export class AuthorizationRepository implements IAuthorizationDatabase {
   public pool: pg.Pool;

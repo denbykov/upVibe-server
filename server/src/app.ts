@@ -1,12 +1,13 @@
-import express, { Express } from 'express';
 import dotenv from 'dotenv';
+import express, { Express } from 'express';
+import fs from 'fs';
 import https from 'https';
 import pg from 'pg';
-import fs from 'fs';
 
-import { APIRoute, AuthRoute, BaseRoute } from '@src/routes';
-import { requestLogger, unmatchedRoutesMiddleware } from '@src/middlewares';
 import { Config } from '@src/entities/config';
+import { requestLogger, unmatchedRoutesMiddleware } from '@src/middlewares';
+import { APIRoute, AuthRoute, BaseRoute, FileRoute } from '@src/routes';
+import { TagRoute } from '@src/routes/tag.route.config';
 import { serverLogger } from '@src/utils/server/logger';
 import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
 
@@ -34,6 +35,8 @@ export class App {
     });
     this.routes.push(new APIRoute(this.app, config, this.pool));
     this.routes.push(new AuthRoute(this.app, config, this.pool));
+    this.routes.push(new FileRoute(this.app, config, this.pool));
+    this.routes.push(new TagRoute(this.app, config, this.pool));
     this.app.use(unmatchedRoutesMiddleware);
   }
   public getApp(): Express {
