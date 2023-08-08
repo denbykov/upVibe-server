@@ -1,9 +1,11 @@
 import { File } from '@src/entities/file';
 
+import { FileSource } from './../entities/source';
+
 export abstract class iFileDatabase {
   public abstract getFiles: (usersId: number) => Promise<File[] | null>;
-  public abstract getSources: () => Promise<JSON.JSONObject[] | null>;
-  public abstract getSource: (
+  public abstract getFileSources: () => Promise<FileSource[] | null>;
+  public abstract getFileSource: (
     sourceId: number
-  ) => Promise<JSON.JSONObject | null>;
+  ) => Promise<FileSource | null>;
 }

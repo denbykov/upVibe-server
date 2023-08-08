@@ -20,13 +20,13 @@ export class FileWorker {
     return new Response(Response.Code.NotFound, 'No files found', 1);
   };
 
-  public getSources = async () => {
-    dataLogger.trace('FileWorker.getSources()');
-    const sources = await this.db.getSources();
+  public getFileSources = async () => {
+    dataLogger.trace('FileWorker.getFileSources()');
+    const sources = await this.db.getFileSources();
 
     if (sources) {
       sources.map((source: JSON.JSONObject) => {
-        delete source.image_path;
+        delete source.imagePath;
         delete Object.assign(source, { ['source']: source.description })[
           'description'
         ];
@@ -39,10 +39,9 @@ export class FileWorker {
 
   public getFileSourcePicture = async (sourceId: number) => {
     dataLogger.trace('FileWorker.getPicture()');
-    const data = await this.db.getSource(sourceId);
+    const data = await this.db.getFileSource(sourceId);
     if (data) {
-      const imagePath = data.image_path;
-      return new Response(Response.Code.Ok, imagePath);
+      return new Response(Response.Code.Ok, data.imagePath);
     }
     return new Response(Response.Code.NotFound, 'No picture found', 1);
   };

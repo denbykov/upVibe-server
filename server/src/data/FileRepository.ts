@@ -4,6 +4,8 @@ import { File } from '@src/entities/file';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { dataLogger } from '@src/utils/server/logger';
 
+import { FileSource } from './../entities/source';
+
 export class FileRepository implements iFileDatabase {
   public pool: pg.Pool;
   constructor(pool: pg.Pool) {
@@ -44,13 +46,17 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getSources = async (): Promise<JSON.JSONObject[] | null> => {
+  public getFileSources = async (): Promise<FileSource[] | null> => {
     const client = await this.pool.connect();
     try {
       const query = 'SELECT * FROM file_sources ORDER BY id';
       dataLogger.debug(query);
       const queryExecution = await client.query(query);
-      const result = queryExecution.rows;
+      const result: FileSource[] = [];
+      for (const source of queryExecution.rows) {
+        const sourceData: FileSource = FileSource.fromJSON(source);
+        result.push(sourceData);
+      }
       if (result.length > 0) {
         return result;
       } else {
@@ -64,15 +70,15 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getSource = async (
+  public getFileSource = async (
     sourceId: number
-  ): Promise<JSON.JSONObject | null> => {
+  ): Promise<FileSource | null> => {
     const client = await this.pool.connect();
     try {
       const query = 'SELECT * FROM file_sources WHERE id = $1';
       dataLogger.debug(query);
       const queryExecution = await client.query(query, [sourceId]);
-      const result = queryExecution.rows[0];
+      const result = FileSource.fromJSON(queryExecution.rows[0]);
       if (result) {
         return result;
       } else {

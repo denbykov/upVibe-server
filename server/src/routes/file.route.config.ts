@@ -26,7 +26,7 @@ export class FileRoute extends BaseRoute {
     this.app.get(
       `${controller.apiURIFiles}/sources`,
       auth0Middleware(this.config, this.databasePool),
-      controller.getSources
+      controller.getFileSources
     );
 
     this.app.get(

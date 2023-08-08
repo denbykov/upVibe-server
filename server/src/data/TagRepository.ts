@@ -1,5 +1,6 @@
 import pg from 'pg';
 
+import { TagSource } from '@src/entities/source';
 import { Tag } from '@src/entities/tag';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { dataLogger } from '@src/utils/server/logger';
@@ -56,7 +57,7 @@ export class TagRepository implements iTagDatabase {
     }
   };
 
-  public getTagSources = async (): Promise<string[] | null> => {
+  public getTagSources = async (): Promise<TagSource[] | null> => {
     const client = await this.pool.connect();
     try {
       const query = 'SELECT  * FROM tag_sources ORDER BY id ASC';
@@ -66,7 +67,11 @@ export class TagRepository implements iTagDatabase {
         return null;
       }
       const rows = result.rows;
-      return rows;
+      const sources: TagSource[] = [];
+      rows.forEach((row) => {
+        sources.push(TagSource.fromJSON(row));
+      });
+      return sources;
     } catch (err) {
       dataLogger.error(err);
       throw err;

@@ -30,12 +30,15 @@ class FileController extends BaseController {
     return res.status(files.httpCode).send(files.serialize());
   };
 
-  public getSources = async (req: Express.Request, res: Express.Response) => {
+  public getFileSources = async (
+    req: Express.Request,
+    res: Express.Response
+  ) => {
     const fileWorker = new FileWorker(
       await new FileRepository(this.databasePool),
       this.config
     );
-    const sources = await fileWorker.getSources();
+    const sources = await fileWorker.getFileSources();
     return res.status(sources.httpCode).send(sources.serialize());
   };
 
