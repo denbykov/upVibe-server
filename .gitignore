@@ -3,12 +3,12 @@
 node_modules
 dist
 logs
-build_debug
+buildDebug
 rest
-scripts/db/data
-ssl
+volumes
+server/tests/sql/
+storage
 .env
 .prettierrc
 .editorconfig
 .eslintrc.js
-package-lock.json

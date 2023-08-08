@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { expect, jest, test } from '@jest/globals';
+import { expect, test } from '@jest/globals';
 import dotenv from 'dotenv';
-// import pg from 'pg';
 
 const { Config } = require('@src/entities/config');
 const { AuthWorker } = require('@src/business/authWorker');
-const { Database } = require('@src/data/database');
+const { AuthorizationRepository } = require('@src/data');
 
 const env = dotenv.config({ path: 'config/.env' }).parsed || {};
 const config = new Config(env, {});
 
-const authWorker = new AuthWorker(new Database(config), config);
+const authWorker = new AuthWorker(new AuthorizationRepository(config), config);
 
 test('verifyAccessToken', async () => {
   const token = authWorker.generateAccessToken(1);

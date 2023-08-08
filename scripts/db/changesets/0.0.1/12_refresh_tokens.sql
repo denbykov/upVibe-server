@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:13
+--changeset sowa:12
 
 CREATE TABLE refresh_tokens (
     id SERIAL PRIMARY KEY,

@@ -10,6 +10,12 @@ export class Config {
   public appUseHttps: boolean = false;
   public appHttpsKey: string = '';
   public appHttpsCert: string = '';
+  public appPathStorage: string = '';
+  public rabbitMQHost: string = '';
+  public rabbitMQPort: number = 0;
+  public rabbitMQUser: string = '';
+  public rabbitMQPassword: string = '';
+  public rabbitMQDownloadingQueue: string = '';
   public dbHost: string = '';
   public dbPort: number = 0;
   public dbUser: string = '';
@@ -57,6 +63,10 @@ export class Config {
       process.env.APP_HTTPS_CERT ||
       configEnv.APP_HTTPS_CERT ||
       configJson.APP_HTTPS_CERT;
+    this.appPathStorage =
+      process.env.APP_PATH_STORAGE ||
+      configEnv.APP_PATH_STORAGE ||
+      configJson.APP_PATH_STORAGE;
     this.dbHost =
       process.env.DB_HOST || configEnv.DB_HOST || configJson.DB_HOST;
     this.dbPort =
@@ -75,5 +85,25 @@ export class Config {
       parseInt(<string>process.env.DB_MAX) ||
       parseInt(configEnv.DB_MAX) ||
       parseInt(configJson.DB_MAX);
+    this.rabbitMQHost =
+      process.env.RABBITMQ_HOST ||
+      configEnv.RABBITMQ_HOST ||
+      configJson.RABBITMQ_HOST;
+    this.rabbitMQPort =
+      parseInt(<string>process.env.RABBITMQ_PORT) ||
+      parseInt(configEnv.RABBITMQ_PORT) ||
+      parseInt(configJson.RABBITMQ_PORT);
+    this.rabbitMQUser =
+      process.env.RABBITMQ_USER ||
+      configEnv.RABBITMQ_USER ||
+      configJson.RABBITMQ_USER;
+    this.rabbitMQPassword =
+      process.env.RABBITMQ_PASSWORD ||
+      configEnv.RABBITMQ_PASSWORD ||
+      configJson.RABBITMQ_PASSWORD;
+    this.rabbitMQDownloadingQueue =
+      process.env.RABBITMQ_DOWNLOADING_QUEUE ||
+      configEnv.RABBITMQ_DOWNLOADING_QUEUE ||
+      configJson.RABBITMQ_DOWNLOADING_QUEUE;
   }
 }
