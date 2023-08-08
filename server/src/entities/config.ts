@@ -11,11 +11,11 @@ export class Config {
   public appHttpsKey: string = '';
   public appHttpsCert: string = '';
   public appPathStorage: string = '';
-  public appRabbitMQHost: string = '';
-  public appRabbitMQPort: number = 0;
-  public appRabbitMQUser: string = '';
-  public appRabbitMQPassword: string = '';
-  public appQueueDownloading: string = '';
+  public rabbitMQHost: string = '';
+  public rabbitMQPort: number = 0;
+  public rabbitMQUser: string = '';
+  public rabbitMQPassword: string = '';
+  public rabbitMQDownloadingQueue: string = '';
   public dbHost: string = '';
   public dbPort: number = 0;
   public dbUser: string = '';
@@ -85,25 +85,25 @@ export class Config {
       parseInt(<string>process.env.DB_MAX) ||
       parseInt(configEnv.DB_MAX) ||
       parseInt(configJson.DB_MAX);
-    this.appRabbitMQHost =
-      process.env.APP_RABBITMQ_HOST ||
-      configEnv.APP_RABBITMQ_HOST ||
-      configJson.APP_RABBITMQ_HOST;
-    this.appRabbitMQPort =
-      parseInt(<string>process.env.APP_RABBITMQ_PORT) ||
-      parseInt(configEnv.APP_RABBITMQ_PORT) ||
-      parseInt(configJson.APP_RABBITMQ_PORT);
-    this.appRabbitMQUser =
-      process.env.APP_RABBITMQ_USER ||
-      configEnv.APP_RABBITMQ_USER ||
-      configJson.APP_RABBITMQ_USER;
-    this.appRabbitMQPassword =
-      process.env.APP_RABBITMQ_PASSWORD ||
-      configEnv.APP_RABBITMQ_PASSWORD ||
-      configJson.APP_RABBITMQ_PASSWORD;
-    this.appQueueDownloading =
-      process.env.APP_QUEUE_DOWNLOADING ||
-      configEnv.APP_QUEUE_DOWNLOADING ||
-      configJson.APP_QUEUE_DOWNLOADING;
+    this.rabbitMQHost =
+      process.env.RABBITMQ_HOST ||
+      configEnv.RABBITMQ_HOST ||
+      configJson.RABBITMQ_HOST;
+    this.rabbitMQPort =
+      parseInt(<string>process.env.RABBITMQ_PORT) ||
+      parseInt(configEnv.RABBITMQ_PORT) ||
+      parseInt(configJson.RABBITMQ_PORT);
+    this.rabbitMQUser =
+      process.env.RABBITMQ_USER ||
+      configEnv.RABBITMQ_USER ||
+      configJson.RABBITMQ_USER;
+    this.rabbitMQPassword =
+      process.env.RABBITMQ_PASSWORD ||
+      configEnv.RABBITMQ_PASSWORD ||
+      configJson.RABBITMQ_PASSWORD;
+    this.rabbitMQDownloadingQueue =
+      process.env.RABBITMQ_DOWNLOADING_QUEUE ||
+      configEnv.RABBITMQ_DOWNLOADING_QUEUE ||
+      configJson.RABBITMQ_DOWNLOADING_QUEUE;
   }
 }

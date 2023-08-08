@@ -6,12 +6,7 @@
     "use_https": true,
     "https_key": "config/ssl/privatekey.pem",
     "https_cert": "config/ssl/certificate.pem",
-    "path_storage": "/opt/app/storage",
-    "rabbitmq_host": "host.docker.internal",
-    "rabbitmq_port": 5672,
-    "rabbitmq_user": "admin",
-    "rabbitmq_password": "admin",
-    "queue_downloading": "downloading"
+    "path_storage": "/opt/app/storage"
   },
   "API": {
     "uri": "up-vibe",
@@ -28,5 +23,12 @@
     "password": "admin",
     "name": "up-vibe-dev",
     "max": 5
+  },
+  "RABBITMQ": {
+    "host": "host.docker.internal",
+    "port": 5672,
+    "user": "admin",
+    "password": "admin",
+    "downloading_queue": "downloading"
   }
 }
