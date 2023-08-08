@@ -7,11 +7,11 @@
     "https_key": "config/ssl/privatekey.pem",
     "https_cert": "config/ssl/certificate.pem",
     "path_storage": "/opt/app/storage",
-    "brocker_host": "host.docker.internal",
-    "brocker_port": 5672,
-    "brocker_user": "admin",
-    "brocker_password": "admin",
-    "brocker_queue": "up-vibe-queue"
+    "rabbitmq_host": "host.docker.internal",
+    "rabbitmq_port": 5672,
+    "rabbitmq_user": "admin",
+    "rabbitmq_password": "admin",
+    "queue_downloading": "downloading"
   },
   "API": {
     "uri": "up-vibe",

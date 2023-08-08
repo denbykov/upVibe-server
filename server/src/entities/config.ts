@@ -11,11 +11,11 @@ export class Config {
   public appHttpsKey: string = '';
   public appHttpsCert: string = '';
   public appPathStorage: string = '';
-  public appBrockerHost: string = '';
-  public appBrockerPort: number = 0;
-  public appBrockerUser: string = '';
-  public appBrockerPassword: string = '';
-  public appBrockerQueue: string = '';
+  public appRabbitMQHost: string = '';
+  public appRabbitMQPort: number = 0;
+  public appRabbitMQUser: string = '';
+  public appRabbitMQPassword: string = '';
+  public appQueueDownloading: string = '';
   public dbHost: string = '';
   public dbPort: number = 0;
   public dbUser: string = '';
@@ -85,25 +85,25 @@ export class Config {
       parseInt(<string>process.env.DB_MAX) ||
       parseInt(configEnv.DB_MAX) ||
       parseInt(configJson.DB_MAX);
-    this.appBrockerHost =
-      process.env.APP_BROCKER_HOST ||
-      configEnv.APP_BROCKER_HOST ||
-      configJson.APP_BROCKER_HOST;
-    this.appBrockerPort =
-      parseInt(<string>process.env.APP_BROCKER_PORT) ||
-      parseInt(configEnv.APP_BROCKER_PORT) ||
-      parseInt(configJson.APP_BROCKER_PORT);
-    this.appBrockerUser =
-      process.env.APP_BROCKER_USER ||
-      configEnv.APP_BROCKER_USER ||
-      configJson.APP_BROCKER_USER;
-    this.appBrockerPassword =
-      process.env.APP_BROCKER_PASSWORD ||
-      configEnv.APP_BROCKER_PASSWORD ||
-      configJson.APP_BROCKER_PASSWORD;
-    this.appBrockerQueue =
-      process.env.APP_BROCKER_QUEUE ||
-      configEnv.APP_BROCKER_QUEUE ||
-      configJson.APP_BROCKER_QUEUE;
+    this.appRabbitMQHost =
+      process.env.APP_RABBITMQ_HOST ||
+      configEnv.APP_RABBITMQ_HOST ||
+      configJson.APP_RABBITMQ_HOST;
+    this.appRabbitMQPort =
+      parseInt(<string>process.env.APP_RABBITMQ_PORT) ||
+      parseInt(configEnv.APP_RABBITMQ_PORT) ||
+      parseInt(configJson.APP_RABBITMQ_PORT);
+    this.appRabbitMQUser =
+      process.env.APP_RABBITMQ_USER ||
+      configEnv.APP_RABBITMQ_USER ||
+      configJson.APP_RABBITMQ_USER;
+    this.appRabbitMQPassword =
+      process.env.APP_RABBITMQ_PASSWORD ||
+      configEnv.APP_RABBITMQ_PASSWORD ||
+      configJson.APP_RABBITMQ_PASSWORD;
+    this.appQueueDownloading =
+      process.env.APP_QUEUE_DOWNLOADING ||
+      configEnv.APP_QUEUE_DOWNLOADING ||
+      configJson.APP_QUEUE_DOWNLOADING;
   }
 }
