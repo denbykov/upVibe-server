@@ -1,11 +1,13 @@
+import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { dataLogger } from '@src/utils/server/logger';
+import { parseYoutubeURL } from '@src/utils/server/parseYoutubeURL';
 
 export class FileWorker {
   private db: iFileDatabase;
-  private config: JSON.JSONObject;
-  constructor(db: iFileDatabase, config: JSON.JSONObject) {
+  private config: Config;
+  constructor(db: iFileDatabase, config: Config) {
     this.db = db;
     this.config = config;
     dataLogger.trace('FileWorker initialized');
@@ -44,5 +46,53 @@ export class FileWorker {
       return new Response(Response.Code.Ok, data.imagePath);
     }
     return new Response(Response.Code.NotFound, 'No picture found', 1);
+  };
+
+  public postURrlFile = async (userId: number, sourceUrl: string) => {
+    dataLogger.trace('FileWorker.uploadFile()');
+    try {
+      switch (true) {
+        case sourceUrl.indexOf('youtube') > -1:
+          sourceUrl = 'https://youtu.be/' + parseYoutubeURL(sourceUrl);
+          await this.db.postURrlFile(
+            this.config,
+            userId,
+            sourceUrl,
+            this.config.rabbitMQDownloadingYouTubeQueue
+          );
+          break;
+        case sourceUrl.indexOf('youtu') > -1:
+          await this.db.postURrlFile(
+            this.config,
+            userId,
+            sourceUrl,
+            this.config.rabbitMQDownloadingYouTubeQueue
+          );
+          break;
+        default:
+          break;
+      }
+      return new Response(Response.Code.Ok, `Start downloading ${sourceUrl}`);
+    } catch (err) {
+      dataLogger.warn(`FileWorker.uploadFile: ${err}`);
+      const fileId = await this.db.getFileBySourceUrl(sourceUrl);
+      if (fileId) {
+        const mapFile = await this.db.mapUserFile(userId, fileId);
+        if (!mapFile) {
+          return new Response(Response.Code.Ok, 'File already exists');
+        } else {
+          return new Response(
+            Response.Code.Ok,
+            'The file was successfully added'
+          );
+        }
+      } else {
+        return new Response(
+          Response.Code.InternalServerError,
+          'Server error',
+          1
+        );
+      }
+    }
   };
 }

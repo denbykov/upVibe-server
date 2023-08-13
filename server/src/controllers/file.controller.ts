@@ -21,11 +21,11 @@ class FileController extends BaseController {
       this.config
     );
     const token = req.headers.authorization?.split(' ')[1];
-    const decoded = jwt.verify(
+    const decodedToken = jwt.verify(
       <string>token,
       this.config.apiAccessTokenSecret
     ) as jwt.JwtPayload;
-    const userId: number = decoded.userId;
+    const userId: number = decodedToken.userId;
     const files = await fileWorker.getFiles(userId);
     return res.status(files.httpCode).send(files.serialize());
   };
@@ -72,6 +72,22 @@ class FileController extends BaseController {
         });
     }
     return res.status(picture.httpCode).send(picture.serialize());
+  };
+
+  public postURrlFile = async (req: Express.Request, res: Express.Response) => {
+    const fileWorker = new FileWorker(
+      await new FileRepository(this.databasePool),
+      this.config
+    );
+    const token = req.headers.authorization?.split(' ')[1];
+    const decodedToken = jwt.verify(
+      <string>token,
+      this.config.apiAccessTokenSecret
+    ) as jwt.JwtPayload;
+    const userId: number = decodedToken.userId;
+    const { sourceUrl } = req.body;
+    const upload = await fileWorker.postURrlFile(userId, sourceUrl);
+    return res.status(upload.httpCode).send(upload.serialize());
   };
 }
 
