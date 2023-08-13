@@ -41,7 +41,8 @@ export class TagRepository implements iTagDatabase {
   public getFilePictureTag = async (tagId: number): Promise<string | null> => {
     const client = await this.pool.connect();
     try {
-      const query = 'SELECT picture_path FROM tags WHERE id = $1';
+      const query =
+        'SELECT st.image_path FROM tags JOIN tag_sources as st ON tags.source_type=st.id WHERE tags.id = $1';
       dataLogger.debug(query);
       const result = await client.query(query, [tagId]);
       if (result.rowCount === 0) {
