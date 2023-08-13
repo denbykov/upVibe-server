@@ -126,7 +126,7 @@ export class FileRepository implements iFileDatabase {
         'SELECT id FROM file_sources WHERE description = $1';
       dataLogger.debug(findSourceIdQuery);
       const findSourceIdQueryExecution = await client.query(findSourceIdQuery, [
-        queue.split(':')[1],
+        queue.split('/')[1],
       ]);
       const sourceId = findSourceIdQueryExecution.rows[0].id;
       const query =
