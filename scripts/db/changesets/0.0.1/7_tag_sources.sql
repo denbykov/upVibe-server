@@ -3,5 +3,6 @@
 
 CREATE TABLE tag_sources (
     id SERIAL PRIMARY KEY,
-    description VARCHAR(255) NOT NULL
+    description VARCHAR(255) NOT NULL,
+    image_path VARCHAR(255) NOT NULL
 );

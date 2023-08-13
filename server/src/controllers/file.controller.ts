@@ -5,6 +5,7 @@ import pg from 'pg';
 import { FileWorker } from '@src/business/fileWorker';
 import { FileRepository } from '@src/data';
 import { Config } from '@src/entities/config';
+import { File } from '@src/entities/file';
 import { Response } from '@src/entities/response';
 import { dataLogger } from '@src/utils/server/logger';
 
@@ -72,6 +73,22 @@ class FileController extends BaseController {
         });
     }
     return res.status(picture.httpCode).send(picture.serialize());
+  };
+
+  public postURrlFile = async (req: Express.Request, res: Express.Response) => {
+    const fileWorker = new FileWorker(
+      await new FileRepository(this.databasePool),
+      this.config
+    );
+    const token = req.headers.authorization?.split(' ')[1];
+    const decoded = jwt.verify(
+      <string>token,
+      this.config.apiAccessTokenSecret
+    ) as jwt.JwtPayload;
+    const userId: number = decoded.userId;
+    const { sourceUrl } = req.body;
+    const upload = await fileWorker.postURrlFile(userId, sourceUrl);
+    return res.status(upload.httpCode).send(upload.serialize());
   };
 }
 
