@@ -5,7 +5,6 @@ import pg from 'pg';
 import { FileWorker } from '@src/business/fileWorker';
 import { FileRepository } from '@src/data';
 import { Config } from '@src/entities/config';
-import { File } from '@src/entities/file';
 import { Response } from '@src/entities/response';
 import { dataLogger } from '@src/utils/server/logger';
 
@@ -22,11 +21,11 @@ class FileController extends BaseController {
       this.config
     );
     const token = req.headers.authorization?.split(' ')[1];
-    const decoded = jwt.verify(
+    const decodedToken = jwt.verify(
       <string>token,
       this.config.apiAccessTokenSecret
     ) as jwt.JwtPayload;
-    const userId: number = decoded.userId;
+    const userId: number = decodedToken.userId;
     const files = await fileWorker.getFiles(userId);
     return res.status(files.httpCode).send(files.serialize());
   };
@@ -81,11 +80,11 @@ class FileController extends BaseController {
       this.config
     );
     const token = req.headers.authorization?.split(' ')[1];
-    const decoded = jwt.verify(
+    const decodedToken = jwt.verify(
       <string>token,
       this.config.apiAccessTokenSecret
     ) as jwt.JwtPayload;
-    const userId: number = decoded.userId;
+    const userId: number = decodedToken.userId;
     const { sourceUrl } = req.body;
     const upload = await fileWorker.postURrlFile(userId, sourceUrl);
     return res.status(upload.httpCode).send(upload.serialize());

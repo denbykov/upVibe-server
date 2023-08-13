@@ -1,4 +1,4 @@
-export const parseURLYouTube = (url: string): string => {
+export const parseYoutubeURL = (url: string): string => {
   const videoId = url.split('v=')[1];
   const ampersandPosition = videoId.indexOf('&');
   if (ampersandPosition !== -1) {

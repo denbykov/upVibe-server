@@ -2,7 +2,7 @@ import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { dataLogger } from '@src/utils/server/logger';
-import { parseURLYouTube } from '@src/utils/server/parseURLYouTube';
+import { parseYoutubeURL } from '@src/utils/server/parseYoutubeURL';
 
 export class FileWorker {
   private db: iFileDatabase;
@@ -53,7 +53,7 @@ export class FileWorker {
     try {
       switch (true) {
         case sourceUrl.indexOf('youtube') > -1:
-          sourceUrl = 'https://youtu.be/' + parseURLYouTube(sourceUrl);
+          sourceUrl = 'https://youtu.be/' + parseYoutubeURL(sourceUrl);
           await this.db.postURrlFile(
             this.config,
             userId,
