@@ -118,7 +118,8 @@ export class FileRepository implements iFileDatabase {
     config: Config,
     userId: number,
     sourceUrl: string,
-    queue: string
+    queueDownloading: string,
+    queueParsing: string
   ): Promise<void> => {
     const client = await this.pool.connect();
     try {
@@ -126,7 +127,7 @@ export class FileRepository implements iFileDatabase {
         'SELECT id FROM file_sources WHERE description = $1';
       dataLogger.debug(findSourceIdQuery);
       const findSourceIdQueryExecution = await client.query(findSourceIdQuery, [
-        queue.split('/')[1],
+        queueDownloading.split('/')[1],
       ]);
       const sourceId = findSourceIdQueryExecution.rows[0].id;
       const query =
@@ -142,8 +143,12 @@ export class FileRepository implements iFileDatabase {
         'INSERT INTO user_files (user_id, file_id) VALUES ($1, $2)';
       dataLogger.debug(queryUserFiles);
       await client.query(queryUserFiles, [userId, fileId]);
-      new PublisherAMQP(config).publishDownloadingQueue(queue, {
-        type: queue,
+      new PublisherAMQP(config).publishDownloadingQueue(queueDownloading, {
+        type: queueDownloading,
+        fileId: fileId,
+      });
+      new PublisherAMQP(config).publishDownloadingQueue(queueParsing, {
+        type: queueParsing,
         fileId: fileId,
       });
     } catch (err) {

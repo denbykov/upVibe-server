@@ -29,6 +29,7 @@
     "port": 5672,
     "user": "admin",
     "password": "admin",
-    "downloading_youtube_queue": "downloading/youtube"
+    "downloading_youtube_queue": "downloading/youtube",
+    "tagging_youtube_native_queue": "tagging/youtube-native"
   }
 }
