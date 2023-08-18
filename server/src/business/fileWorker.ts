@@ -58,6 +58,7 @@ export class FileWorker {
             this.config,
             userId,
             sourceUrl,
+            this.config.rabbitMQDownloadingYouTubeQueue,
             this.config.rabbitMQDownloadingYouTubeQueue
           );
           break;
@@ -66,7 +67,8 @@ export class FileWorker {
             this.config,
             userId,
             sourceUrl,
-            this.config.rabbitMQDownloadingYouTubeQueue
+            this.config.rabbitMQDownloadingYouTubeQueue,
+            this.config.rabbitMQTaggingYouTubeNativeQueue
           );
           break;
         default:
