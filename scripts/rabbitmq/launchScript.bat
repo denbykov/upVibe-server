@@ -18,7 +18,7 @@ docker network create -d bridge up-vibe-network
 GOTO :END
 
 :RABBITMQ
-ECHO "Launching docker-compose-postgresql..."
+ECHO "Launching docker-compose-rabbitmq..."
 docker compose -f .\docker-compose.yml -p rabbitmq up -d
 GOTO :END
 
