@@ -72,7 +72,7 @@ export class FileWorker {
           );
           break;
         default:
-          break;
+          throw new Error('Unsupported source');
       }
       return new Response(Response.Code.Ok, `Start downloading ${sourceUrl}`);
     } catch (err) {

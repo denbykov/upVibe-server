@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 import { AccessToken } from '@src/entities/accessToken';
+import { Config } from '@src/entities/config';
 import { RefreshToken } from '@src/entities/refreshToken';
 import { Response } from '@src/entities/response';
 import { LoginRequest } from '@src/entities/user';
@@ -9,8 +10,8 @@ import { dataLogger } from '@src/utils/server/logger';
 
 export class AuthWorker {
   private db: IAuthorizationDatabase;
-  private config: JSON.JSONObject;
-  constructor(db: IAuthorizationDatabase, config: JSON.JSONObject) {
+  private config: Config;
+  constructor(db: IAuthorizationDatabase, config: Config) {
     this.db = db;
     this.config = config;
     dataLogger.trace('AuthWorker initialized');
