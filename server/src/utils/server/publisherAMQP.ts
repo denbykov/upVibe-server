@@ -32,7 +32,7 @@ export class PublisherAMQP {
           channel.sendToQueue(queue, Buffer.from(msg), {
             persistent: true,
           });
-          dataLogger.debug(`[RabbitMQ] Sent ${msg}`);
+          dataLogger.debug(`[RabbitMQ] Sent to ${queue} ${msg}`);
         });
         setTimeout(() => {
           connection.close();

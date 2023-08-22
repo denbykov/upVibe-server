@@ -144,11 +144,11 @@ export class FileRepository implements iFileDatabase {
       dataLogger.debug(queryUserFiles);
       await client.query(queryUserFiles, [userId, fileId]);
       new PublisherAMQP(config).publishDownloadingQueue(queueDownloading, {
-        type: queueDownloading,
+        type: 'get_file/youtube',
         fileId: fileId,
       });
       new PublisherAMQP(config).publishDownloadingQueue(queueParsing, {
-        type: queueParsing,
+        type: 'set_tags/youtube-native',
         fileId: fileId,
       });
     } catch (err) {
