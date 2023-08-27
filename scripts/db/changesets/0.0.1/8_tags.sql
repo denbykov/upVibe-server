@@ -11,8 +11,8 @@ CREATE TABLE tags (
     year TIMESTAMP NULL,
     track_number INT NULL,
     source_type SERIAL NOT NULL,
-    status_id CHAR NOT NULL,
+    status CHAR NOT NULL,
     CONSTRAINT fk_file_id_tags FOREIGN KEY (file_id) REFERENCES files(id),
     CONSTRAINT fk_source_type_tags FOREIGN KEY (source_type) REFERENCES tag_sources(id),
-    CONSTRAINT fk_status_id_tags FOREIGN KEY (status_id) REFERENCES tag_statuses(status)
+    CONSTRAINT fk_status_tags FOREIGN KEY (status) REFERENCES tag_statuses(status)
 );

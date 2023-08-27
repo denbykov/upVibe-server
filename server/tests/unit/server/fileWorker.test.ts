@@ -18,7 +18,7 @@ describe('FileWorker', () => {
       getFiles: jest.fn(),
       getFileSources: jest.fn(),
       getFileSource: jest.fn(),
-      postURrlFile: jest.fn(),
+      startFileDownloading: jest.fn(),
       getFileBySourceUrl: jest.fn(),
       mapUserFile: jest.fn(),
     };
@@ -120,12 +120,12 @@ describe('FileWorker', () => {
     });
   });
 
-  describe('postURrlFile', () => {
+  describe('startFileDownloading', () => {
     it('should return a response with a success message if the URL is valid', async () => {
       const userId = 1;
       const sourceUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-      db.postURrlFile.mockResolvedValue(null);
-      const response = await fileWorker.postURrlFile(userId, sourceUrl);
+      db.startFileDownloading.mockResolvedValue(null);
+      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
       expect(response.httpCode).toBe(Response.Code.Ok);
       expect(response.payload).toBe(
         `Start downloading https://youtu.be/${parseYoutubeURL(sourceUrl)}`
@@ -135,18 +135,18 @@ describe('FileWorker', () => {
     it('should return a response with a success message if the URL is a YouTube video and post message in RabbitMQ', async () => {
       const userId = 1;
       const sourceUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-      db.postURrlFile.mockResolvedValue(null);
-      const response = await fileWorker.postURrlFile(userId, sourceUrl);
+      db.startFileDownloading.mockResolvedValue(null);
+      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
       expect(response.httpCode).toBe(Response.Code.Ok);
       expect(response.payload).toBe(
         `Start downloading https://youtu.be/${parseYoutubeURL(sourceUrl)}`
       );
-      expect(db.postURrlFile).toHaveBeenCalledWith(
+      expect(db.startFileDownloading).toHaveBeenCalledWith(
         config,
         userId,
         `https://youtu.be/${parseYoutubeURL(sourceUrl)}`,
         config.rabbitMQDownloadingYouTubeQueue,
-        config.rabbitMQDownloadingYouTubeQueue
+        config.rabbitMQTaggingYouTubeNativeQueue
       );
     });
 
@@ -154,7 +154,7 @@ describe('FileWorker', () => {
       const userId = 1;
       const sourceUrl = 'invalid-url';
       db.getFileBySourceUrl.mockResolvedValue(null);
-      const response = await fileWorker.postURrlFile(userId, sourceUrl);
+      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
       expect(response.httpCode).toBe(Response.Code.InternalServerError);
       expect(response.payload).toBe('Server error');
     });
@@ -164,11 +164,11 @@ describe('FileWorker', () => {
       const sourceUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
       const fileId = 1;
       db.getFileBySourceUrl.mockResolvedValue(fileId);
-      db.postURrlFile.mockImplementation(() => {
+      db.startFileDownloading.mockImplementation(() => {
         throw new Error('File already exists');
       });
       db.mapUserFile.mockResolvedValue(false);
-      const response = await fileWorker.postURrlFile(userId, sourceUrl);
+      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
       expect(response.httpCode).toBe(Response.Code.Ok);
       expect(response.payload).toBe('File already exists');
     });
@@ -178,11 +178,11 @@ describe('FileWorker', () => {
       const sourceUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
       const fileId = 1;
       db.getFileBySourceUrl.mockResolvedValue(fileId);
-      db.postURrlFile.mockImplementation(() => {
+      db.startFileDownloading.mockImplementation(() => {
         throw new Error('File already exists');
       });
       db.mapUserFile.mockResolvedValue(true);
-      const response = await fileWorker.postURrlFile(userId, sourceUrl);
+      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
       expect(response.httpCode).toBe(Response.Code.Ok);
       expect(response.payload).toBe('The file was successfully added');
     });

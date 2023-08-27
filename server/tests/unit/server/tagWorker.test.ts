@@ -39,7 +39,7 @@ describe('TagWorker', () => {
           id: 1,
           description: 'youtube-native',
         },
-        statusId: {
+        status: {
           id: 'C',
           description: 'Completed',
         },

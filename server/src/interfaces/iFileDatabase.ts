@@ -11,7 +11,7 @@ export abstract class iFileDatabase {
   public abstract getFileBySourceUrl: (
     sourceUrl: string
   ) => Promise<number | null>;
-  public abstract postURrlFile: (
+  public abstract startFileDownloading: (
     config: Config,
     userId: number,
     sourceUrl: string,

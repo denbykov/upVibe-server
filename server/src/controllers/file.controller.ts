@@ -74,7 +74,10 @@ class FileController extends BaseController {
     return res.status(picture.httpCode).send(picture.serialize());
   };
 
-  public postURrlFile = async (req: Express.Request, res: Express.Response) => {
+  public startFileDownloading = async (
+    req: Express.Request,
+    res: Express.Response
+  ) => {
     const fileWorker = new FileWorker(
       await new FileRepository(this.databasePool),
       this.config
@@ -86,7 +89,7 @@ class FileController extends BaseController {
     ) as jwt.JwtPayload;
     const userId: number = decodedToken.userId;
     const { sourceUrl } = req.body;
-    const upload = await fileWorker.postURrlFile(userId, sourceUrl);
+    const upload = await fileWorker.startFileDownloading(userId, sourceUrl);
     return res.status(upload.httpCode).send(upload.serialize());
   };
 }

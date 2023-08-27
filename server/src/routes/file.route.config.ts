@@ -20,7 +20,7 @@ export class FileRoute extends BaseRoute {
     this.app.post(
       `${controller.apiURIFiles}`,
       auth0Middleware(this.config, this.databasePool),
-      controller.postURrlFile
+      controller.startFileDownloading
     );
 
     this.app.get(

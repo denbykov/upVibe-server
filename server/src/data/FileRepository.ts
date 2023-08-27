@@ -114,7 +114,7 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public postURrlFile = async (
+  public startFileDownloading = async (
     config: Config,
     userId: number,
     sourceUrl: string,
