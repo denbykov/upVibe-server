@@ -2,7 +2,7 @@
   "APP": {
     "name": "up-vibe",
     "port": 3000,
-    "host": "127.0.0.1",
+    "host": "0.0.0.0",
     "use_https": true,
     "https_key": "config/ssl/privatekey.pem",
     "https_cert": "config/ssl/certificate.pem",
