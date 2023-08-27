@@ -17,26 +17,28 @@ export class FileRoute extends BaseRoute {
       this.databasePool
     );
 
+    const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/library/files`;
+
     this.app.post(
-      `${controller.apiURIFiles}`,
+      `${apiURIFiles}`,
       auth0Middleware(this.config, this.databasePool),
       controller.startFileDownloading
     );
 
     this.app.get(
-      `${controller.apiURIFiles}`,
+      `${apiURIFiles}`,
       auth0Middleware(this.config, this.databasePool),
       controller.getFiles
     );
 
     this.app.get(
-      `${controller.apiURIFiles}/sources`,
+      `${apiURIFiles}/sources`,
       auth0Middleware(this.config, this.databasePool),
       controller.getFileSources
     );
 
     this.app.get(
-      `${controller.apiURIFiles}/sources/:sourceId/picture`,
+      `${apiURIFiles}/sources/:sourceId/picture`,
       auth0Middleware(this.config, this.databasePool),
       controller.getFileSourcePicture
     );
