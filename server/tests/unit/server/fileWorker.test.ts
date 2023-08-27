@@ -27,6 +27,8 @@ describe('FileWorker', () => {
       apiRefreshTokenSecretExpires: '1h',
       rabbitMQDownloadingYouTubeQueue: 'downloading-youtube',
       rabbitMQTaggingYouTubeNativeQueue: 'tagging-youtube-native',
+      rabbitMQDownloadingYouTubeType: 'get_file/youtube',
+      rabbitMQTaggingYouTubeNativeType: 'set_tags/youtube-native',
     };
     fileWorker = new FileWorker(db, config);
   });
@@ -146,7 +148,9 @@ describe('FileWorker', () => {
         userId,
         `https://youtu.be/${parseYoutubeURL(sourceUrl)}`,
         config.rabbitMQDownloadingYouTubeQueue,
-        config.rabbitMQTaggingYouTubeNativeQueue
+        config.rabbitMQTaggingYouTubeNativeQueue,
+        config.rabbitMQDownloadingYouTubeType,
+        config.rabbitMQTaggingYouTubeNativeType
       );
     });
 

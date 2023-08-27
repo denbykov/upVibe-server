@@ -16,7 +16,9 @@ export abstract class iFileDatabase {
     userId: number,
     sourceUrl: string,
     queueDownloading: string,
-    queueParsing: string
+    queueParsing: string,
+    typeDownloading: string,
+    typeParsing: string
   ) => Promise<void>;
   public abstract mapUserFile: (
     userId: number,

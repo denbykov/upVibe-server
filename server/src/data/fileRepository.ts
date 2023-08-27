@@ -119,7 +119,9 @@ export class FileRepository implements iFileDatabase {
     userId: number,
     sourceUrl: string,
     queueDownloading: string,
-    queueParsing: string
+    queueParsing: string,
+    typeDownloading: string,
+    typeParsing: string
   ): Promise<void> => {
     const client = await this.pool.connect();
     try {
@@ -144,11 +146,11 @@ export class FileRepository implements iFileDatabase {
       dataLogger.debug(queryUserFiles);
       await client.query(queryUserFiles, [userId, fileId]);
       new PublisherAMQP(config).publishDownloadingQueue(queueDownloading, {
-        type: 'get_file/youtube',
+        type: typeDownloading,
         fileId: fileId,
       });
       new PublisherAMQP(config).publishDownloadingQueue(queueParsing, {
-        type: 'set_tags/youtube-native',
+        type: typeParsing,
         fileId: fileId,
       });
     } catch (err) {
