@@ -60,8 +60,8 @@ export class FileWorker {
             sourceUrl,
             this.config.rabbitMQDownloadingYouTubeQueue,
             this.config.rabbitMQTaggingYouTubeNativeQueue,
-            this.config.rabbitMQDownloadingYouTubeType,
-            this.config.rabbitMQTaggingYouTubeNativeType
+            'get_file/youtube',
+            'get_tags/youtube-native'
           );
           break;
         case sourceUrl.indexOf('youtu') > -1:
@@ -71,8 +71,8 @@ export class FileWorker {
             sourceUrl,
             this.config.rabbitMQDownloadingYouTubeQueue,
             this.config.rabbitMQTaggingYouTubeNativeQueue,
-            this.config.rabbitMQDownloadingYouTubeType,
-            this.config.rabbitMQTaggingYouTubeNativeType
+            'get_file/youtube',
+            'get_tags/youtube-native'
           );
           break;
         default:
