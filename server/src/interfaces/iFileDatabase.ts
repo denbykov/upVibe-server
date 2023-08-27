@@ -11,12 +11,14 @@ export abstract class iFileDatabase {
   public abstract getFileBySourceUrl: (
     sourceUrl: string
   ) => Promise<number | null>;
-  public abstract postURrlFile: (
+  public abstract startFileDownloading: (
     config: Config,
     userId: number,
     sourceUrl: string,
     queueDownloading: string,
-    queueParsing: string
+    queueParsing: string,
+    typeDownloading: string,
+    typeParsing: string
   ) => Promise<void>;
   public abstract mapUserFile: (
     userId: number,

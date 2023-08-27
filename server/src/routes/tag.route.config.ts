@@ -18,26 +18,29 @@ export class TagRoute extends BaseRoute {
       this.databasePool
     );
 
+    const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/library/files`;
+    const apiURITags = `/${this.config.apiURI}/${this.config.apiVersion}/library/tags`;
+
     this.app.get(
-      `${controller.apiURIFiles}/:fileId/tags`,
+      `${apiURIFiles}/:fileId/tags`,
       auth0Middleware(this.config, this.databasePool),
       controller.getFileTags
     );
 
     this.app.get(
-      `${controller.apiURITags}/:tagId/picture`,
+      `${apiURITags}/:tagId/picture`,
       auth0Middleware(this.config, this.databasePool),
       controller.getFilePictureTag
     );
 
     this.app.get(
-      `${controller.apiURITags}/sources`,
+      `${apiURITags}/sources`,
       auth0Middleware(this.config, this.databasePool),
       controller.getTagSources
     );
 
     this.app.get(
-      `${controller.apiURITags}/sources/:sourceId/picture`,
+      `${apiURITags}/sources/:sourceId/picture`,
       auth0Middleware(this.config, this.databasePool),
       controller.getTagSourcePicture
     );

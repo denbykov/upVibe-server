@@ -5,7 +5,11 @@ import https from 'https';
 import pg from 'pg';
 
 import { Config } from '@src/entities/config';
-import { requestLogger, unmatchedRoutesMiddleware } from '@src/middlewares';
+import {
+  handleBadJsonMiddleware,
+  requestLogger,
+  unmatchedRoutesMiddleware,
+} from '@src/middlewares';
 import { APIRoute, AuthRoute, BaseRoute, FileRoute } from '@src/routes';
 import { TagRoute } from '@src/routes/tag.route.config';
 import { serverLogger } from '@src/utils/server/logger';
@@ -38,6 +42,7 @@ export class App {
     this.routes.push(new FileRoute(this.app, config, this.pool));
     this.routes.push(new TagRoute(this.app, config, this.pool));
     this.app.use(unmatchedRoutesMiddleware);
+    this.app.use(handleBadJsonMiddleware);
   }
   public getApp(): Express {
     return this.app;

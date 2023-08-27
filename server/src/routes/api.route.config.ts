@@ -17,11 +17,12 @@ export class APIRoute extends BaseRoute {
       this.config,
       this.databasePool
     );
+    const apiURI = `/${this.config.apiURI}/${this.config.apiVersion}`;
 
-    this.app.get(`${controller.apiURI}/info`, controller.getInfo);
+    this.app.get(`${apiURI}/info`, controller.getInfo);
 
     this.app.get(
-      `${controller.apiURI}/auth-test`,
+      `${apiURI}/auth-test`,
       auth0Middleware(this.config, this.databasePool),
       controller.authTest
     );

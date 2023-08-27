@@ -8,7 +8,7 @@ export class Tag {
   public year: Date;
   public trackNumber: number;
   public sourceType: { id: number; description: string };
-  public statusId: { id: number; description: string };
+  public status: { status: string; description: string };
   constructor(
     id: number,
     fileId: number,
@@ -19,7 +19,7 @@ export class Tag {
     year: Date,
     trackNumber: number,
     sourceType: { id: number; description: string },
-    statusId: { id: number; description: string }
+    status: { status: string; description: string }
   ) {
     this.id = id;
     this.fileId = fileId;
@@ -30,7 +30,7 @@ export class Tag {
     this.year = year;
     this.trackNumber = trackNumber;
     this.sourceType = sourceType;
-    this.statusId = statusId;
+    this.status = status;
   }
   public static fromJSON(json: JSON.JSONObject): Tag {
     return new Tag(
@@ -43,7 +43,7 @@ export class Tag {
       json.year,
       json.track_number,
       { id: json.source_type_id, description: json.source_type_description },
-      { id: json.status_id, description: json.status_description }
+      { status: json.status, description: json.status_description }
     );
   }
 }

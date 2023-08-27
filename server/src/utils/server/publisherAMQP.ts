@@ -27,13 +27,16 @@ export class PublisherAMQP {
           }
           const msg = JSON.stringify(payload);
           channel.assertQueue(queue, {
-            durable: false,
+            durable: true,
           });
+
           channel.sendToQueue(queue, Buffer.from(msg), {
             persistent: true,
+            deliveryMode: true,
           });
-          dataLogger.debug(`[RabbitMQ] Sent ${msg}`);
+          dataLogger.debug(`[RabbitMQ] Sent to ${queue} ${msg}`);
         });
+
         setTimeout(() => {
           connection.close();
         }, 500);

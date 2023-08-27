@@ -1,11 +1,12 @@
+import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class TagWorker {
   private db: iTagDatabase;
-  private config: JSON.JSONObject;
-  constructor(db: iTagDatabase, config: JSON.JSONObject) {
+  private config: Config;
+  constructor(db: iTagDatabase, config: Config) {
     this.db = db;
     this.config = config;
     dataLogger.trace('TagWorker initialized');
