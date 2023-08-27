@@ -30,6 +30,8 @@
     "user": "admin",
     "password": "admin",
     "downloading_youtube_queue": "downloading/youtube",
-    "tagging_youtube_native_queue": "tagging/youtube-native"
+    "tagging_youtube_native_queue": "tagging/youtube-native",
+    "downloading_youtube_type": "get_file/youtube",
+    "tagging_youtube_native_type": "set_tags/youtube-native"
   }
 }

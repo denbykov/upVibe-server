@@ -17,6 +17,8 @@ export class Config {
   public rabbitMQPassword: string = '';
   public rabbitMQDownloadingYouTubeQueue: string = '';
   public rabbitMQTaggingYouTubeNativeQueue: string = '';
+  public rabbitMQDownloadingYouTubeType: string = '';
+  public rabbitMQTaggingYouTubeNativeType: string = '';
   public dbHost: string = '';
   public dbPort: number = 0;
   public dbUser: string = '';
@@ -110,5 +112,13 @@ export class Config {
       process.env.RABBITMQ_TAGGING_YOUTUBE_NATIVE_QUEUE ||
       configEnv.RABBITMQ_TAGGING_YOUTUBE_NATIVE_QUEUE ||
       configJson.RABBITMQ_TAGGING_YOUTUBE_NATIVE_QUEUE;
+    this.rabbitMQDownloadingYouTubeType =
+      process.env.RABBITMQ_DOWNLOADING_YOUTUBE_TYPE ||
+      configEnv.RABBITMQ_DOWNLOADING_YOUTUBE_TYPE ||
+      configJson.RABBITMQ_DOWNLOADING_YOUTUBE_TYPE;
+    this.rabbitMQTaggingYouTubeNativeType =
+      process.env.RABBITMQ_TAGGING_YOUTUBE_NATIVE_TYPE ||
+      configEnv.RABBITMQ_TAGGING_YOUTUBE_NATIVE_TYPE ||
+      configJson.RABBITMQ_TAGGING_YOUTUBE_NATIVE_TYPE;
   }
 }
