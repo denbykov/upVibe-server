@@ -9,10 +9,8 @@ services:
       - 5672
       - 15672
     environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin
-    volumes:
-      - ../../volumes/rabbitmq:/var/lib/rabbitmq
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
     networks:
       - up-vibe-network
     container_name: rabbitmq
