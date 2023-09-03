@@ -1,19 +1,8 @@
 # Content
 
 - [Content](#content)
-  - [Basic interaction](#basic-interaction)
   - [Information about configuration variables](#information-about-configuration-variables)
   - [Configuration settings](#configuration-settings)
-
-## Basic interaction
-
-This diagram shows how the configuration interacts with the server.
-
-<center style="padding: 1rem 0 1rem 0;">
-    <img src="../src/img/config.basic_interaction.png" alt="Basic interaction">
-</center>
-
-As we can see, you can use different bindings to change configuration variables.
 
 ## Information about configuration variables
 
