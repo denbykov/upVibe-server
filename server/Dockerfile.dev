@@ -12,6 +12,7 @@ COPY customTypings ./customTypings
 COPY src ./src
 COPY tests ./tests
 COPY tsconfig.dev.json ./
+COPY tsconfig.json ./
 COPY package.json ./
 
 EXPOSE 3000
