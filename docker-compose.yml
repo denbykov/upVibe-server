@@ -36,11 +36,27 @@ services:
     depends_on: 
       postgresql:
         condition: service_healthy
+  
+  rabbitmq:
+    image: rabbitmq:3.12.2-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    expose:
+      - 5672
+      - 15672
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - ./volumes/rabbitmq:/var/lib/rabbitmq
+    networks:
+      - up-vibe-network
+    container_name: rabbitmq
 
   backend:
-    build:
-      context: ./server
-      dockerfile: ./Dockerfile.dev
+    image: upvibe-server-backend:latest
     ports:
       - 3000:3000
     volumes:
@@ -48,7 +64,7 @@ services:
       - ./server/config:/opt/app/config
       - ./storage:/opt/app/storage
     restart: always
-    command: npm run dev:docker
+    command: npm run start
     container_name: backend
     expose:
       - 3000
@@ -57,7 +73,11 @@ services:
         condition: service_healthy
       liquibase:
         condition: service_completed_successfully
+      rabbitmq:
+        condition: service_started
+    networks:
+      - up-vibe-network
 
 networks:
   up-vibe-network:
-    name: viv
+    name: up-vibe-network
