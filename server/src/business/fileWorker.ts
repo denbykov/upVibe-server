@@ -48,31 +48,35 @@ export class FileWorker {
     return new Response(Response.Code.NotFound, 'No picture found', 1);
   };
 
-  public postURrlFile = async (userId: number, sourceUrl: string) => {
+  public startFileDownloading = async (userId: number, sourceUrl: string) => {
     dataLogger.trace('FileWorker.uploadFile()');
     try {
       switch (true) {
         case sourceUrl.indexOf('youtube') > -1:
           sourceUrl = 'https://youtu.be/' + parseYoutubeURL(sourceUrl);
-          await this.db.postURrlFile(
+          await this.db.startFileDownloading(
             this.config,
             userId,
             sourceUrl,
             this.config.rabbitMQDownloadingYouTubeQueue,
-            this.config.rabbitMQDownloadingYouTubeQueue
+            this.config.rabbitMQTaggingYouTubeNativeQueue,
+            'get_file/youtube',
+            'get_tags/youtube-native'
           );
           break;
         case sourceUrl.indexOf('youtu') > -1:
-          await this.db.postURrlFile(
+          await this.db.startFileDownloading(
             this.config,
             userId,
             sourceUrl,
             this.config.rabbitMQDownloadingYouTubeQueue,
-            this.config.rabbitMQTaggingYouTubeNativeQueue
+            this.config.rabbitMQTaggingYouTubeNativeQueue,
+            'get_file/youtube',
+            'get_tags/youtube-native'
           );
           break;
         default:
-          break;
+          throw new Error('Unsupported source');
       }
       return new Response(Response.Code.Ok, `Start downloading ${sourceUrl}`);
     } catch (err) {

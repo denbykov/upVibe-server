@@ -114,12 +114,14 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public postURrlFile = async (
+  public startFileDownloading = async (
     config: Config,
     userId: number,
     sourceUrl: string,
     queueDownloading: string,
-    queueParsing: string
+    queueParsing: string,
+    typeDownloading: string,
+    typeParsing: string
   ): Promise<void> => {
     const client = await this.pool.connect();
     try {
@@ -144,11 +146,11 @@ export class FileRepository implements iFileDatabase {
       dataLogger.debug(queryUserFiles);
       await client.query(queryUserFiles, [userId, fileId]);
       new PublisherAMQP(config).publishDownloadingQueue(queueDownloading, {
-        type: queueDownloading,
+        type: typeDownloading,
         fileId: fileId,
       });
       new PublisherAMQP(config).publishDownloadingQueue(queueParsing, {
-        type: queueParsing,
+        type: typeParsing,
         fileId: fileId,
       });
     } catch (err) {

@@ -17,25 +17,18 @@ export class AuthRoute extends BaseRoute {
       this.databasePool
     );
 
-    this.app.post(`${controller.apiURIAuth}/login`, controller.login);
+    const apiURIAuth = `/${this.config.apiURI}/${this.config.apiVersion}/auth`;
 
-    this.app.get(
-      `${controller.apiURIAuth}/access-token`,
-      controller.getAccessToken
-    );
+    this.app.post(`${apiURIAuth}/login`, controller.login);
 
-    this.app.get(
-      `${controller.apiURIAuth}/refresh-token`,
-      controller.getRefreshToken
-    );
+    this.app.get(`${apiURIAuth}/access-token`, controller.getAccessToken);
+
+    this.app.get(`${apiURIAuth}/refresh-token`, controller.getRefreshToken);
+
+    this.app.delete(`${apiURIAuth}/access-token`, controller.deleteAccessToken);
 
     this.app.delete(
-      `${controller.apiURIAuth}/access-token`,
-      controller.deleteAccessToken
-    );
-
-    this.app.delete(
-      `${controller.apiURIAuth}/refresh-token`,
+      `${apiURIAuth}/refresh-token`,
       controller.deleteRefreshToken
     );
 
