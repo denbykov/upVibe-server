@@ -4,7 +4,7 @@ This page describes the public.tag_mapping_priorities table
 
 ![Alt text](tag_mapping_priorities.png)
 
-# Structure definition  
+## Structure definition  
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |

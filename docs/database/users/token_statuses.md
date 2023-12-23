@@ -4,14 +4,14 @@ This page describes the public.token_statuses table
 
 ![Alt text](token_statuses.png)
 
-# Structure definition  
+## Structure definition  
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
 | status  | CHAR(1) | PK |
 | description  | VARCHAR(50) | NOT NULL |
 
-# Data definition 
+## Data definition 
 
 | status | description |
 | - | - |

@@ -4,7 +4,7 @@ This page describes the public.tags table
 
 ![Alt text](tags.png)
 
-# Structure definition  
+## Structure definition  
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |

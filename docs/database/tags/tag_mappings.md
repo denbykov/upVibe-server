@@ -4,7 +4,7 @@ This page describes the public.tag_mappings table
 
 ![Alt text](tag_mappings.png)
 
-# Structure definition  
+## Structure definition  
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |

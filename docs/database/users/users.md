@@ -4,7 +4,7 @@ This page describes the public.users table
 
 ![Alt text](users.png)  
 
-# Structure definition  
+## Structure definition  
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |

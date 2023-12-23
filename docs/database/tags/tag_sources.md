@@ -4,7 +4,7 @@ This page describes the public.tag_sources table
 
 ![Alt text](tag_sources.png)
 
-# Structure definition  
+## Structure definition  
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |

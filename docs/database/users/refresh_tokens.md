@@ -4,7 +4,7 @@ This page describes the public.refresh_tokens table
 
 ![Alt text](refresh_tokens.png)
 
-# Structure definition  
+## Structure definition  
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |

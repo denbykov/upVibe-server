@@ -4,7 +4,7 @@ This page describes the public.user_files table
 
 ![Alt text](user_files.png)
 
-# Structure definition  
+## Structure definition  
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |

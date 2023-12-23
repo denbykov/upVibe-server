@@ -4,7 +4,7 @@ This page describes the public.access_tokens table
 
 ![Alt text](access_tokens.png)  
 
-# Structure definition  
+## Structure definition  
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
