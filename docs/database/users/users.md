@@ -2,7 +2,7 @@
 
 This page describes the public.users table  
 
-![Alt text](image.png)  
+![Alt text](users.png)  
 
 # Structure definition  
 
