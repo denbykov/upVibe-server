@@ -110,7 +110,7 @@ Next, set the following variables in the `config.json` file:
 }
 ```
 
-Example config:
+Config example:
 
 ```
 {
