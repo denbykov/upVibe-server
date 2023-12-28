@@ -10,4 +10,4 @@ This page describes the public.tag_sources table
 | - | - | - | - |
 | id | SERIAL | PK |
 | description | VARCHAR(255) | NOT NULL |
-| image_path | VARCHAR(255) |
+| logo_path | VARCHAR(255) | NOT NULL, UNIQUE |
