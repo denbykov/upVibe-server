@@ -9,5 +9,5 @@ This page describes the public.file_sources table
 | Column | Type | Constraints | Description |
 | - | - | - | - |
 | id | SERIAL | PK |
-| description | VARCHAR | NOT NULL |
+| description | VARCHAR(255) | NOT NULL |
 | logo_path | VARCHAR(255) | NOT NULL, UNIQUE |
