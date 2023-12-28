@@ -2,7 +2,7 @@
 
 This page describes the public.users table  
 
-![Alt text](users.png)  
+![Alt text](users.png)
 
 ## Structure definition  
 
@@ -10,5 +10,3 @@ This page describes the public.users table
 | - | - | - | - |
 | id  | SERIAL | PK |
 | name | VARCHAR(255) | NOT NULL |
-| password | VARCHAR(255) | NOT NULL |
-

@@ -8,8 +8,8 @@ This page describes the public.file_statuses table
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
-| status  | CHAR(1) | PK |
-| description  | VARCHAR(255) | NOT NULL |
+| status  | VARCHAR(2) | PK |
+| description  | VARCHAR | NOT NULL |
 
 ## Data definition 
 

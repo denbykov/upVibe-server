@@ -8,8 +8,8 @@ This page describes the public.tag_statuses table
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
-| status  | CHAR | PK |
-| description  | VARCHAR(255) | NOT NULL |
+| status  | VARCHAR(2) | PK |
+| description  | VARCHAR | NOT NULL |
 
 ## Data definition 
 

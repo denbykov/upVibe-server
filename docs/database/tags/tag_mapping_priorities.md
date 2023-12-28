@@ -9,7 +9,7 @@ This page describes the public.tag_mapping_priorities table
 | Column | Type | Constraints | Description |
 | - | - | - | - |
 | user_id | SERIAL | PK,<br/> FK to public.users(id) |
-| tag_source | SERIAL | NOT NULL,<br/> FK to public.tag_sources(id) |
+| source | SERIAL | NOT NULL,<br/> FK to public.tag_sources(id) |
 | title | SMALLINT | NOT NULL |
 | artist | SMALLINT | NOT NULL |
 | album | SMALLINT | NOT NULL |
