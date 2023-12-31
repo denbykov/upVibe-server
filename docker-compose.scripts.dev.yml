@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  postgresql:
+    image: postgres:15.3
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: up-vibe-dev
+    volumes:
+      - ./volumes/postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "admin", "-d", "up-vibe-dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - up-vibe-network
+    container_name: postgresql
+
+  liquibase:
+    image: liquibase/liquibase:4.23
+    volumes:
+      - ./scripts/db/config/:/liquibase/config/
+      - ./scripts/db/changesets/:/liquibase/changesets/
+      - ./scripts/db/liquibase.properties:/liquibase/liquibase.properties
+    command: --defaultsFile=liquibase.properties update
+    networks:
+      - up-vibe-network
+    container_name: liquibase
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  rabbitmq:
+    image: rabbitmq:3.12.2-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    expose:
+      - 5672
+      - 15672
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - ./volumes/rabbitmq:/var/lib/rabbitmq
+    networks:
+      - up-vibe-network
+    container_name: rabbitmq
+
+networks:
+  up-vibe-network:
+    name: up-vibe-network

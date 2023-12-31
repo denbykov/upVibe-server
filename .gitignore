@@ -12,3 +12,4 @@ server/config/.env
 .editorconfig
 .eslintrc.js
 volumes
+server/coverage

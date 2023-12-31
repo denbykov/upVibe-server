@@ -4,7 +4,7 @@ import pg from 'pg';
 import { AuthController } from '@src/controllers';
 import { Config } from '@src/entities/config';
 
-import { BaseRoute } from './baseRoute';
+import { BaseRoute } from './base.route.config';
 
 export class AuthRoute extends BaseRoute {
   constructor(app: express.Application, config: Config, databasePool: pg.Pool) {

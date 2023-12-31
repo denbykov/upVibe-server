@@ -1,7 +1,7 @@
 import Express from 'express';
 import pg from 'pg';
 
-import { AuthWorker } from '@src/business/authWorker';
+import { AuthWorker } from '@src/business/authWorker.business';
 import { AuthorizationRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
@@ -19,9 +19,7 @@ class AuthController extends BaseController {
       await new AuthorizationRepository(this.databasePool),
       this.config
     );
-    const tokens = await authWorker.login(
-      new LoginRequest(req.body.name, req.body.password)
-    );
+    const tokens = await authWorker.login(new LoginRequest(req.body.name));
 
     return res.status(tokens.httpCode).send(tokens.serialize());
   };

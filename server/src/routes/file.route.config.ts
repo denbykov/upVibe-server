@@ -3,9 +3,10 @@ import pg from 'pg';
 
 import { FileController } from '@src/controllers';
 import { Config } from '@src/entities/config';
-import { auth0Middleware } from '@src/middlewares';
+import auth0Middleware from '@src/middlewares/auth0.middleware';
 
-import { BaseRoute } from './baseRoute';
+// import { auth0Middleware } from '@src/middlewares';
+import { BaseRoute } from './base.route.config';
 
 export class FileRoute extends BaseRoute {
   constructor(app: express.Application, config: Config, databasePool: pg.Pool) {
@@ -21,25 +22,25 @@ export class FileRoute extends BaseRoute {
 
     this.app.post(
       `${apiURIFiles}`,
-      auth0Middleware(this.config, this.databasePool),
+      auth0Middleware(this.config),
       controller.startFileDownloading
     );
 
     this.app.get(
       `${apiURIFiles}`,
-      auth0Middleware(this.config, this.databasePool),
+      auth0Middleware(this.config),
       controller.getFiles
     );
 
     this.app.get(
       `${apiURIFiles}/sources`,
-      auth0Middleware(this.config, this.databasePool),
+      auth0Middleware(this.config),
       controller.getFileSources
     );
 
     this.app.get(
       `${apiURIFiles}/sources/:sourceId/picture`,
-      auth0Middleware(this.config, this.databasePool),
+      auth0Middleware(this.config),
       controller.getFileSourcePicture
     );
 

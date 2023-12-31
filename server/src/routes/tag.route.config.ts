@@ -3,9 +3,10 @@ import pg from 'pg';
 
 import { TagController } from '@src/controllers';
 import { Config } from '@src/entities/config';
-import { auth0Middleware } from '@src/middlewares';
+import auth0Middleware from '@src/middlewares/auth0.middleware';
 
-import { BaseRoute } from './baseRoute';
+// import { auth0Middleware } from '@src/middlewares';
+import { BaseRoute } from './base.route.config';
 
 export class TagRoute extends BaseRoute {
   constructor(app: express.Application, config: Config, databasePool: pg.Pool) {
@@ -23,25 +24,25 @@ export class TagRoute extends BaseRoute {
 
     this.app.get(
       `${apiURIFiles}/:fileId/tags`,
-      auth0Middleware(this.config, this.databasePool),
+      auth0Middleware(this.config),
       controller.getFileTags
     );
 
     this.app.get(
       `${apiURITags}/:tagId/picture`,
-      auth0Middleware(this.config, this.databasePool),
+      auth0Middleware(this.config),
       controller.getFilePictureTag
     );
 
     this.app.get(
       `${apiURITags}/sources`,
-      auth0Middleware(this.config, this.databasePool),
+      auth0Middleware(this.config),
       controller.getTagSources
     );
 
     this.app.get(
       `${apiURITags}/sources/:sourceId/picture`,
-      auth0Middleware(this.config, this.databasePool),
+      auth0Middleware(this.config),
       controller.getTagSourcePicture
     );
 

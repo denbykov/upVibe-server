@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 const { Config } = require('@src/entities/config');
-const { AuthWorker } = require('@src/business/authWorker');
+const { AuthWorker } = require('@src/business/authWorker.business');
 const {
   IAuthorizationDatabase,
 } = require('@src/interfaces/iAuthorizationDatabase');
@@ -94,12 +94,10 @@ describe('AuthWorker', () => {
     it('should return a response with an access token and a refresh token', async () => {
       const loginRequest: typeof LoginRequest = {
         name: 'user',
-        password: 'password',
       };
       const user = {
         id: 1,
         name: 'user',
-        password: 'password',
       };
       db.findUserByName.mockResolvedValue(user);
       db.insertRefreshToken.mockResolvedValue(2);
@@ -112,7 +110,6 @@ describe('AuthWorker', () => {
     it('should return a response with an error message if the user is not found', async () => {
       const loginRequest: typeof LoginRequest = {
         name: 'user',
-        password: 'password',
       };
       db.findUserByName.mockResolvedValue(undefined);
       const response: typeof Response = await authWorker.login(loginRequest);
@@ -123,12 +120,10 @@ describe('AuthWorker', () => {
     it('should return a response with an error message if the password is invalid', async () => {
       const loginRequest: typeof LoginRequest = {
         name: 'user',
-        password: 'password',
       };
       const user = {
         id: 1,
-        name: 'user',
-        password: 'wrong_password',
+        name: 'user1',
       };
       db.findUserByName.mockResolvedValue(user);
       const response: typeof Response = await authWorker.login(loginRequest);

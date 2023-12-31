@@ -1,5 +1,5 @@
-import { AuthorizationRepository } from '@src/data/authorizationRepository';
-import { FileRepository } from '@src/data/fileRepository';
-import { TagRepository } from '@src/data/tagRepository';
+import { AuthorizationRepository } from '@src/data/authorizationRepository.data';
+import { FileRepository } from '@src/data/fileRepository.data';
+import { TagRepository } from '@src/data/tagRepository.data';
 
 export { AuthorizationRepository, FileRepository, TagRepository };

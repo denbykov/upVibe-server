@@ -2,7 +2,7 @@ import Express from 'express';
 import jwt from 'jsonwebtoken';
 import pg from 'pg';
 
-import { FileWorker } from '@src/business/fileWorker';
+import { FileWorker } from '@src/business/fileWorker.business';
 import { FileRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
