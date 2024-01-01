@@ -6,10 +6,11 @@ import pg from 'pg';
 
 import { Config } from '@src/entities/config';
 import {
-  handleBadJsonMiddleware,
+  BadJsonHandlerMiddleware,
   requestLogger,
   unmatchedRoutesMiddleware,
 } from '@src/middlewares';
+import { errorAuth0Handler } from '@src/middlewares';
 import { APIRoute, AuthRoute, BaseRoute, FileRoute } from '@src/routes';
 import { TagRoute } from '@src/routes/tag.route.config';
 import { serverLogger } from '@src/utils/server/logger';
@@ -29,6 +30,7 @@ export class App {
     this.app = express();
     this.app.use(express.json());
     this.app.use(requestLogger);
+
     this.pool = new pg.Pool({
       user: config.dbUser,
       host: config.dbHost,
@@ -41,8 +43,9 @@ export class App {
     this.routes.push(new AuthRoute(this.app, config, this.pool));
     this.routes.push(new FileRoute(this.app, config, this.pool));
     this.routes.push(new TagRoute(this.app, config, this.pool));
+    this.app.use(errorAuth0Handler);
     this.app.use(unmatchedRoutesMiddleware);
-    this.app.use(handleBadJsonMiddleware);
+    this.app.use(BadJsonHandlerMiddleware);
   }
   public getApp(): Express {
     return this.app;

@@ -16,6 +16,10 @@
     "access_token_secret_expires": "1h",
     "refresh_token_secret_expires": "1d"
   },
+  "AUTH0": {
+    "audience": "volodymyr-test-null",
+    "domain": "up-vibe.eu.auth0.com"
+  },
   "DB": {
     "host": "host.docker.internal",
     "port": 5432,
@@ -31,5 +35,10 @@
     "password": "admin",
     "downloading_youtube_queue": "downloading/youtube",
     "tagging_youtube_native_queue": "tagging/youtube-native"
+  },
+  "EXTENSIONS": {
+    "youtube": {
+      "api_key": "1234-5678-9012-3456"
+    }
   }
 }

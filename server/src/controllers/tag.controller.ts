@@ -1,7 +1,7 @@
 import Express from 'express';
 import pg from 'pg';
 
-import { TagWorker } from '@src/business/tagWorker';
+import { TagWorker } from '@src/business/tagWorker.business';
 import { TagRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { dataLogger } from '@src/utils/server/logger';

@@ -2,7 +2,7 @@
 --changeset sowa:6
 
 CREATE TABLE tag_statuses (
-    status CHAR PRIMARY KEY,
+    status VARCHAR(2) PRIMARY KEY,
     description VARCHAR(255) NOT NULL
 );
 

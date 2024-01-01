@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 const { parseYoutubeURL } = require('@src/utils/server/parseYoutubeURL');
 
 const { iFileDatabase } = require('@src/interfaces/iFileDatabase');
-const { FileWorker } = require('@src/business/fileWorker');
+const { FileWorker } = require('@src/business/fileWorker.business');
 const { Config } = require('@src/entities/config');
 const { Response } = require('@src/entities/response');
 
@@ -28,7 +28,7 @@ describe('FileWorker', () => {
       rabbitMQDownloadingYouTubeQueue: 'downloading-youtube',
       rabbitMQTaggingYouTubeNativeQueue: 'tagging-youtube-native',
       rabbitMQDownloadingYouTubeType: 'get_file/youtube',
-      rabbitMQTaggingYouTubeNativeType: 'set_tags/youtube-native',
+      rabbitMQTaggingYouTubeNativeType: 'get_tags/youtube-native',
     };
     fileWorker = new FileWorker(db, config);
   });
@@ -63,7 +63,6 @@ describe('FileWorker', () => {
       };
       db.getFiles.mockResolvedValue(files);
       const response: typeof Response = await fileWorker.getFiles(userId);
-      console.log(response);
       expect(response.httpCode).toBe(Response.Code.Ok);
       expect(response.payload.files).toEqual(files);
     });
