@@ -35,10 +35,5 @@
     "password": "admin",
     "downloading_youtube_queue": "downloading/youtube",
     "tagging_youtube_native_queue": "tagging/youtube-native"
-  },
-  "EXTENSIONS": {
-    "youtube": {
-      "api_key": "1234-5678-9012-3456"
-    }
   }
 }
