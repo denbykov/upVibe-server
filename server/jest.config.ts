@@ -8,7 +8,7 @@ const config: JestConfigWithTsJest = {
     "^@src/(.*)$": "<rootDir>/src/$1",
   },
   extensionsToTreatAsEsm: [".ts"],
-  testMatch: ["**/tests/unit/**/*.test.ts"],
+  testMatch: ["**/tests/*.test.ts"],
   clearMocks: true,
   transformIgnorePatterns: ["node_modules/(?!(lodash-es|@src)/)"],
   transform: {
