@@ -33,10 +33,10 @@ services:
     networks:
       - up-vibe-network
     container_name: liquibase
-    depends_on: 
+    depends_on:
       postgresql:
         condition: service_healthy
-  
+
   rabbitmq:
     image: rabbitmq:3.12.2-management
     ports:
@@ -68,7 +68,7 @@ services:
     container_name: backend
     expose:
       - 3000
-    depends_on: 
+    depends_on:
       postgresql:
         condition: service_healthy
       liquibase:

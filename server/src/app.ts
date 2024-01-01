@@ -6,12 +6,12 @@ import pg from 'pg';
 
 import { Config } from '@src/entities/config';
 import {
-  handleBadJsonMiddleware,
-  requestLogger,
+  BadJsonMiddleware,
+  errorAuth0Middleware,
+  requestLoggerMiddleware,
   unmatchedRoutesMiddleware,
 } from '@src/middlewares';
-import { APIRoute, AuthRoute, BaseRoute, FileRoute } from '@src/routes';
-import { TagRoute } from '@src/routes/tag.route.config';
+import { APIRoute, BaseRoute, FileRoute, TagRoute } from '@src/routes';
 import { serverLogger } from '@src/utils/server/logger';
 import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
 
@@ -28,7 +28,8 @@ export class App {
   constructor() {
     this.app = express();
     this.app.use(express.json());
-    this.app.use(requestLogger);
+    this.app.use(requestLoggerMiddleware);
+
     this.pool = new pg.Pool({
       user: config.dbUser,
       host: config.dbHost,
@@ -38,11 +39,11 @@ export class App {
       max: config.dbMax,
     });
     this.routes.push(new APIRoute(this.app, config, this.pool));
-    this.routes.push(new AuthRoute(this.app, config, this.pool));
     this.routes.push(new FileRoute(this.app, config, this.pool));
     this.routes.push(new TagRoute(this.app, config, this.pool));
+    this.app.use(errorAuth0Middleware);
     this.app.use(unmatchedRoutesMiddleware);
-    this.app.use(handleBadJsonMiddleware);
+    this.app.use(BadJsonMiddleware);
   }
   public getApp(): Express {
     return this.app;

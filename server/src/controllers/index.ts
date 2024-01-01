@@ -1,13 +1,6 @@
-import { APIController } from './api.controller';
-import { AuthController } from './auth.controller';
-import { BaseController } from './base.controller';
-import { FileController } from './file.controller';
-import { TagController } from './tag.controller';
+import { APIController } from './api';
+import { BaseController } from './base';
+import { FileController } from './file';
+import { TagController } from './tag';
 
-export {
-  APIController,
-  AuthController,
-  BaseController,
-  FileController,
-  TagController,
-};
+export { APIController, BaseController, FileController, TagController };
