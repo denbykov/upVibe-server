@@ -5,7 +5,6 @@ import { TagController } from '@src/controllers';
 import { Config } from '@src/entities/config';
 import auth0Middleware from '@src/middlewares/auth0';
 
-// import { auth0Middleware } from '@src/middlewares';
 import { BaseRoute } from './baseConfig';
 
 export class TagRoute extends BaseRoute {

@@ -5,7 +5,7 @@ import { Response as responseServer } from '@src/entities/response';
 import { User } from '@src/entities/user';
 import { parseReadableStreamToJSON } from '@src/utils/server/parseReadableStreamToJSON';
 
-const userInfo = (config: Config, permissions: Array<string>) => {
+const userInfoMiddleware = (config: Config, permissions: Array<string>) => {
   const domain = config.autho0Domain;
   return async (request: Request, response: Response, next: NextFunction) => {
     const headers = new Headers();
@@ -37,4 +37,4 @@ const userInfo = (config: Config, permissions: Array<string>) => {
   };
 };
 
-export default userInfo;
+export default userInfoMiddleware;
