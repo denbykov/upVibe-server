@@ -1,13 +1,15 @@
-import auth0Middleware from './auth0.middleware';
-import BadJsonHandlerMiddleware from './badJsonHandler.middleware';
-import errorAuth0Handler from './error.auth0.middleware';
-import requestLogger from './requestLogger.moddleware';
-import unmatchedRoutesMiddleware from './unmatchedRoutes.middleware';
+import auth0Middleware from './auth0';
+import BadJsonMiddleware from './badJson';
+import errorAuth0 from './errorAuth0';
+import requestLogger from './requestLogger';
+import unmatchedRoutesMiddleware from './unmatchedRoutes';
+import userInfo from './userInfo';
 
 export {
   auth0Middleware,
-  errorAuth0Handler,
+  userInfo,
+  errorAuth0,
   requestLogger,
   unmatchedRoutesMiddleware,
-  BadJsonHandlerMiddleware,
+  BadJsonMiddleware,
 };
