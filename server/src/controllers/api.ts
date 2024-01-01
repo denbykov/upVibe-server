@@ -4,7 +4,7 @@ import pg from 'pg';
 import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
 
-import { BaseController } from './base.controller';
+import { BaseController } from './base';
 
 class APIController extends BaseController {
   constructor(config: Config, databasePool: pg.Pool) {

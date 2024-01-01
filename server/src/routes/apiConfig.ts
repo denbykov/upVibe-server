@@ -3,9 +3,9 @@ import pg from 'pg';
 
 import { APIController } from '@src/controllers';
 import { Config } from '@src/entities/config';
-import { auth0Middleware } from '@src/middlewares';
+import { auth0Middleware, userInfoMiddleware } from '@src/middlewares';
 
-import { BaseRoute } from './baseRoute';
+import { BaseRoute } from './baseConfig';
 
 export class APIRoute extends BaseRoute {
   constructor(app: express.Application, config: Config, databasePool: pg.Pool) {
@@ -23,7 +23,8 @@ export class APIRoute extends BaseRoute {
 
     this.app.get(
       `${apiURI}/auth-test`,
-      auth0Middleware(this.config, this.databasePool),
+      auth0Middleware(this.config),
+      userInfoMiddleware(this.config, []),
       controller.authTest
     );
 

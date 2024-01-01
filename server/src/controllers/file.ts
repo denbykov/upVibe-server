@@ -8,7 +8,7 @@ import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
 import { dataLogger } from '@src/utils/server/logger';
 
-import { BaseController } from './base.controller';
+import { BaseController } from './base';
 
 class FileController extends BaseController {
   constructor(config: Config, databasePool: pg.Pool) {
