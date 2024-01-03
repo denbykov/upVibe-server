@@ -1,0 +1,569 @@
+openapi: 3.0.3
+info:
+  title: upVibe-Server
+  license:
+    name: Express v.4.18.2
+    url: https://github.com/expressjs/express/blob/master/LICENSE
+  version: 0.0.1
+    
+tags:
+  - name: files
+    description: File management
+  - name: tags
+    description: Tag management
+  - name: tag-mappings
+    description: Tag mappings management
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: user-management
+    description: User management
+  
+paths:          
+  /up-vibe/v1/files:
+    post:
+      tags:
+        - files
+      summary: Create a new file
+      description: Create a new file.
+      operationId: addFile
+      requestBody:
+        description: Create a new file
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileCreationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        '405':
+          description: Invalid input
+      security:
+        - upvibe-auth:
+            - user
+    get:
+      tags:
+        - files
+      summary: Get files
+      description: Returns array of files for current user
+      operationId: getFiles
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Files'
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/files/{fileId}/download:
+    get:
+      tags:
+        - files
+      summary: Download tagged file
+      description: Download tagged file
+      operationId: tagAndLoadFile
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/files/sources:
+    get:
+      tags:
+        - files
+      summary: Get file sources
+      description: Returns array of the available file sources
+      operationId: getFileSources
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileSources'
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/files/sources/{sourceId}/picture:
+    get:
+      tags:
+        - files
+      summary: Get picture for the given source id
+      description: Returns array of the available file sources
+      operationId: getFileSourcePicture
+      parameters:
+        - name: sourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/files/{fileId}/tags:
+    post:
+      tags:
+        - tags
+      summary: Add a new tag for given fileId
+      description: Add a new tag object and request system to parse it.
+      operationId: addTag
+      parameters:
+        - name: fileId
+          in: path
+          description: id of the file for which the tag is being parsed
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '405':
+          description: Invalid input
+      security:
+        - upvibe-auth:
+            - user
+    get:
+      tags:
+        - tags
+      summary: Find tags for given fileId
+      description: Returns array of tags for given fileId
+      operationId: getTags
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tags'
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/tags/pictures/{pictureId}:
+    get:
+      tags:
+        - tags
+      summary: Download picture
+      description: Returns tag picture with given id
+      operationId: getTagPicture
+      parameters:
+        - name: pictureId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/tags/sources:
+    get:
+      tags:
+        - tags
+      summary: Get tag sources
+      description: Returns array of the available tag sources
+      operationId: getTagSources
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagSources'
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/tags/sources/{sourceId}/picture:
+    get:
+      tags:
+        - tags
+      summary: Get picture for the given source id
+      description: Returns array of the available file sources
+      operationId: getTagSourcePicture
+      parameters:
+        - name: sourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/files/tag-mapping-priority:
+    get:
+      tags:
+        - tag-mappings
+      summary: Get tag mapping priority
+      description: Get tag mapping priority
+      operationId: getTagMappingPriority
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagMappingPriority'
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+    put:
+      tags:
+        - tag-mappings
+      summary: Update tag mapping priority
+      description: Update tag mapping priority
+      operationId: updateTagMappingPriority
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagMappingPriority'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/files/{fileId}/tag-mapping:
+    get:
+      tags:
+        - tag-mappings
+      summary: Get tag mapping for given file
+      description: Get tag mapping for given file
+      operationId: getTagMapping
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagMapping'
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+    put:
+      tags:
+        - tag-mappings
+      summary: Update tag mapping for given file id
+      description: Update tag mapping for given file id
+      operationId: updateTagMapping
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagMapping'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
+components:
+  schemas:
+    FileCreationRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          example: https://www.some.storage.com/files/123
+    FileSource:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        source:
+          type: string
+          enum:
+            - native
+            - sound-cloud
+            - spotify
+            - custom-upload
+          example: spotify
+    FileSources:
+      type: array
+      items:
+        $ref: '#/components/schemas/FileSource'
+    File:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        source:
+          $ref: '#/components/schemas/FileSource'
+        status:
+          type: string
+          example: I
+        sourceUrl:
+          description: May contain source location
+          type: string
+          example: https://some/url
+        tags:
+          $ref: '#/components/schemas/ShortTag'
+    Files:
+      type: array
+      items:
+        $ref: '#/components/schemas/File'
+    TagSource:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        source:
+          type: string
+          enum:
+            - SoundCloud
+            - Spotify
+          example: spotify
+    CustomTag:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Chaos in the Streets"
+        artist:
+          type: string
+          example: "Magnavolt"
+        album:
+          type: string
+          example: "Chaos in the Streets"
+        year:
+          type: integer
+          example: 2021
+        trackNumber:
+          type: integer
+          example: 1
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        source:
+          $ref: '#/components/schemas/TagSource'
+        status:
+          type: string
+          example: inProgress
+          enum:
+            - ready
+            - inProgress
+            - error
+        statusDescription:
+          type: string
+          example: "The tag is being parsed"
+        title:
+          type: string
+          example: "Chaos in the Streets"
+        artist:
+          type: string
+          example: "Magnavolt"
+        album:
+          type: string
+          example: "Chaos in the Streets"
+        year:
+          type: integer
+          example: 2021
+        trackNumber:
+          type: integer
+          example: 1
+        puctureId:
+          type: string
+          example: "123"
+    ShortTag:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Chaos in the Streets"
+        artist:
+          type: string
+          example: "Magnavolt"
+        album:
+          type: string
+          example: "Chaos in the Streets"
+        year:
+          type: integer
+          example: 2021
+        trackNumber:
+          type: integer
+          example: 1
+        puctureId:
+          type: string
+          example: "123"
+    ActualTag:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Chaos in the Streets"
+        artist:
+          type: string
+          example: "Magnavolt"
+        album:
+          type: string
+          example: "Chaos in the Streets"
+        year:
+          type: integer
+          example: 2021
+        trackNumber:
+          type: integer
+          example: 1
+        puctureId:
+          type: string
+          example: "123"
+    Tags:
+      type: array
+      items:
+        $ref: '#/components/schemas/Tag'
+    TagSources:
+      type: array
+      items:
+        $ref: '#/components/schemas/TagSource'
+    TagMappingPriority:
+      type: object
+      properties:
+        title:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagSource'
+        artist:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagSource'
+        album:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagSource'
+        year:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagSource'
+        trackNumber:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagSource'
+        puctureId:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagSource'
+    TagMapping:
+      type: object
+      properties:
+        title:
+          $ref: '#/components/schemas/TagSource'
+        artist:
+          $ref: '#/components/schemas/TagSource'
+        album:
+          $ref: '#/components/schemas/TagSource'
+        year:
+          $ref: '#/components/schemas/TagSource'
+        trackNumber:
+          $ref: '#/components/schemas/TagSource'
+        puctureId:
+          $ref: '#/components/schemas/TagSource'
+  securitySchemes:
+    upvibe-auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:pets: modify pets in your account
+            user: read your pets
+    BearerAuth:
+      type: http
+      scheme: bearer
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header

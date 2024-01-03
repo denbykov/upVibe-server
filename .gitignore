@@ -5,8 +5,10 @@ dist
 logs
 buildDebug
 rest
-volumes
 server/tests/sql/
 storage
 .env
+.prettierrc
 .editorconfig
+.eslintrc.js
+volumes
