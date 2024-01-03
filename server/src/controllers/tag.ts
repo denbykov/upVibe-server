@@ -6,7 +6,7 @@ import { TagRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { dataLogger } from '@src/utils/server/logger';
 
-import { BaseController } from './base.controller';
+import { BaseController } from './base';
 
 class TagController extends BaseController {
   constructor(config: Config, databasePool: pg.Pool) {

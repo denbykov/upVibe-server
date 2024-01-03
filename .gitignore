@@ -7,7 +7,7 @@ buildDebug
 rest
 server/tests/sql/
 storage
-server/config/.env
+.env
 .prettierrc
 .editorconfig
 .eslintrc.js
