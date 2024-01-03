@@ -7,8 +7,6 @@ info:
   version: 0.0.1
     
 tags:
-  - name: auth
-    description: Auth managment
   - name: files
     description: File management
   - name: tags
@@ -21,180 +19,20 @@ tags:
   - name: user-management
     description: User management
   
-paths:
-  /up-vibe/v1/auth/login:
-    post:
-      tags:
-        - auth
-      summary: Allows you to log in
-      description: Allows you to authenticate through the server
-      operationId: authLogin
-      requestBody:
-        description: Keys for authorization
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/authLoginSource'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authLoginOk'
-        '403':
-          description: Invalid operation (not found user)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authLoginForbiden'
-      security:
-        - petstore_auth:
-            - read:pets
-  /up-vibe/v1/auth/access-token:
-      get:
-        tags:
-          - auth
-        summary: Refresh accessToken
-        description: Update accessToken using refreshToken in the header
-        operationId: authGetAccessToken
-        parameters:
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-            example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-        responses:
-          '200':
-           description: Successful operation
-           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authGetAccessTokenOk'
-          '401':
-           description: Invalid operation (not refresh accessToken)
-           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authGetAccessTokenUnauthorized'
-        security:
-          - api_key: []
-          - BearerAuth: [] 
-          - petstore_auth:
-              - read:pets
-      delete:
-        tags:
-          - auth
-        summary: Delete accessToken
-        description: Delete accessToken using refreshToken in the header
-        operationId: authDeleteAccessToken
-        parameters:
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-            example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-        responses:
-          '200':
-           description: Successful operation
-           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authDeleteAccessTokenOk'
-          '400':
-           description: Invalid operation
-           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authDeleteAccessTokenUnauthorized'
-                
-        security:
-          - api_key: []
-          - BearerAuth: [] 
-          - petstore_auth:
-              - read:pets
-              
-  /up-vibe/v1/auth/refresh-token:
-      get:
-        tags:
-          - auth
-        summary: Refresh refreshToken
-        description: Update refreshToken using refreshToken in the header
-        operationId: authGetRefreshToken
-        parameters:
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-            example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-        responses:
-          '200':
-           description: Successful operation
-           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authGetRefreshTokenOk'
-          '401':
-           description: Invalid operation (not refresh refreshToken)
-           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authGetRefreshTokenUnauthorized'
-        security:
-          - api_key: []
-          - BearerAuth: [] 
-          - petstore_auth:
-              - read:pets
-      delete:
-        tags:
-          - auth
-        summary: Delete refreshToken
-        description: Delete refreshToken using refreshToken in the header
-        operationId: authDeleteRefreshToken
-        parameters:
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-            example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-        responses:
-          '200':
-           description: Successful operation
-           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authDeleteRefreshTokenOk'
-          '400':
-           description: Invalid operation
-           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/authDeleteRefreshTokenUnauthorized'
-                
-        security:
-          - api_key: []
-          - BearerAuth: [] 
-          - petstore_auth:
-              - read:pets
-            
-  /up-vibe/v1/library/files:
+paths:          
+  /up-vibe/v1/files:
     post:
       tags:
         - files
-      summary: Add a new file
-      description: Add a new file and request the system download it to the local storage to be processed further.
+      summary: Create a new file
+      description: Create a new file.
       operationId: addFile
       requestBody:
         description: Create a new file
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FileSource'
+              $ref: '#/components/schemas/FileCreationRequest'
         required: true
       responses:
         '200':
@@ -226,7 +64,7 @@ paths:
         - api_key: []
         - petstore_auth:
             - read:pets
-  /up-vibe/v1/library/files/{fileId}:
+  /up-vibe/v1/files/{fileId}/download:
     get:
       tags:
         - files
@@ -252,7 +90,7 @@ paths:
         - api_key: []
         - petstore_auth:
             - read:pets
-  /up-vibe/v1/library/files/upload:
+  /up-vibe/v1/files/upload:
     post:
       tags:
         - files
@@ -277,7 +115,7 @@ paths:
         - petstore_auth:
             - write:files
             - read:files
-  /up-vibe/v1/library/files/sources:
+  /up-vibe/v1/files/sources:
     get:
       tags:
         - files
@@ -295,7 +133,7 @@ paths:
         - api_key: []
         - petstore_auth:
             - read:pets
-  /up-vibe/v1/library/files/sources/{sourceId}/picture:
+  /up-vibe/v1/files/sources/{sourceId}/picture:
     get:
       tags:
         - files
@@ -321,7 +159,7 @@ paths:
         - api_key: []
         - petstore_auth:
             - read:pets
-  /up-vibe/v1/library/files/{fileId}/tags:
+  /up-vibe/v1/files/{fileId}/tags:
     post:
       tags:
         - tags
@@ -373,7 +211,7 @@ paths:
         - api_key: []
         - petstore_auth:
             - read:pets
-  /up-vibe/v1/library/files/{fileId}/custom-tag:
+  /up-vibe/v1/files/{fileId}/custom-tag:
     post:
       tags:
         - tags
@@ -436,7 +274,7 @@ paths:
         - petstore_auth:
             - write:files
             - read:files
-  /up-vibe/v1/library/files/{fileId}/custom-tag/picture:
+  /up-vibe/v1/files/{fileId}/custom-tag/picture:
     post:
       tags:
         - tags
@@ -471,34 +309,7 @@ paths:
         - petstore_auth:
             - write:files
             - read:files
-  /up-vibe/v1/library/files/{fileId}/actual-tag:
-    get:
-      tags:
-        - tags
-      summary: Get actual tag for the file, composed from other using established mapping
-      description: Get actual tag for the file, composed from other using established mapping
-      operationId: getActualTag
-      parameters:
-        - name: fileId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ActualTag'
-        '405':
-          description: Invalid input
-      security:
-        - petstore_auth:
-            - write:files
-            - read:files
-  /up-vibe/v1/library/tags/pictures/{pictureId}:
+  /up-vibe/v1/tags/pictures/{pictureId}:
     get:
       tags:
         - tags
@@ -524,7 +335,7 @@ paths:
         - api_key: []
         - petstore_auth:
             - read:pets
-  /up-vibe/v1/library/tags/sources:
+  /up-vibe/v1/tags/sources:
     get:
       tags:
         - tags
@@ -542,7 +353,7 @@ paths:
         - api_key: []
         - petstore_auth:
             - read:pets
-  /up-vibe/v1/library/tags/sources/{sourceId}/picture:
+  /up-vibe/v1/tags/sources/{sourceId}/picture:
     get:
       tags:
         - tags
@@ -568,7 +379,7 @@ paths:
         - api_key: []
         - petstore_auth:
             - read:pets
-  /up-vibe/v1/library/files/tag-mapping-priority:
+  /up-vibe/v1/files/tag-mapping-priority:
     get:
       tags:
         - tag-mappings
@@ -605,7 +416,31 @@ paths:
         - api_key: []
         - petstore_auth:
             - read:pets
-  /up-vibe/v1/library/files/{fileId}/tag-mapping:
+  /up-vibe/v1/files/{fileId}/tag-mapping:
+    get:
+      tags:
+        - tag-mappings
+      summary: Get tag mapping for given file
+      description: Get tag mapping for given file
+      operationId: getTagMapping
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagMapping'
+      security:
+        - api_key: []
+        - petstore_auth:
+            - read:pets
     put:
       tags:
         - tag-mappings
@@ -634,108 +469,12 @@ paths:
             - read:pets
 components:
   schemas:
-    authLoginSource:
+    FileCreationRequest:
       type: object
       properties:
-        name: 
+        url:
           type: string
-          example: admin
-        password:
-          type: string
-          example: admin
-    authLoginOk:
-      type: object
-      properties:
-        accessToken:
-          type: string
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-        refreshToken:
-          type: string
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4dawrfzc6POk6yJV_adQssw5c'
-        code:
-          type: integer
-          example: 0
-    authLoginForbiden:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'User not found'
-        code:
-          type: integer
-          example: 1
-    authGetAccessTokenOk:
-      type: object
-      properties:
-        accessToken:
-          type: string
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-        code:
-          type: integer
-          example: 0
-    authDeleteAccessTokenOk:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'Logout success'
-        code:
-          type: integer
-          example: 0
-    authDeleteRefreshTokenOk:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'Logout success'
-        code:
-          type: integer
-          example: 0
-    authGetRefreshTokenOk:
-      type: object
-      properties:
-        refreshToken:
-          type: string
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-        code:
-          type: integer
-          example: 0
-    authGetAccessTokenUnauthorized:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'Authorization is expired'
-        code:
-          type: integer
-          example: 1
-    authDeleteAccessTokenUnauthorized:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'AccessToken is not found'
-        code:
-          type: integer
-          example: 1
-    authDeleteRefreshTokenUnauthorized:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'AccessToken is not found'
-        code:
-          type: integer
-          example: 1
-    authGetRefreshTokenUnauthorized:
-      type: object
-      properties:
-        message:
-          type: string
-          example: 'Authorization is expired'
-        code:
-          type: integer
-          example: 1
+          example: https://www.some.storage.com/files/123
     FileSource:
       type: object
       properties:
@@ -766,18 +505,13 @@ components:
           $ref: '#/components/schemas/FileSource'
         status:
           type: string
-          example: inProgress
-          enum:
-            - ready
-            - inProgress
-            - error
-        statusDescription:
-          type: string
-          example: The file is being downloaded
+          example: I
         sourceUrl:
           description: May contain source location
           type: string
           example: https://some/url
+        tags:
+          $ref: '#/components/schemas/ShortTag'
     Files:
       type: array
       items:
@@ -832,6 +566,27 @@ components:
         statusDescription:
           type: string
           example: "The tag is being parsed"
+        title:
+          type: string
+          example: "Chaos in the Streets"
+        artist:
+          type: string
+          example: "Magnavolt"
+        album:
+          type: string
+          example: "Chaos in the Streets"
+        year:
+          type: integer
+          example: 2021
+        trackNumber:
+          type: integer
+          example: 1
+        puctureId:
+          type: string
+          example: "123"
+    ShortTag:
+      type: object
+      properties:
         title:
           type: string
           example: "Chaos in the Streets"
