@@ -1,0 +1,13 @@
+# About  
+
+This page describes the public.users table  
+
+![Alt text](users.png)
+
+## Structure definition  
+
+| Column | Type | Constraints | Description |
+| - | - | - | - |
+| id | SERIAL | PK |
+| sub | VARCHAR | PK |
+| name | VARCHAR(255) | NOT NULL |
