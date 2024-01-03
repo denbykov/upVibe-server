@@ -8,8 +8,8 @@ This page describes the public.tag_mapping_priorities table
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
-| user_id | SERIAL | PK,<br/> FK to public.users(id) |
-| source | SERIAL | NOT NULL,<br/> FK to public.tag_sources(id) |
+| user_id | INT | PK,<br/> FK to public.users(id) |
+| source | INT | NOT NULL,<br/> FK to public.tag_sources(id) |
 | title | SMALLINT | NOT NULL |
 | artist | SMALLINT | NOT NULL |
 | album | SMALLINT | NOT NULL |
