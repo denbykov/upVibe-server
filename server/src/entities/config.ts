@@ -11,6 +11,8 @@ export class Config {
   public appHttpsKey: string = '';
   public appHttpsCert: string = '';
   public appPathStorage: string = '';
+  public appPluginsLocation: string = '';
+  public appDebug: boolean = false;
   public auth0Audience: string = '';
   public autho0Domain: string = '';
   public rabbitMQHost: string = '';
@@ -70,6 +72,12 @@ export class Config {
       process.env.APP_PATH_STORAGE ||
       configEnv.APP_PATH_STORAGE ||
       configJson.APP_PATH_STORAGE;
+    this.appPluginsLocation =
+      process.env.APP_PLUGINS_LOCATION ||
+      configEnv.APP_PLUGINS_LOCATION ||
+      configJson.APP_PLUGINS_LOCATION;
+    this.appDebug =
+      process.env.APP_DEBUG || configEnv.APP_DEBUG || configJson.APP_DEBUG;
     this.auth0Audience =
       process.env.AUTH0_AUDIENCE ||
       configEnv.AUTH0_AUDIENCE ||

@@ -6,7 +6,9 @@
     "use_https": true,
     "https_key": "config/ssl/privatekey.pem",
     "https_cert": "config/ssl/certificate.pem",
-    "path_storage": "/opt/app/storage"
+    "path_storage": "/opt/app/storage",
+    "plugins_location": "/home/sowa/Work/Projects/upVibe-server/plugins",
+    "debug": true
   },
   "API": {
     "uri": "up-vibe",
