@@ -12,7 +12,6 @@ import {
   unmatchedRoutesMiddleware,
 } from '@src/middlewares';
 import { APIRoute, BaseRoute, FileRoute, TagRoute } from '@src/routes';
-import { pluginLoader } from '@src/utils/plugins/pluginLoader';
 import { serverLogger } from '@src/utils/server/logger';
 import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
 
@@ -21,8 +20,6 @@ const configJson = parseConfigJSON(
   JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
 );
 const config = new Config(env, configJson);
-
-pluginLoader(config.appPluginsLocation);
 
 export class App {
   private readonly app: Express;
