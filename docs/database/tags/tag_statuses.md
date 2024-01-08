@@ -15,6 +15,7 @@ This page describes the public.tag_statuses table
 
 | status | description |
 | - | - |
+| 'CR' | 'Created' |
 | 'С'  | 'Completed' |
 | 'E'  | 'Error' |
 | 'I'  | 'In Progress' |
