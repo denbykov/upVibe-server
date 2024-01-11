@@ -3,7 +3,7 @@ import pg from 'pg';
 
 import { APIController } from '@src/controllers';
 import { Config } from '@src/entities/config';
-import { auth0Middleware, userInfoMiddleware } from '@src/middlewares';
+import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 
 import { BaseRoute } from './baseConfig';
 
@@ -24,7 +24,7 @@ export class APIRoute extends BaseRoute {
     this.app.get(
       `${apiURI}/auth-test`,
       auth0Middleware(this.config),
-      userInfoMiddleware(this.config, []),
+      userManagementMiddleware(this.config, this.databasePool, []),
       controller.authTest
     );
 
