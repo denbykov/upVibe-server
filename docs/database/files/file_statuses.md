@@ -15,6 +15,7 @@ This page describes the public.file_statuses table
 
 | status | description |
 | - | - |
+| 'СR'  | 'Created' |
 | 'С'  | 'Completed' |
 | 'E'  | 'Error' |
 | 'I'  | 'In Progress' |
