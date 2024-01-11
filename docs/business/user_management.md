@@ -1,4 +1,4 @@
-# upVibe-server
+# User management
 
 This document describes user management details.
 
@@ -16,7 +16,7 @@ This implementation of the server relies on auth0 for user authentication and au
 
 User permissions should be configured in the auth0, for example, using its RBAC capabilities. User permissions should be included in the access token as the "permissions" claim. It all means that the token should not be opaque.
 
-Server recognizes following permissions:
+The server recognizes the following permissions:
 - user - grants access to basic user functionality.
 
 # User handling
@@ -40,7 +40,7 @@ Does the record exist?
 
 #### AC 3
 
-Request the user's nickname from the auth0 /userinfo endpoint. Then insert the record into the [users](../database/users/users.md) table with the following values:  
+Request the user's nickname from the auth0 /userinfo endpoint. Then, insert the record into the [users](../database/users/users.md) table with the following values:  
 sub = access_token.sub  
 id = next id  
 name = user_info.nickname  
@@ -49,7 +49,7 @@ Go to AC 5
 
 #### AC 4
 
-Read user's data from the [users](../database/users/users.md) table filtering by:  
+Read the user's data from the [users](../database/users/users.md) table filtering by:  
 sub = access_token.sub 
 
 #### AC 5
