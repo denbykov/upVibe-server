@@ -7,6 +7,7 @@ This document describes file management details, such as file downloading, synch
 - [Plugins](#plugins)
 - [Downloading](#downloading)
 - [Tag parsing](#tag-parsing)
+- [Tag mappings](#tag-mappings)
 
 # Plugins  
 
