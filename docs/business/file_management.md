@@ -8,6 +8,7 @@ This document describes file management details, such as file downloading, synch
 - [Downloading](#downloading)
 - [Tag parsing](#tag-parsing)
 - [Tag mappings](#tag-mappings)
+- [File receiving](#file-receiving)
 
 # Plugins  
 
@@ -40,6 +41,9 @@ body:
     "tag_id": 1
 }
 ```
+
+- File tagger    
+This plugin is responsible for the file preparation before sending it to the user. It is required for this plugin to return the path to the prepared file immediately, and it should guarantee that file will remain intact for some time after its creation.  
 
 # Downloading  
 
@@ -164,3 +168,53 @@ Does the plugin report an error?
 This section describes only an idea around tag mappings, as the business logic of the API is just a set of CRUD operations.  
 So, the idea is to create a tag mapping for each file, which will tell what tags to apply to the file before sending it to the user. It should be created when the user requests file downloading(#downloading). Each priority item could be modified via the API.
 Mapping priority is an object unique for each user and is used to create a default tag_mapping for the file.
+
+# File receiving  
+
+The client can request the tagged file from the server using GET /up-vibe/v1/files/{fileId}/download request. The client has to pass a request with the related file id as a url parameter.
+
+The server should:
+
+#### AC 1
+
+Try to find a record in the [files](../database/files/files.md) table by the following filter:  
+file_id = request.url.file_id  
+
+Does the record exist?  
+- yes - go to AC 2  
+- no - abort the operation and send the "File does not exist" (errorCode 1) error response to the user  
+
+#### AC 2
+
+Check the status of the found file.
+
+If a status is:
+- "С" - go to AC 3
+- "E" - abort the operation and send the "File preparation failed" (errorCode 2) error response to the user   
+- otherwise - abort the operation and send the "File is not prepared yet" (errorCode 3) error response to the user
+
+#### AC 3
+Try to find a record in the [tag_mappings](../database/tags/tag_mappings.md) table by the following filter:  
+file_id = request.url.file_id
+user_id = request.user.id   
+
+Does the record exist?  
+- yes - go to AC 4  
+- no - abort the operation and send the "Tag mapping does not exist" (errorCode 4) error response to the user  
+
+#### AC 4
+
+Find all required tag records in the [tags](../database/tags/tags.md) table by the following filter:  
+file_id = request.url.file_id  
+source = [all sources that required by the mapping]
+
+#### AC 5
+
+Create a tag object by combining all the tag data from the previous step and request tag file tagging via its file tagger plugin.  
+Value mapping for the request:  
+tag = [created_tag]
+file = [file.uuid]  
+
+Does the plugin report an error?  
+- yes - abort the operation and send the error response to the user (errorCode -1)  
+- no - send a file to the user
