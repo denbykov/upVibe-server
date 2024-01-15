@@ -1,7 +1,9 @@
 import express from 'express';
 import pg from 'pg';
 
+import { UserWorker } from '@src/business/userWorker';
 import { APIController } from '@src/controllers';
+import { UserRepository } from '@src/data/userRepository';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 
@@ -18,13 +20,17 @@ export class APIRoute extends BaseRoute {
       this.databasePool
     );
     const apiURI = `/${this.config.apiURI}/${this.config.apiVersion}`;
+    const userWorker = new UserWorker(
+      new UserRepository(this.databasePool),
+      this.config
+    );
 
     this.app.get(`${apiURI}/info`, controller.getInfo);
 
     this.app.get(
       `${apiURI}/auth-test`,
       auth0Middleware(this.config),
-      userManagementMiddleware(this.config, this.databasePool, []),
+      userManagementMiddleware([], userWorker),
       controller.authTest
     );
 

@@ -11,10 +11,3 @@ export class User {
     return new User(json.id, json.sub, json.name);
   }
 }
-
-// export class LoginRequest {
-//   public name: string;
-//   constructor(name: string) {
-//     this.name = name;
-//   }
-// }

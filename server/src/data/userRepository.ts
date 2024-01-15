@@ -18,7 +18,7 @@ export class UserRepository implements iUserDatabase {
     return result.rows[0];
   }
 
-  public async setUser(user: User): Promise<User> {
+  public async insertUser(user: User): Promise<User> {
     const client = await this.pool.connect();
     const result = await client.query(
       `INSERT INTO users (sub, name) VALUES ('${user.sub}', '${user.name}') RETURNING *`
