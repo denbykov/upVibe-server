@@ -8,9 +8,7 @@ export class UserInfoAgent implements iUserInfoAgent {
   constructor(config: Config) {
     this.config = config;
   }
-  public getUserAuthorizationByToken = async (
-    token: string
-  ): Promise<User | null> => {
+  public getUserInfoByToken = async (token: string): Promise<User | null> => {
     const headers = new Headers();
     headers.append('Authorization', token);
     const req = await fetch(`https://${this.config.auth0Domain}/userinfo`, {

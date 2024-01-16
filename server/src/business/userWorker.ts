@@ -35,9 +35,7 @@ export class UserWorker {
     }
     let dbUser = await this.getUser(token.sub);
     if (!dbUser) {
-      await this.userInfoAgent.getUserAuthorizationByToken(
-        token.authorization || ''
-      );
+      await this.userInfoAgent.getUserInfoByToken(token.authorization || '');
     }
     return dbUser;
   };
