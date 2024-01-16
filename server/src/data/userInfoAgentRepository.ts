@@ -1,9 +1,9 @@
 import { Config } from '@src/entities/config';
 import { User } from '@src/entities/user';
-import { iUserAuth } from '@src/interfaces/iUserAuth';
+import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';
 import { readJSON } from '@src/utils/server/readJSON';
 
-export class UserAuth implements iUserAuth {
+export class UserInfoAgent implements iUserInfoAgent {
   private config: Config;
   constructor(config: Config) {
     this.config = config;
