@@ -19,6 +19,7 @@ export class APIRoute extends BaseRoute {
       this.config,
       this.databasePool
     );
+    const accessPermissions = ['user'];
     const apiURI = `/${this.config.apiURI}/${this.config.apiVersion}`;
     const userWorker = new UserWorker(
       new UserRepository(this.databasePool),
@@ -30,7 +31,7 @@ export class APIRoute extends BaseRoute {
     this.app.get(
       `${apiURI}/auth-test`,
       auth0Middleware(this.config),
-      userManagementMiddleware([], userWorker),
+      userManagementMiddleware(accessPermissions, userWorker),
       controller.authTest
     );
 

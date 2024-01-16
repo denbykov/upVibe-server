@@ -4,7 +4,7 @@ import {
   UnauthorizedError,
 } from 'express-oauth2-jwt-bearer';
 
-import { Response as responseServer } from '@src/entities/response';
+import { Response as ServerResponse } from '@src/entities/response';
 
 const errorAuth0Handler = (
   error: unknown,
@@ -13,8 +13,8 @@ const errorAuth0Handler = (
   next: NextFunction
 ) => {
   if (error instanceof InvalidTokenError) {
-    const message = new responseServer(
-      responseServer.Code.Unauthorized,
+    const message = new ServerResponse(
+      ServerResponse.Code.Unauthorized,
       'Bad credentials',
       1
     );
@@ -23,8 +23,8 @@ const errorAuth0Handler = (
   }
 
   if (error instanceof UnauthorizedError) {
-    const message = new responseServer(
-      responseServer.Code.Unauthorized,
+    const message = new ServerResponse(
+      ServerResponse.Code.Unauthorized,
       'Requires authentication',
       1
     );
@@ -32,8 +32,8 @@ const errorAuth0Handler = (
     return response.status(message.httpCode).send(message.serialize());
   }
 
-  const message = new responseServer(
-    responseServer.Code.InternalServerError,
+  const message = new ServerResponse(
+    ServerResponse.Code.InternalServerError,
     'Internal Server Error',
     1
   );
