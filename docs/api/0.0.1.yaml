@@ -359,12 +359,7 @@ components:
           example: 10
         source:
           type: string
-          enum:
-            - native
-            - sound-cloud
-            - spotify
-            - custom-upload
-          example: spotify
+          example: some-source
     FileSources:
       type: array
       items:
@@ -394,16 +389,10 @@ components:
     TagSource:
       type: object
       properties:
-        id:
+        source:
           type: integer
           format: int64
-          example: 10
-        source:
-          type: string
-          enum:
-            - SoundCloud
-            - Spotify
-          example: spotify
+          example: 2
     CustomTag:
       type: object
       properties:
