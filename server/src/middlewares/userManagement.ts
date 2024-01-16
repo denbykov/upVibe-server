@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { UserWorker } from '@src/business/userWorker';
-import { Response as serverResponse } from '@src/entities/response';
+import { Response as ServerResponse } from '@src/entities/response';
 
 const userManagementMiddleware = (
   permissions: Array<string>,
@@ -12,16 +12,17 @@ const userManagementMiddleware = (
     const token = JSON.parse(
       Buffer.from(rawToken!, 'base64').toString('ascii')
     );
-    const dbUser = await worker.manageUser(token, permissions);
+    const dbUser = await worker.handleAuthorization(token, permissions);
+
     if (!dbUser) {
-      const message = new serverResponse(
-        serverResponse.Code.InternalServerError,
-        'Error managing user',
+      const message = new ServerResponse(
+        ServerResponse.Code.Forbidden,
+        'Authorization error',
         1
       );
-      response.status(message.code).send(message.serialize());
-      return;
+      return response.status(message.httpCode).send(message.serialize());
     }
+
     request.body.user = dbUser;
     next();
   };

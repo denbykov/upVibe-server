@@ -1,3 +1,4 @@
+import { UserAuth } from '@src/data/userAuthRepository';
 import { Config } from '@src/entities/config';
 import { User } from '@src/entities/user';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
@@ -16,9 +17,6 @@ export class UserWorker {
   public getUser = async (sub: string): Promise<User | null> => {
     dataLogger.trace('UserWorker.getUser()');
     const user = await this.db.getUserBySub(sub);
-    if (user == null) {
-      return null;
-    }
     return user;
   };
 
@@ -27,11 +25,11 @@ export class UserWorker {
     return await this.db.insertUser(user);
   };
 
-  public manageUser = async (
+  public handleAuthorization = async (
     token: JSON.JSONObject,
     permissions: Array<string>
   ): Promise<User | null> => {
-    dataLogger.trace('UserWorker.manageUser()');
+    dataLogger.trace('UserWorker.handleAuthorization()');
     for (const permission of permissions) {
       if (!token.permissions.includes(permission)) {
         return null;
@@ -39,13 +37,9 @@ export class UserWorker {
     }
     let dbUser = await this.getUser(token.sub);
     if (!dbUser) {
-      const headers = new Headers();
-      headers.append('Authorization', token.authorization || '');
-      const req = await fetch(`https://${this.config.auth0Domain}/userinfo`, {
-        headers: headers,
-      });
-      const reqData = req.status == 200 ? await readJSON(req.body!) : {};
-      dbUser = await this.insertUser(new User(0, token.sub, reqData.username!));
+      dbUser = await new UserAuth(this.config).getUserAuthorizationByToken(
+        token.authorization || ''
+      );
     }
     return dbUser;
   };
