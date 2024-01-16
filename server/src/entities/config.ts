@@ -12,7 +12,7 @@ export class Config {
   public appHttpsCert: string = '';
   public appPathStorage: string = '';
   public auth0Audience: string = '';
-  public autho0Domain: string = '';
+  public auth0Domain: string = '';
   public rabbitMQHost: string = '';
   public rabbitMQPort: number = 0;
   public rabbitMQUser: string = '';
@@ -74,7 +74,7 @@ export class Config {
       process.env.AUTH0_AUDIENCE ||
       configEnv.AUTH0_AUDIENCE ||
       configJson.AUTH0_AUDIENCE;
-    this.autho0Domain =
+    this.auth0Domain =
       process.env.AUTH0_DOMAIN ||
       configEnv.AUTH0_DOMAIN ||
       configJson.AUTH0_DOMAIN;

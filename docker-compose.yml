@@ -26,10 +26,10 @@ services:
   liquibase:
     image: liquibase/liquibase:4.23
     volumes:
-      - ./scripts/db/config/db.changelog-0.0.1.xml:/liquibase/db.changelog-0.0.1.xml
+      - ./scripts/db/config/:/liquibase/config/
       - ./scripts/db/changesets/:/liquibase/changesets/
       - ./scripts/db/liquibase.properties:/liquibase/liquibase.properties
-    command: --changeLogFile=db.changelog-0.0.1.xml --url=jdbc:postgresql://postgresql/up-vibe-dev --username=admin --password=admin update
+    command: --defaultsFile=liquibase.properties update
     networks:
       - up-vibe-network
     container_name: liquibase
@@ -56,18 +56,22 @@ services:
     container_name: rabbitmq
 
   backend:
-    image: upvibe-server-backend:latest
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile.dev
     ports:
       - 3000:3000
+      - 9229:9229
     volumes:
       - ./server/logs:/opt/app/logs
       - ./server/config:/opt/app/config
       - ./storage:/opt/app/storage
     restart: always
-    command: npm run start
+    command: npm run dev:docker
     container_name: backend
     expose:
       - 3000
+      - 9229
     depends_on:
       postgresql:
         condition: service_healthy

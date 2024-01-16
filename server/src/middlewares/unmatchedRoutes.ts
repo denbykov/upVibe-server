@@ -8,5 +8,6 @@ export default async (req: Express.Request, res: Express.Response) => {
     'Not Found',
     1
   );
+
   return res.status(response.httpCode).send(response.serialize());
 };
