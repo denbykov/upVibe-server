@@ -3,11 +3,11 @@ import BadJsonMiddleware from './badJson';
 import errorAuth0Middleware from './errorAuth0';
 import requestLoggerMiddleware from './requestLogger';
 import unmatchedRoutesMiddleware from './unmatchedRoutes';
-import userInfoMiddleware from './userInfo';
+import userManagementMiddleware from './userManagement';
 
 export {
   auth0Middleware,
-  userInfoMiddleware,
+  userManagementMiddleware,
   errorAuth0Middleware,
   requestLoggerMiddleware,
   unmatchedRoutesMiddleware,

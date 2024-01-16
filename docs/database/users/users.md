@@ -9,5 +9,5 @@ This page describes the public.users table
 | Column | Type | Constraints | Description |
 | - | - | - | - |
 | id | SERIAL | PK |
-| sub | VARCHAR | PK |
+| sub | VARCHAR | PK, IDX |
 | name | VARCHAR(255) | NOT NULL |
