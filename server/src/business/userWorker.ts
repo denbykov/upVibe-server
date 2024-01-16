@@ -1,16 +1,14 @@
-import { UserAuth } from '@src/data/userAuthRepository';
-import { Config } from '@src/entities/config';
 import { User } from '@src/entities/user';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
+import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';
 import { dataLogger } from '@src/utils/server/logger';
-import { readJSON } from '@src/utils/server/readJSON';
 
 export class UserWorker {
   private db: iUserDatabase;
-  private config: Config;
-  constructor(db: iUserDatabase, config: Config) {
+  private userInfoAgent: iUserInfoAgent;
+  constructor(db: iUserDatabase, userInfoAgent: iUserInfoAgent) {
     this.db = db;
-    this.config = config;
+    this.userInfoAgent = userInfoAgent;
     dataLogger.trace('UserWorker initialized');
   }
 
@@ -37,7 +35,7 @@ export class UserWorker {
     }
     let dbUser = await this.getUser(token.sub);
     if (!dbUser) {
-      dbUser = await new UserAuth(this.config).getUserAuthorizationByToken(
+      await this.userInfoAgent.getUserAuthorizationByToken(
         token.authorization || ''
       );
     }
