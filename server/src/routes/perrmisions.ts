@@ -1,1 +1,1 @@
-export const general = 'user';
+export const GENERAL = 'user';

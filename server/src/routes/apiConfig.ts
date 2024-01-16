@@ -9,7 +9,7 @@ import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 
 import { BaseRoute } from './baseConfig';
-import { general } from './perrmisions';
+import { GENERAL } from './perrmisions';
 
 export class APIRoute extends BaseRoute {
   constructor(app: express.Application, config: Config, databasePool: pg.Pool) {
@@ -32,7 +32,7 @@ export class APIRoute extends BaseRoute {
     this.app.get(
       `${apiURI}/auth-test`,
       auth0Middleware(this.config),
-      userManagementMiddleware([general], userWorker),
+      userManagementMiddleware([GENERAL], userWorker),
       controller.authTest
     );
 
