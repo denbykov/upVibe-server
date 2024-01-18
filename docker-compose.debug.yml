@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  upvibeserver:
+    image: up-vibe-server
+    build:
+      context: server
+      dockerfile: ./Dockerfile.dev
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3000:3000
+      - 9229:9229
+    command: ${SERVER_COMMAND_RUN}
