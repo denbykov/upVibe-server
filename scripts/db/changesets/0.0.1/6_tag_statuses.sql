@@ -6,6 +6,7 @@ CREATE TABLE tag_statuses (
     description VARCHAR(255) NOT NULL
 );
 
+INSERT INTO tag_statuses (status, description) VALUES ('CR', 'Created');
 INSERT INTO tag_statuses (status, description) VALUES ('C', 'Completed');
 INSERT INTO tag_statuses (status, description) VALUES ('E', 'Error');
 INSERT INTO tag_statuses (status, description) VALUES ('I', 'In Progress');
