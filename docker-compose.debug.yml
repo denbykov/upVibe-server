@@ -12,3 +12,5 @@ services:
       - ${SERVER_PORT}:${SERVER_PORT}
       - ${SERVER_INSPECT_PORT}:${SERVER_INSPECT_PORT}
     command: ${SERVER_COMMAND_RUN}
+    networks:
+      - up-vibe-network
