@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Docker Node.js Attach",
+            "name": "Attach to Docker",
             "port": 9229,
             "request": "attach",
             "skipFiles": [
