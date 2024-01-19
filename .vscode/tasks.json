@@ -8,7 +8,8 @@
 			"dockerBuild": {
 				"dockerfile": "${workspaceFolder}/server/Dockerfile.dev",
 				"context": "${workspaceFolder}/server",
-				"pull": true
+				"pull": true,
+				"tag": "up-vibe-server:latest",
 			},
 			"node": {
 				"package": "${workspaceFolder}/server/package.json"
@@ -34,8 +35,9 @@
 			"dockerRun": {
 				"env": {
 					"DEBUG": "*",
-					"NODE_ENV": "development"
-				}
+					"NODE_ENV": "development",
+				},
+				"containerName": "up-vibe-server-debug",
 			},
 			"node": {
 				"package": "${workspaceFolder}/server/package.json",

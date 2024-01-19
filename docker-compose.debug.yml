@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  upvibeserver:
+  up-vibe-server:
     image: up-vibe-server
     build:
-      context: server
-      dockerfile: ./Dockerfile.dev
+      context: ${SERVER_CONTEXT}
+      dockerfile: ${SERVER_DOCKERFILE_DEV}
     environment:
       NODE_ENV: development
     ports:
-      - 3000:3000
-      - 9229:9229
+      - ${SERVER_PORT}:${SERVER_PORT}
+      - ${SERVER_INSPECT_PORT}:${SERVER_INSPECT_PORT}
     command: ${SERVER_COMMAND_RUN}

@@ -18,6 +18,7 @@ In order to run `docker-compose.yaml`, we need to configure the variables, for t
 
 - `SERVER_CONTEXT`: The context for the server, typically the directory containing the server's code.
 - `SERVER_DOCKERFILE`: The path to the Dockerfile for the server.
+- `SERVER_DOCKERFILE_DEV`: The path to the Dockerfile.dev for the server.
 - `SERVER_PORT`: The port to expose for the server.
 - `SERVER_INSPECT_PORT`: The inspect port to  expose for the server.
 - `SERVER_VOLUME_LOGS`: The Docker volume to use for server logs.
