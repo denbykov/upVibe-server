@@ -8,17 +8,20 @@ export abstract class BaseRoute {
   name: string;
   config: Config;
   databasePool: pg.Pool;
+  plugins?: Promise<Map<string, any>>;
 
   constructor(
     app: express.Application,
     name: string,
     config: Config,
-    databasePool: pg.Pool
+    databasePool: pg.Pool,
+    plugins?: Promise<Map<string, any>>
   ) {
     this.app = app;
     this.name = name;
     this.config = config;
     this.databasePool = databasePool;
+    this.plugins = plugins;
     this.configureRoutes();
   }
 

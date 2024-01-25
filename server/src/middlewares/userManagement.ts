@@ -13,7 +13,6 @@ const userManagementMiddleware = (
       Buffer.from(rawToken!, 'base64').toString('ascii')
     );
     const dbUser = await worker.handleAuthorization(token, permissions);
-
     if (!dbUser) {
       const message = new ServerResponse(
         ServerResponse.Code.Forbidden,

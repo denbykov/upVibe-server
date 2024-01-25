@@ -12,6 +12,7 @@ import {
   unmatchedRoutesMiddleware,
 } from '@src/middlewares';
 import { APIRoute, BaseRoute, FileRoute, TagRoute } from '@src/routes';
+import { pluginLoader } from '@src/utils/plugins/pluginLoader';
 import { serverLogger } from '@src/utils/server/logger';
 import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
 
@@ -20,6 +21,7 @@ const configJson = parseConfigJSON(
   JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
 );
 const config = new Config(env, configJson);
+const plugins = pluginLoader(config.appPluginsLocation, serverLogger);
 
 export class App {
   private readonly app: Express;
@@ -39,7 +41,7 @@ export class App {
       max: config.dbMax,
     });
     this.routes.push(new APIRoute(this.app, config, this.pool));
-    this.routes.push(new FileRoute(this.app, config, this.pool));
+    this.routes.push(new FileRoute(this.app, config, this.pool, plugins));
     this.routes.push(new TagRoute(this.app, config, this.pool));
     this.app.use(errorAuth0Middleware);
     this.app.use(unmatchedRoutesMiddleware);

@@ -4,5 +4,5 @@ export const parseYoutubeURL = (url: string): string => {
   if (ampersandPosition !== -1) {
     return videoId.substring(0, ampersandPosition);
   }
-  return videoId;
+  return `https://youtu.be/${videoId}`;
 };

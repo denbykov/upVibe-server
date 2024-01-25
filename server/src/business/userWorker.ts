@@ -35,7 +35,10 @@ export class UserWorker {
     }
     let dbUser = await this.getUser(token.sub);
     if (!dbUser) {
-      await this.userInfoAgent.getUserInfoByToken(token.authorization || '');
+      dbUser = await this.userInfoAgent.getUserInfoByToken(
+        token.authorization || ''
+      );
+      await this.insertUser(dbUser!);
     }
     return dbUser;
   };
