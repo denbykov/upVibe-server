@@ -35,8 +35,8 @@ export class FileWorker {
         {
           id: 0,
           url: sourceUrl,
-          description: source.description,
-          logoPath: source.logoPath,
+          description: source,
+          logoPath: source,
         },
         Status.Created
       );

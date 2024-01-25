@@ -11,6 +11,13 @@ class APIController extends BaseController {
     super(config, databasePool);
   }
 
+  public healthCheck = async (req: Express.Request, res: Express.Response) => {
+    const response: Response = new Response(Response.Code.Ok, {
+      message: 'API is healthy!',
+    });
+    return res.status(response.httpCode).send(response.serialize());
+  };
+
   public getInfo = async (req: Express.Request, res: Express.Response) => {
     const response: Response = new Response(Response.Code.Ok, {
       message: `Welcome to ${this.config.apiURI} API! Version: ${this.config.apiVersion} 🚀`,

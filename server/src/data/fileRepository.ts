@@ -35,7 +35,8 @@ export class FileRepository implements iFileDatabase {
     try {
       await client.query('BEGIN');
       try {
-        // await client.query('COMMIT');
+        await client.query('COMMIT');
+        return null;
         // return File.fromJSON(queryExecution.rows[0]);
       } catch (err) {
         await client.query('ROLLBACK');

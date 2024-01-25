@@ -27,6 +27,7 @@ export class APIRoute extends BaseRoute {
       new UserInfoAgent(this.config)
     );
 
+    this.app.get(`${apiURI}/health`, controller.healthCheck);
     this.app.get(`${apiURI}/info`, controller.getInfo);
 
     this.app.get(
