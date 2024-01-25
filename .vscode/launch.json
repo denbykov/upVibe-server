@@ -1,13 +1,13 @@
 {
     "configurations": [
         {
-            "name": "Docker Node.js Attach",
-            "port": 9229,
+            "type": "node",
             "request": "attach",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "node"
+            "port": 9229,
+            "restart": true,
+            "name": "Docker: Attach to Node",
+            "remoteRoot": "/usr/src/app",
+            "localRoot": "${workspaceFolder}/server"
         },
         {
             "name": "Docker Node.js Launch",
@@ -17,8 +17,8 @@
             "platform": "node",
             "node": {
                 "package": "${workspaceFolder}/server/package.json",
-                "localRoot": "${workspaceFolder}/server",
+                "localRoot": "${workspaceFolder}/server"
             }
-        }
+        },
     ]
 }
