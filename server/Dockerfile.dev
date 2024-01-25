@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:lts-alpine
 
 ENV NODE_ENV=development
 
@@ -7,8 +7,9 @@ WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
 COPY . .
 
-RUN npm install --production --silent && mv node_modules ../
-EXPOSE 3000
+RUN npm install --silent && mv node_modules ../
 
-RUN chown -R node /usr/src/app
-USER node
+RUN chown -R root /usr/src/app
+USER root
+
+CMD ["npm", "run", "dev:build:docker"]
