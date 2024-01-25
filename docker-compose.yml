@@ -2,18 +2,16 @@ version: "3.8"
 
 services:
   postgresql:
-    image: postgres:15.3
+    image: ${POSTGRES_IMAGE}
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     expose:
-      - 5432
+      - ${POSTGRES_PORT}
     restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: up-vibe-dev
-    volumes:
-      - ./volumes/postgresql:/var/lib/postgresql/data
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "admin", "-d", "up-vibe-dev"]
       interval: 10s
@@ -24,11 +22,11 @@ services:
     container_name: postgresql
 
   liquibase:
-    image: liquibase/liquibase:4.23
+    image: ${LIQUIBASE_IMAGE}
     volumes:
-      - ./scripts/db/config/:/liquibase/config/
-      - ./scripts/db/changesets/:/liquibase/changesets/
-      - ./scripts/db/liquibase.properties:/liquibase/liquibase.properties
+      - ${LIQUIBASE_VOLUME_CONFIG}:/liquibase/config/
+      - ${LIQUIBASE_VOLUME_CHANGESETS}:/liquibase/changesets/
+      - ${LIQUIBASE_VOLUME_PROPERTIES}:/liquibase/liquibase.properties
     command: --defaultsFile=liquibase.properties update
     networks:
       - up-vibe-network
@@ -38,40 +36,40 @@ services:
         condition: service_healthy
 
   rabbitmq:
-    image: rabbitmq:3.12.2-management
+    image: ${RABBITMQ_IMAGE}
     ports:
-      - 5672:5672
-      - 15672:15672
+      - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
+      - ${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}
     expose:
-      - 5672
-      - 15672
+      - ${RABBITMQ_PORT}
+      - ${RABBITMQ_MANAGEMENT_PORT}
     restart: always
     environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin
-    volumes:
-      - ./volumes/rabbitmq:/var/lib/rabbitmq
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
     networks:
       - up-vibe-network
     container_name: rabbitmq
 
-  backend:
+  server:
     build:
-      context: ./server
-      dockerfile: ./Dockerfile.dev
+      context: ${SERVER_CONTEXT}
+      dockerfile: ${SERVER_DOCKERFILE_DEV}
     ports:
-      - 3000:3000
-      - 9229:9229
-    volumes:
-      - ./server/logs:/opt/app/logs
-      - ./server/config:/opt/app/config
-      - ./storage:/opt/app/storage
-    restart: always
-    command: npm run dev:docker
-    container_name: backend
+      - ${SERVER_PORT}:${SERVER_PORT}
+      - ${SERVER_INSPECT_PORT}:${SERVER_INSPECT_PORT}
     expose:
-      - 3000
-      - 9229
+      - ${SERVER_PORT}
+      - ${SERVER_INSPECT_PORT}
+    command: ${SERVER_COMMAND_RUN}
+    container_name: server
+    restart: always
+    volumes:
+      - ${SERVER_VOLUME_LOGS}:/usr/src/app/logs
+      - ${SERVER_VOLUME_CONFIG}:/usr/src/app/config
+      - ${SERVER_VOLUME_STORAGE}:/usr/src/app/storage
+      - ${SERVER_VOLUME_PLUGINS}:/usr/src/app/plugins
+      - ${SERVER_VOLUME_SRC}:/usr/src/app/src
     depends_on:
       postgresql:
         condition: service_healthy
@@ -81,6 +79,7 @@ services:
         condition: service_started
     networks:
       - up-vibe-network
+    user: ${SERVER_USER}
 
 networks:
   up-vibe-network:
