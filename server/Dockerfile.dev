@@ -1,18 +1,15 @@
-FROM node:20-alpine
+FROM node:lts-alpine
 
-RUN mkdir -p /opt/app && chown -R 777 /opt/app && \
-    mkdir -p /opt/app
+ENV NODE_ENV=development
 
-WORKDIR /opt/app
+WORKDIR /usr/src/app
 
-COPY package*.json ./
-RUN npm install
+COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
+COPY . .
 
-COPY customTypings ./customTypings
-COPY src ./src
-COPY tests ./tests
-COPY tsconfig.dev.json ./
-COPY tsconfig.json ./
-COPY package.json ./
+RUN npm install --silent && mv node_modules ../
 
-EXPOSE 3000
+RUN chown -R root /usr/src/app
+USER root
+
+CMD ["npm", "run", "dev:build:docker"]
