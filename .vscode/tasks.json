@@ -8,8 +8,7 @@
 			"dockerBuild": {
 				"dockerfile": "${workspaceFolder}/server/Dockerfile.dev",
 				"context": "${workspaceFolder}/server",
-				"pull": true,
-				"tag": "up-vibe-server:latest",
+				"pull": true
 			},
 			"node": {
 				"package": "${workspaceFolder}/server/package.json"
@@ -35,14 +34,36 @@
 			"dockerRun": {
 				"env": {
 					"DEBUG": "*",
-					"NODE_ENV": "development",
+					"NODE_ENV": "development"
 				},
-				"containerName": "up-vibe-server-debug",
+				"command": "npm run dev:start:docker",
+				"containerName": "up-vibe-server-dev",
+				"restart": "on-failure",
+				"volumes": [
+					{
+						"localPath": "/home/sowa/Work/Projects/upVibe-private-workers/plugins/dist",
+						"containerPath": "/usr/src/app/plugins"
+					},
+					{
+						"localPath": "${workspaceFolder}/server/src",
+						"containerPath": "/usr/src/app/src"
+					}
+				],
+				"ports": [
+					{
+						"hostPort": 3000,
+						"containerPort": 3000
+					},
+					{
+						"hostPort": 9229,
+						"containerPort": 9229
+					}
+				],
 			},
 			"node": {
 				"package": "${workspaceFolder}/server/package.json",
 				"enableDebugging": true
 			}
-		}
+		},
 	]
 }
