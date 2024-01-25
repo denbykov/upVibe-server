@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  postgres:
+  postgresql:
     image: ${POSTGRES_IMAGE}
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
@@ -32,15 +32,17 @@ services:
       - up-vibe-network
     container_name: liquibase
     depends_on:
-      postgres:
+      postgresql:
         condition: service_healthy
 
   rabbitmq:
     image: ${RABBITMQ_IMAGE}
     ports:
       - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
+      - ${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}
     expose:
       - ${RABBITMQ_PORT}
+      - ${RABBITMQ_MANAGEMENT_PORT}
     restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
@@ -52,7 +54,7 @@ services:
   server:
     build:
       context: ${SERVER_CONTEXT}
-      dockerfile: ${SERVER_DOCKERFILE}
+      dockerfile: ${SERVER_DOCKERFILE_DEV}
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
       - ${SERVER_INSPECT_PORT}:${SERVER_INSPECT_PORT}
@@ -63,11 +65,13 @@ services:
     container_name: server
     restart: always
     volumes:
-      - ${SERVER_VOLUME_LOGS}:/opt/app/logs
-      - ${SERVER_VOLUME_CONFIG}:/opt/app/config
-      - ${SERVER_VOLUME_STORAGE}:/opt/app/storage
+      - ${SERVER_VOLUME_LOGS}:/usr/src/app/logs
+      - ${SERVER_VOLUME_CONFIG}:/usr/src/app/config
+      - ${SERVER_VOLUME_STORAGE}:/usr/src/app/storage
+      - ${SERVER_VOLUME_PLUGINS}:/usr/src/app/plugins
+      - ${SERVER_VOLUME_SRC}:/usr/src/app/src
     depends_on:
-      postgres:
+      postgresql:
         condition: service_healthy
       liquibase:
         condition: service_completed_successfully
@@ -75,6 +79,7 @@ services:
         condition: service_started
     networks:
       - up-vibe-network
+    user: ${SERVER_USER}
 
 networks:
   up-vibe-network:
