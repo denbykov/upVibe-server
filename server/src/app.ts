@@ -13,15 +13,23 @@ import {
 } from '@src/middlewares';
 import { APIRoute, BaseRoute, FileRoute, TagRoute } from '@src/routes';
 import { pluginLoader } from '@src/utils/plugins/pluginLoader';
-import { serverLogger } from '@src/utils/server/logger';
+import { dataLogger, serverLogger } from '@src/utils/server/logger';
 import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
+
+import PluginManager from './pluginManager';
 
 const env = dotenv.config({ path: 'config/.env' }).parsed || {};
 const configJson = parseConfigJSON(
   JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
 );
 const config = new Config(env, configJson);
-const plugins = pluginLoader(config.appPluginsLocation, serverLogger);
+const pluginManager = new PluginManager(dataLogger);
+
+const pluginManagerPromise = (async () => {
+  await pluginManager.registerPlugin(
+    await pluginLoader(config.appPluginsLocation, dataLogger)
+  );
+})();
 
 export class App {
   private readonly app: Express;
@@ -31,7 +39,6 @@ export class App {
     this.app = express();
     this.app.use(express.json());
     this.app.use(requestLoggerMiddleware);
-
     this.pool = new pg.Pool({
       user: config.dbUser,
       host: config.dbHost,
@@ -40,9 +47,13 @@ export class App {
       password: config.dbPasswrd,
       max: config.dbMax,
     });
-    this.routes.push(new APIRoute(this.app, config, this.pool));
-    this.routes.push(new FileRoute(this.app, config, this.pool, plugins));
-    this.routes.push(new TagRoute(this.app, config, this.pool));
+    pluginManagerPromise.then(() => {
+      this.routes.push(new APIRoute(this.app, config, this.pool));
+      this.routes.push(
+        new FileRoute(this.app, config, this.pool, pluginManager)
+      );
+      this.routes.push(new TagRoute(this.app, config, this.pool));
+    });
     this.app.use(errorAuth0Middleware);
     this.app.use(unmatchedRoutesMiddleware);
     this.app.use(BadJsonMiddleware);

@@ -6,6 +6,7 @@ import { FileController } from '@src/controllers';
 import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
 import { UserRepository } from '@src/data/userRepository';
 import { Config } from '@src/entities/config';
+import { iPluginManager } from '@src/interfaces/iPluginManager';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 
 import { BaseRoute } from './baseConfig';
@@ -16,15 +17,15 @@ export class FileRoute extends BaseRoute {
     app: express.Application,
     config: Config,
     databasePool: pg.Pool,
-    plugins?: Promise<Map<string, any>>
+    pluginManager?: iPluginManager
   ) {
-    super(app, 'FileRoute', config, databasePool, plugins);
+    super(app, 'FileRoute', config, databasePool, pluginManager);
   }
   configureRoutes() {
     const controller: FileController = new FileController(
       this.config,
       this.databasePool,
-      this.plugins
+      this.pluginManager
     );
 
     const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/files`;

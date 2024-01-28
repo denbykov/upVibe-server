@@ -1,19 +1,20 @@
 import pg from 'pg';
 
 import { Config } from '@src/entities/config';
+import { iPluginManager } from '@src/interfaces/iPluginManager';
 
 class BaseController {
   public config: Config;
   public databasePool: pg.Pool;
-  public plugins?: Promise<Map<string, any>>;
+  public pluginManager?: iPluginManager;
   constructor(
     config: Config,
     databasePool: pg.Pool,
-    plugins?: Promise<Map<string, any>>
+    pluginManager?: iPluginManager
   ) {
     this.config = config;
     this.databasePool = databasePool;
-    this.plugins = plugins;
+    this.pluginManager = pluginManager;
   }
 }
 

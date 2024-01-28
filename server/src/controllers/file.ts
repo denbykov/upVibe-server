@@ -7,22 +7,24 @@ import { FileRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
+import { iPluginManager } from '@src/interfaces/iPluginManager';
+import PluginManager from '@src/pluginManager';
 import { dataLogger } from '@src/utils/server/logger';
 
 import { BaseController } from './base';
 
-// TODO: add plugin manager
 class FileController extends BaseController {
-  private filePlugin: Promise<iFilePlugin>;
+  private filePlugin: iFilePlugin;
   constructor(
     config: Config,
     databasePool: pg.Pool,
-    plugins?: Promise<Map<string, any>>
+    pluginManager?: iPluginManager
   ) {
-    super(config, databasePool, plugins);
-    this.filePlugin = this.plugins!.then(
-      (plugins) => new (plugins.get('FilePlugin') as any)(config, dataLogger)
-    );
+    super(config, databasePool, pluginManager);
+    this.filePlugin = pluginManager!.getPlugin(
+      PluginManager.PluginType.FilePlugin
+    ) as iFilePlugin;
+    console.log(this.filePlugin);
   }
 
   // public getFiles = async (req: Express.Request, res: Express.Response) => {
