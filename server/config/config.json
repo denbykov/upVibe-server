@@ -6,22 +6,19 @@
     "use_https": true,
     "https_key": "config/ssl/privatekey.pem",
     "https_cert": "config/ssl/certificate.pem",
-    "path_storage": "/opt/app/storage"
+    "path_storage": "//usr/src/app/storage",
+    "plugins_location": "/usr/src/app/plugins"
   },
   "API": {
     "uri": "up-vibe",
-    "version": "v1",
-    "access_token_secret": "1234-5678-9012-3456",
-    "refresh_token_secret": "1234-5678-9012-3456",
-    "access_token_secret_expires": "1h",
-    "refresh_token_secret_expires": "1d"
+    "version": "v1"
   },
   "AUTH0": {
     "audience": "volodymyr-test-null",
     "domain": "up-vibe.eu.auth0.com"
   },
   "DB": {
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432,
     "user": "admin",
     "password": "admin",
@@ -29,11 +26,9 @@
     "max": 5
   },
   "RABBITMQ": {
-    "host": "localhost",
+    "host": "rabbitmq",
     "port": 5672,
     "user": "admin",
-    "password": "admin",
-    "downloading_youtube_queue": "downloading/youtube",
-    "tagging_youtube_native_queue": "tagging/youtube-native"
+    "password": "admin"
   }
 }
