@@ -12,14 +12,16 @@ class Source {
 }
 
 export class FileSource extends Source {
-  public imagePath: string;
-  constructor(id: number, description: string, imagePath: string) {
+  public url: string;
+  public logoPath: string;
+  constructor(id: number, url: string, description: string, logoPath: string) {
     super(id, description);
-    this.imagePath = imagePath;
+    this.url = url;
+    this.logoPath = logoPath;
   }
 
   public static fromJSON(json: JSON.JSONObject): FileSource {
-    return new FileSource(json.id, json.description, json.image_path);
+    return new FileSource(json.id, json.url, json.description, json.image_path);
   }
 }
 

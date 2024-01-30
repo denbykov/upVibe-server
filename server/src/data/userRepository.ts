@@ -2,6 +2,7 @@ import pg from 'pg';
 
 import { User } from '@src/entities/user';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
+import { dataLogger } from '@src/utils/server/logger';
 
 export class UserRepository implements iUserDatabase {
   public pool: pg.Pool;
@@ -11,19 +12,31 @@ export class UserRepository implements iUserDatabase {
 
   public async getUserBySub(sub: string): Promise<User | null> {
     const client = await this.pool.connect();
-    const result = await client.query(
-      `SELECT * FROM users WHERE sub = '${sub}'`
-    );
-    client.release();
-    return result.rows[0];
+    try {
+      const result = await client.query(
+        `SELECT * FROM users WHERE sub = '${sub}'`
+      );
+      return User.fromJSON(result.rows[0]);
+    } catch (err) {
+      dataLogger.error(`UserRepository.getUserBySub: ${err}`);
+    } finally {
+      client.release();
+    }
+    return null;
   }
 
-  public async insertUser(user: User): Promise<User> {
+  public async insertUser(user: User): Promise<User | null> {
     const client = await this.pool.connect();
-    const result = await client.query(
-      `INSERT INTO users (sub, name) VALUES ('${user.sub}', '${user.name}') RETURNING *`
-    );
-    client.release();
-    return result.rows[0];
+    try {
+      const result = await client.query(
+        `INSERT INTO users (sub, name) VALUES ('${user.sub}', '${user.name}') RETURNING *`
+      );
+      return User.fromJSON(result.rows[0]);
+    } catch (err) {
+      dataLogger.error(`UserRepository.insertUser: ${err}`);
+    } finally {
+      client.release();
+    }
+    return null;
   }
 }

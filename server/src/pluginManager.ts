@@ -20,7 +20,9 @@ class PluginManager implements iPluginManager {
     this.dataLogger.info('PluginManager instance created');
   }
 
-  public registerPlugin = async (plugins: Map<string, any>): Promise<void> => {
+  public registerPlugin = async (
+    plugins: Map<string, iPlugin>
+  ): Promise<void> => {
     const pluginsMap = await plugins;
     await pluginsMap.forEach(async (plugin, name) => {
       await this.plugins.set(name as PluginType, plugin as iPlugin);
@@ -37,4 +39,4 @@ class PluginManager implements iPluginManager {
   };
 }
 
-export default PluginManager;
+export { PluginManager };

@@ -9,10 +9,14 @@ const userManagementMiddleware = (
 ) => {
   return async (request: Request, response: Response, next: NextFunction) => {
     const rawToken = request.headers.authorization?.split(' ')[1].split('.')[1];
-    const token = JSON.parse(
+    const token: JSON.JSONObject = JSON.parse(
       Buffer.from(rawToken!, 'base64').toString('ascii')
     );
-    const dbUser = await worker.handleAuthorization(token, permissions);
+    const dbUser = await worker.handleAuthorization(
+      rawToken!,
+      token,
+      permissions
+    );
     if (!dbUser) {
       const message = new ServerResponse(
         ServerResponse.Code.Forbidden,

@@ -1,23 +1,14 @@
 import { UUID } from 'crypto';
 
+import { FileSource } from './source';
 import { Status } from './status';
 
 export class File {
   public id: number;
   public path: UUID;
-  public source: {
-    id: number;
-    url: string;
-    description: string;
-    logoPath: string;
-  };
+  public source: FileSource;
   public status: Status;
-  constructor(
-    id: number,
-    path: UUID,
-    source: { id: number; url: string; description: string; logoPath: string },
-    status: Status
-  ) {
+  constructor(id: number, path: UUID, source: FileSource, status: Status) {
     this.id = id;
     this.path = path;
     this.source = source;

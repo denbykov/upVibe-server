@@ -5,6 +5,7 @@ import https from 'https';
 import pg from 'pg';
 
 import { Config } from '@src/entities/config';
+import { ConfigPlugin } from '@src/entities/configPlugin';
 import {
   BadJsonMiddleware,
   errorAuth0Middleware,
@@ -16,18 +17,29 @@ import { pluginLoader } from '@src/utils/plugins/pluginLoader';
 import { dataLogger, serverLogger } from '@src/utils/server/logger';
 import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
 
-import PluginManager from './pluginManager';
+import { PluginManager } from './pluginManager';
 
 const env = dotenv.config({ path: 'config/.env' }).parsed || {};
 const configJson = parseConfigJSON(
   JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
 );
 const config = new Config(env, configJson);
+
+const configPluginJson = parseConfigJSON(
+  JSON.parse(fs.readFileSync('config/plugins.json', 'utf-8'))
+);
+const configPlugin = new ConfigPlugin(env, configPluginJson);
+
 const pluginManager = new PluginManager(dataLogger);
 
 const pluginManagerPromise = (async () => {
   await pluginManager.registerPlugin(
-    await pluginLoader(config.appPluginsLocation, dataLogger)
+    await pluginLoader(
+      config.appPluginsLocation,
+      configPlugin,
+      serverLogger,
+      dataLogger
+    )
   );
 })();
 
@@ -53,11 +65,12 @@ export class App {
         new FileRoute(this.app, config, this.pool, pluginManager)
       );
       this.routes.push(new TagRoute(this.app, config, this.pool));
+      this.app.use(errorAuth0Middleware);
+      this.app.use(unmatchedRoutesMiddleware);
+      this.app.use(BadJsonMiddleware);
     });
-    this.app.use(errorAuth0Middleware);
-    this.app.use(unmatchedRoutesMiddleware);
-    this.app.use(BadJsonMiddleware);
   }
+
   public getApp(): Express {
     return this.app;
   }

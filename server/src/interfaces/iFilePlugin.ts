@@ -1,18 +1,5 @@
-import { UUID } from 'crypto';
-import { Logger } from 'log4js';
-
-import { Config } from '@src/entities/config';
+import { File } from '@src/entities/file';
 
 export abstract class iFilePlugin {
-  protected config: Config;
-  protected logger: Logger;
-  constructor(config: Config, logger: Logger) {
-    this.config = config;
-    this.logger = logger;
-  }
-  public abstract downloadFile: (
-    fileId: number,
-    sourceUrl: string,
-    destinationPath: UUID
-  ) => Promise<void>;
+  public abstract downloadFile: (file: File) => Promise<void>;
 }
