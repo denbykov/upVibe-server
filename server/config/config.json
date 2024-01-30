@@ -18,17 +18,11 @@
     "domain": "up-vibe.eu.auth0.com"
   },
   "DB": {
-    "host": "postgres",
+    "host": "postgresql",
     "port": 5432,
     "user": "admin",
     "password": "admin",
     "name": "up-vibe-dev",
     "max": 5
-  },
-  "RABBITMQ": {
-    "host": "rabbitmq",
-    "port": 5672,
-    "user": "admin",
-    "password": "admin"
   }
 }
