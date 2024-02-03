@@ -10,7 +10,7 @@ import { iPluginManager } from '@src/interfaces/iPluginManager';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 
 import { BaseRoute } from './baseConfig';
-import { GENERAL } from './perrmisions';
+import { GENERAL } from './permissions';
 
 export class FileRoute extends BaseRoute {
   constructor(
@@ -39,6 +39,34 @@ export class FileRoute extends BaseRoute {
       auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),
       controller.downloadFileBySource
+    );
+
+    this.app.get(
+      `${apiURIFiles}`,
+      auth0Middleware(this.config),
+      userManagementMiddleware([GENERAL], userWorker),
+      controller.getFilesByUser
+    );
+
+    this.app.get(
+      `${apiURIFiles}/:fileId/download`,
+      auth0Middleware(this.config),
+      userManagementMiddleware([GENERAL], userWorker),
+      controller.getFileById
+    );
+
+    this.app.get(
+      `${apiURIFiles}/sources`,
+      auth0Middleware(this.config),
+      userManagementMiddleware([GENERAL], userWorker),
+      controller.getFileSources
+    );
+
+    this.app.get(
+      `${apiURIFiles}/sources/:sourceId/picture`,
+      auth0Middleware(this.config),
+      userManagementMiddleware([], userWorker),
+      controller.getPictureBySourceId
     );
 
     return this.app;

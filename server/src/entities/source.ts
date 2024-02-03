@@ -5,10 +5,6 @@ class Source {
     this.id = id;
     this.description = description;
   }
-
-  public static fromJSON(json: JSON.JSONObject): Source {
-    return new Source(json.id, json.description);
-  }
 }
 
 export class FileSource extends Source {
@@ -21,7 +17,21 @@ export class FileSource extends Source {
   }
 
   public static fromJSON(json: JSON.JSONObject): FileSource {
-    return new FileSource(json.id, json.url, json.description, json.image_path);
+    return new FileSource(
+      json.file_sources_id,
+      json.file_sources_url,
+      json.file_sources_description,
+      json.file_sources_logo_path
+    );
+  }
+
+  public toJSON(): JSON.JSONObject {
+    return {
+      id: this.id,
+      url: this.url,
+      description: this.description,
+      logoPath: this.logoPath,
+    };
   }
 }
 
@@ -31,6 +41,6 @@ export class TagSource extends Source {
   }
 
   public static fromJSON(json: JSON.JSONObject): TagSource {
-    return new TagSource(json.id, json.description);
+    return new TagSource(json.tag_sources_id, json.tag_sources_description);
   }
 }

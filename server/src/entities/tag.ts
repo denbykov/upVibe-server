@@ -1,3 +1,6 @@
+import { TagSource } from './source';
+import { Status } from './status';
+
 export class Tag {
   public id: number;
   public fileId: number;
@@ -7,8 +10,8 @@ export class Tag {
   public picturePath: string;
   public year: Date;
   public trackNumber: number;
-  public sourceType: { id: number; description: string };
-  public status: { status: string; description: string };
+  public sourceType: TagSource;
+  public status: Status;
   constructor(
     id: number,
     fileId: number,
@@ -18,8 +21,8 @@ export class Tag {
     picturePath: string,
     year: Date,
     trackNumber: number,
-    sourceType: { id: number; description: string },
-    status: { status: string; description: string }
+    sourceType: TagSource,
+    status: Status
   ) {
     this.id = id;
     this.fileId = fileId;
@@ -34,16 +37,31 @@ export class Tag {
   }
   public static fromJSON(json: JSON.JSONObject): Tag {
     return new Tag(
-      json.id,
-      json.file_id,
-      json.title,
-      json.artist,
-      json.album,
-      json.picture_path,
-      json.year,
-      json.track_number,
-      { id: json.source_type_id, description: json.source_type_description },
-      { status: json.status, description: json.status_description }
+      json.tag_id,
+      json.tag_file_id,
+      json.tag_title,
+      json.tag_artist,
+      json.tag_album,
+      json.tag_picture_path,
+      json.tag_year,
+      json.tag_track_number,
+      TagSource.fromJSON(json),
+      json.tag_status
     );
+  }
+
+  public toJSON(): JSON.JSONObject {
+    return {
+      id: this.id,
+      fileId: this.fileId,
+      title: this.title,
+      artist: this.artist,
+      album: this.album,
+      picturePath: this.picturePath,
+      year: this.year,
+      trackNumber: this.trackNumber,
+      sourceType: this.sourceType,
+      status: this.status,
+    };
   }
 }

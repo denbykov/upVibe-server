@@ -17,15 +17,19 @@ export class File {
 
   public static fromJSON = (json: JSON.JSONObject): File => {
     return new File(
-      json.id,
-      json.path,
-      {
-        id: json.source_id,
-        url: json.source_url,
-        description: json.source_description,
-        logoPath: json.source_logo_path,
-      },
-      json.status
+      json.file_id,
+      json.file_path,
+      FileSource.fromJSON(json),
+      json.file_status
     );
+  };
+
+  public toJSON = (): JSON.JSONObject => {
+    return {
+      id: this.id,
+      path: this.path,
+      source: this.source.toJSON(),
+      status: this.status,
+    };
   };
 }

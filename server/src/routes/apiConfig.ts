@@ -9,7 +9,7 @@ import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 
 import { BaseRoute } from './baseConfig';
-import { GENERAL } from './perrmisions';
+import { GENERAL } from './permissions';
 
 export class APIRoute extends BaseRoute {
   constructor(app: express.Application, config: Config, databasePool: pg.Pool) {
