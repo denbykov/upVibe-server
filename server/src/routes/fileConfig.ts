@@ -37,14 +37,14 @@ export class FileRoute extends BaseRoute {
     this.app.post(
       `${apiURIFiles}`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      userManagementMiddleware([], userWorker),
       controller.downloadFileBySource
     );
 
     this.app.get(
       `${apiURIFiles}`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      userManagementMiddleware([], userWorker),
       controller.getFilesByUser
     );
 
@@ -58,7 +58,7 @@ export class FileRoute extends BaseRoute {
     this.app.get(
       `${apiURIFiles}/sources`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      userManagementMiddleware([], userWorker),
       controller.getFileSources
     );
 

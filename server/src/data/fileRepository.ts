@@ -2,23 +2,15 @@ import pg from 'pg';
 
 import { File } from '@src/entities/file';
 import { Response } from '@src/entities/response';
-import { FileSource } from '@src/entities/source';
+import { FileSource, TagSource } from '@src/entities/source';
+import { Status } from '@src/entities/status';
 import { Tag } from '@src/entities/tag';
-import { UnionFileTag } from '@src/entities/unionFileTag';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
+import { displayFile, displayFiles } from '@src/utils/server/displayFiles';
 import { dataLogger } from '@src/utils/server/logger';
 
-import {
-  GET_FILES_BY_USER,
-  GET_FILE_BY_ID,
-  GET_FILE_BY_URL,
-  GET_FILE_SOURCE,
-  GET_FILE_SOURCES,
-  GET_PICTURE_BY_SOURCE_ID,
-  INSERT_FILE_RECORD,
-  INSERT_USER_FILE_RECORD,
-} from './queries';
+import { GET_FILES_BY_USER_ID, GET_FILE_BY_ID } from './queries';
 
 export class FileRepository implements iFileDatabase {
   public pool: pg.Pool;
@@ -29,8 +21,9 @@ export class FileRepository implements iFileDatabase {
   public getFileByUrl = async (url: string): Promise<File | null> => {
     const client = await this.pool.connect();
     try {
-      dataLogger.debug(GET_FILE_BY_URL);
-      const queryExecution = await client.query(GET_FILE_BY_URL, [url]);
+      const query = 'SELECT * FROM files WHERE source_url = $1';
+      dataLogger.debug(query);
+      const queryExecution = await client.query(query, [url]);
       if (queryExecution.rows.length > 0) {
         return File.fromJSON(queryExecution.rows[0]);
       } else {
@@ -39,40 +32,52 @@ export class FileRepository implements iFileDatabase {
     } catch (err) {
       dataLogger.error(`FilesRepository.getFileByUrl: ${err}`);
       return null;
+    } finally {
+      dataLogger.debug('FilesRepository.getFileByUrl: client.release()');
+      client.release();
     }
   };
 
   public getFilesByUser = async (
     user: User
-  ): Promise<UnionFileTag[] | null> => {
+  ): Promise<Array<
+    Record<
+      string,
+      | number
+      | string
+      | Record<string, number | string>
+      | Array<Record<string, number | string>>
+    >
+  > | null> => {
     const client = await this.pool.connect();
     try {
-      dataLogger.debug(GET_FILES_BY_USER);
-      const queryExecution = await client.query(GET_FILES_BY_USER, [user.id]);
-      const unionFileTag: UnionFileTag[] = [];
-      queryExecution.rows.forEach((row) => {
-        unionFileTag.push(
-          new UnionFileTag(File.fromJSON(row), Tag.fromJSON(row))
-        );
-      });
-      return unionFileTag;
+      dataLogger.debug(GET_FILES_BY_USER_ID);
+      const query = await client.query(GET_FILES_BY_USER_ID, [user.id]);
+      return displayFiles(query);
     } catch (err) {
       dataLogger.error(`FilesRepository.getFilesByUser: ${err}`);
       return null;
     } finally {
+      dataLogger.trace('FilesRepository.getFilesByUser: client.release()');
       client.release();
     }
   };
 
-  public getFileById = async (fileId: string): Promise<UnionFileTag | null> => {
+  public getFileById = async (
+    fileId: string
+  ): Promise<Record<
+    string,
+    | string
+    | number
+    | Record<string, string | number>
+    | Array<Record<string, string | number>>
+  > | null> => {
     const client = await this.pool.connect();
     try {
       dataLogger.debug(GET_FILE_BY_ID);
+      dataLogger.debug('FileRepository.getFileById()' + fileId);
       const queryExecution = await client.query(GET_FILE_BY_ID, [fileId]);
-      return new UnionFileTag(
-        File.fromJSON(queryExecution.rows[0]),
-        Tag.fromJSON(queryExecution.rows[0])
-      );
+      return displayFile(queryExecution);
     } catch (err) {
       dataLogger.error(`FilesRepository.getFileById: ${err}`);
       return null;
@@ -84,13 +89,14 @@ export class FileRepository implements iFileDatabase {
   public getFileSources = async (): Promise<FileSource[] | null> => {
     const client = await this.pool.connect();
     try {
-      dataLogger.debug(GET_FILE_SOURCES);
-      const queryExecution = await client.query(GET_FILE_SOURCES);
-      const sources: FileSource[] = [];
-      queryExecution.rows.forEach((row) => {
-        sources.push(FileSource.fromJSON(row));
-      });
-      return sources;
+      const query =
+        'SELECT id as file_sources_id, ' +
+        'description as file_sources_description, ' +
+        'logo_path as file_sources_logo_path ' +
+        'FROM file_sources';
+      dataLogger.debug(query);
+      const queryExecution = await client.query(query);
+      return queryExecution.rows.map((row) => FileSource.fromJSON(row));
     } catch (err) {
       dataLogger.error(`FilesRepository.getSources: ${err}`);
       return null;
@@ -99,27 +105,57 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getFileSource = async (description: string): Promise<FileSource> => {
-    const client = await this.pool.connect();
+  public getFileSource = async (
+    description: string,
+    client: pg.PoolClient
+  ): Promise<FileSource> => {
     try {
-      dataLogger.debug(GET_FILE_SOURCE);
-      const queryExecution = await client.query(GET_FILE_SOURCE, [description]);
+      const query =
+        'SELECT id as file_sources_id, ' +
+        'description as file_sources_description, ' +
+        'logo_path as file_sources_logo_path ' +
+        'FROM file_sources ' +
+        'WHERE description = $1';
+      dataLogger.debug(query);
+      const queryExecution = await client.query(query, [description]);
       return FileSource.fromJSON(queryExecution.rows[0]);
     } catch (err) {
       dataLogger.error(`FilesRepository.getFileSourceId: ${err}`);
       throw new Error('File source not found');
-    } finally {
-      client.release();
     }
   };
 
-  public insertFileRecord = async (
-    file: File,
-    sourceId: number
-  ): Promise<File> => {
-    const client = await this.pool.connect();
+  public getTagSources = async (
+    description: string,
+    client: pg.PoolClient
+  ): Promise<TagSource> => {
     try {
-      const queryExecution = await client.query(INSERT_FILE_RECORD, [
+      const query =
+        'SELECT tag_sources.id as tag_sources_id, ' +
+        'tag_sources.description as tag_sources_description, ' +
+        'tag_sources.logo_path as tag_sources_logo_path ' +
+        'FROM tag_sources ' +
+        'WHERE tag_sources.description = $1';
+      const queryExecution = await client.query(query, [description]);
+      return TagSource.fromJSON(queryExecution.rows[0]);
+    } catch (err) {
+      dataLogger.error(`FilesRepository.getFileSourceId: ${err}`);
+      throw new Error('File source not found');
+    }
+  };
+
+  public insertFile = async (
+    file: File,
+    sourceId: number,
+    client: pg.PoolClient
+  ): Promise<File> => {
+    try {
+      const query =
+        'INSERT INTO files (path, source_url, source_id, status) ' +
+        'VALUES ($1, $2, $3, $4) RETURNING id as file_id, ' +
+        'path as file_path, source_url as file_source_url, ' +
+        'source_id as file_source_id, status as file_status';
+      const queryExecution = await client.query(query, [
         file.path,
         file.source.url,
         sourceId,
@@ -129,27 +165,66 @@ export class FileRepository implements iFileDatabase {
     } catch (err) {
       dataLogger.error(`FilesRepository.insertFileRecord: ${err}`);
       throw new Error('File not inserted');
-    } finally {
-      client.release();
     }
   };
 
-  public insertUserFileRecord = async (
+  public insertFileTagMapping = async (
+    fileId: number,
     userId: number,
-    fileId: number
-  ): Promise<void | null> => {
-    const client = await this.pool.connect();
+    sourceId: number,
+    client: pg.PoolClient
+  ): Promise<void> => {
     try {
-      dataLogger.debug(INSERT_USER_FILE_RECORD);
-      await client.query(INSERT_USER_FILE_RECORD, [userId, fileId]);
+      const query =
+        'INSERT INTO tag_mappings (file_id, user_id, title, ' +
+        'artist, album, picture, year, track_number) VALUES ' +
+        '($1, $2, $3, $3, $3, $3, $3, $3)';
+      await client.query(query, [fileId, userId, sourceId]);
+    } catch (err) {
+      dataLogger.error(`FilesRepository.insertFileTagMapping: ${err}`);
+      throw new Error('File tag not inserted');
+    }
+  };
+
+  public insertFileTag = async (
+    tag: Tag,
+    client: pg.PoolClient
+  ): Promise<void> => {
+    try {
+      const query =
+        'INSERT INTO tags (file_id, title, artist, album, picture_path, year, track_number, source, status) ' +
+        'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+      await client.query(query, [
+        tag.fileId,
+        tag.title,
+        tag.artist,
+        tag.album,
+        tag.picturePath,
+        tag.year,
+        tag.trackNumber,
+        tag.sourceType.id,
+        tag.status,
+      ]);
+    } catch (err) {
+      dataLogger.error(`FilesRepository.insertFileTagRecord: ${err}`);
+      throw new Error('File tag not inserted');
+    }
+  };
+
+  public insertUserFile = async (
+    userId: number,
+    fileId: number,
+    client: pg.PoolClient
+  ): Promise<void> => {
+    try {
+      const query = 'INSERT INTO user_files (user_id, file_id) VALUES ($1, $2)';
+      await client.query(query, [userId, fileId]);
     } catch (err) {
       dataLogger.error(`FilesRepository.insertUserFileRecord: ${err}`);
-    } finally {
-      client.release();
     }
   };
 
-  public insertTransactionFileRecord = async (
+  public insertTransactionFile = async (
     file: File,
     user: User,
     downloadFileBySource: (file: File) => Promise<Response>
@@ -158,22 +233,49 @@ export class FileRepository implements iFileDatabase {
     try {
       await client.query('BEGIN');
       try {
-        const source = await this.getFileSource(file.source.description);
-        const sourceId = source.id;
+        const source = await this.getFileSource(
+          file.source.description,
+          client
+        );
+        const fileSourceId = source.id;
         const sourceLogoPath = source.logoPath;
-        const insertFile = await this.insertFileRecord(file, sourceId);
+        const insertFile = await this.insertFile(file, fileSourceId, client);
         const newFile = new File(
           insertFile.id,
           insertFile.path,
           new FileSource(
-            sourceId,
+            fileSourceId,
             file.source.url,
             file.source.description,
             sourceLogoPath
           ),
           insertFile.status
         );
-        await this.insertUserFileRecord(user.id, newFile.id);
+        await this.insertUserFile(user.id, newFile.id, client);
+        const tagSourceId = (
+          await this.getTagSources(newFile.source.description, client)
+        ).id;
+        await this.insertFileTag(
+          new Tag(
+            0,
+            newFile.id,
+            'CR',
+            'CR',
+            'CR',
+            'CR',
+            0,
+            0,
+            new TagSource(tagSourceId, 'CR'),
+            Status.Created
+          ),
+          client
+        );
+        await this.insertFileTagMapping(
+          newFile.id,
+          user.id,
+          tagSourceId,
+          client
+        );
         const response = await downloadFileBySource(newFile);
         await client.query('COMMIT');
         return response;
@@ -194,6 +296,7 @@ export class FileRepository implements iFileDatabase {
         -1
       );
     } finally {
+      dataLogger.trace('FilesRepository.insertFileRecord: client.release()');
       client.release();
     }
   };
@@ -203,11 +306,10 @@ export class FileRepository implements iFileDatabase {
   ): Promise<FileSource | null> => {
     const client = await this.pool.connect();
     try {
-      dataLogger.debug(GET_PICTURE_BY_SOURCE_ID);
-      const queryExecution = await client.query(GET_PICTURE_BY_SOURCE_ID, [
-        sourceId,
-      ]);
-      return FileSource.fromJSON(queryExecution.rows[0]);
+      const query =
+        'SELECT logo_path as file_sources_logo_path FROM file_sources WHERE id = $1';
+      const queryExecution = await client.query(query, [sourceId]);
+      return FileSource.fromJSON(queryExecution.rows[0]) || null;
     } catch (err) {
       dataLogger.error(`FilesRepository.getFileSourceById: ${err}`);
       return null;

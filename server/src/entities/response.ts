@@ -7,7 +7,7 @@ enum Code {
   InternalServerError = 500,
 }
 
-export class Response {
+class Response {
   public static Code = Code;
   public httpCode: Code;
   public payload: string | object;
@@ -26,3 +26,5 @@ export class Response {
     }
   }
 }
+
+export { Response, Code as ResponseCode };

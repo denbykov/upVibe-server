@@ -1,6 +1,6 @@
 const sources: Record<string, string> = {
-  'www.youtube.com': 'youtube-native',
-  'youtu.be': 'youtube-native',
+  'www.youtube.com': 'youtube',
+  'youtu.be': 'youtube',
 };
 
 const getAuthoritySource = (reference: string) => {

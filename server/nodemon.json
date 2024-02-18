@@ -3,6 +3,6 @@
   "ignore": ["node_modules", "dist", "src/**/*.spec.ts"],
   "watch": ["src/**/*.ts"],
   "execMap": {
-    "ts": "npx tsc -p tsconfig.dev.json && npx tsc-alias -p tsconfig.dev.json && node --inspect=0.0.0.0:9229 buildDebug/server.js"
+    "ts": "npx tsc -p tsconfig.dev.json && npx tsc-alias -p tsconfig.dev.json && node --trace-warnings --inspect=0.0.0.0:9229 buildDebug/server.js"
   }
 }

@@ -25,12 +25,12 @@ export class FileSource extends Source {
     );
   }
 
-  public toJSON(): JSON.JSONObject {
+  public static toJSON(source: FileSource): FileSource {
     return {
-      id: this.id,
-      url: this.url,
-      description: this.description,
-      logoPath: this.logoPath,
+      id: source.id,
+      url: source.url,
+      description: source.description,
+      logoPath: source.logoPath,
     };
   }
 }

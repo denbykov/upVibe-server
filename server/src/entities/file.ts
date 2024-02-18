@@ -23,13 +23,4 @@ export class File {
       json.file_status
     );
   };
-
-  public toJSON = (): JSON.JSONObject => {
-    return {
-      id: this.id,
-      path: this.path,
-      source: this.source.toJSON(),
-      status: this.status,
-    };
-  };
 }

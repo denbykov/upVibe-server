@@ -14,6 +14,8 @@ import { getCorrectUrl } from '@src/utils/server/getCorrectUrl';
 import { getAuthoritySource } from '@src/utils/server/getReferenceSource';
 import { dataLogger } from '@src/utils/server/logger';
 
+import { ErrorManager } from './errorManager';
+
 export class FileWorker {
   private db: iFileDatabase;
   private filePlugin: iFilePlugin;
@@ -41,7 +43,7 @@ export class FileWorker {
         new FileSource(0, sourceUrlCorrected, description, ''),
         Status.Created
       );
-      const responseFileRecord = await this.db.insertTransactionFileRecord(
+      const responseFileRecord = await this.db.insertTransactionFile(
         newFile,
         user,
         this.downloadFileBySource
@@ -59,11 +61,10 @@ export class FileWorker {
       await this.tagPlugin.tagFile(file);
       return new Response(Response.Code.Ok, `File downloaded`);
     } catch (err) {
-      dataLogger.warn(`FileWorker.downloadFileBySource: ${err}`);
-      return new Response(
-        Response.Code.InternalServerError,
+      return ErrorManager.responseError(
+        `FileWorker.downloadFileBySource: ${err}`,
         'Server error',
-        -1
+        Response.Code.InternalServerError
       );
     }
   };
@@ -71,20 +72,16 @@ export class FileWorker {
   public getFilesByUser = async (user: User) => {
     dataLogger.trace('FileWorker.getFilesByUser()');
     try {
-      const unionFileTag = await this.db.getFilesByUser(user);
-      if (!unionFileTag) {
+      const userFiles = await this.db.getFilesByUser(user);
+      if (!userFiles) {
         return new Response(Response.Code.Ok, 'No files', 0);
       }
-      const convertedArrayToJSONObjects = unionFileTag.map((file) => {
-        return file.toJSON();
-      });
-      return new Response(Response.Code.Ok, convertedArrayToJSONObjects, 0);
+      return new Response(Response.Code.Ok, userFiles, 0);
     } catch (err) {
-      dataLogger.warn(`FileWorker.getFilesByUser: ${err}`);
-      return new Response(
-        Response.Code.InternalServerError,
+      return ErrorManager.responseError(
+        `FileWorker.getFilesByUser: ${err}`,
         'Server error',
-        -1
+        Response.Code.InternalServerError
       );
     }
   };
@@ -96,13 +93,12 @@ export class FileWorker {
       if (!file) {
         return new Response(Response.Code.NotFound, 'File not found', -1);
       }
-      return new Response(Response.Code.Ok, file.toJSON(), 0);
+      return new Response(Response.Code.Ok, file, 0);
     } catch (err) {
-      dataLogger.warn(`FileWorker.getFileById: ${err}`);
-      return new Response(
-        Response.Code.InternalServerError,
+      return ErrorManager.responseError(
+        `FileWorker.getFileById: ${err}`,
         'Server error',
-        -1
+        Response.Code.InternalServerError
       );
     }
   };
@@ -114,16 +110,12 @@ export class FileWorker {
       if (!sources) {
         return new Response(Response.Code.Ok, 'No sources', 0);
       }
-      const convertedArrayToJSONObjects = sources.map((source) => {
-        return source.toJSON();
-      });
-      return new Response(Response.Code.Ok, convertedArrayToJSONObjects, 0);
+      return new Response(Response.Code.Ok, sources, 0);
     } catch (err) {
-      dataLogger.warn(`FileWorker.getSources: ${err}`);
-      return new Response(
-        Response.Code.InternalServerError,
+      return ErrorManager.responseError(
+        `FileWorker.getFileSources: ${err}`,
         'Server error',
-        -1
+        Response.Code.InternalServerError
       );
     }
   };
@@ -135,13 +127,12 @@ export class FileWorker {
       if (!source) {
         return new Response(Response.Code.NotFound, 'Source not found', -1);
       }
-      return new Response(Response.Code.Ok, source.toJSON(), 0);
+      return new Response(Response.Code.Ok, source, 0);
     } catch (err) {
-      dataLogger.warn(`FileWorker.getPictureBySourceId: ${err}`);
-      return new Response(
-        Response.Code.InternalServerError,
+      return ErrorManager.responseError(
+        `FileWorker.getPictureBySourceId: ${err}`,
         'Server error',
-        -1
+        Response.Code.InternalServerError
       );
     }
   };

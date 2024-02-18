@@ -26,8 +26,8 @@ class FileController extends BaseController {
       new FileRepository(this.databasePool),
       this.pluginManager!
     );
-    const task = await fileWorker.manageFileDownload(url, user);
-    return res.status(task.httpCode).send(task.serialize());
+    const resultWorker = await fileWorker.manageFileDownload(url, user);
+    return res.status(resultWorker.httpCode).send(resultWorker.serialize());
   };
 
   public getFilesByUser = async (
@@ -39,8 +39,8 @@ class FileController extends BaseController {
       new FileRepository(this.databasePool),
       this.pluginManager!
     );
-    const task = await fileWorker.getFilesByUser(user);
-    return res.status(task.httpCode).send(task.serialize());
+    const resultWorker = await fileWorker.getFilesByUser(user);
+    return res.status(resultWorker.httpCode).send(resultWorker.serialize());
   };
 
   public getFileById = async (req: Express.Request, res: Express.Response) => {
@@ -49,8 +49,8 @@ class FileController extends BaseController {
       new FileRepository(this.databasePool),
       this.pluginManager!
     );
-    const task = await fileWorker.getFileById(fileId);
-    return res.status(task.httpCode).send(task.serialize());
+    const resultWorker = await fileWorker.getFileById(fileId);
+    return res.status(resultWorker.httpCode).send(resultWorker.serialize());
   };
 
   public getFileSources = async (
@@ -61,8 +61,8 @@ class FileController extends BaseController {
       new FileRepository(this.databasePool),
       this.pluginManager!
     );
-    const task = await fileWorker.getFileSources();
-    return res.status(task.httpCode).send(task.serialize());
+    const resultWorker = await fileWorker.getFileSources();
+    return res.status(resultWorker.httpCode).send(resultWorker.serialize());
   };
 
   public getPictureBySourceId = async (
@@ -74,8 +74,8 @@ class FileController extends BaseController {
       new FileRepository(this.databasePool),
       this.pluginManager!
     );
-    const task = await fileWorker.getPictureBySourceId(sourceId);
-    return res.status(task.httpCode).send(task.serialize());
+    const resultWorker = await fileWorker.getPictureBySourceId(sourceId);
+    return res.status(resultWorker.httpCode).send(resultWorker.serialize());
   };
 }
 
