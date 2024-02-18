@@ -2,16 +2,16 @@ version: "3.8"
 
 services:
   postgresql:
-    image: ${POSTGRES_IMAGE}
+    image: postgres:15.3
     ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+      - 5432:5432
     expose:
-      - ${POSTGRES_PORT}
+      - 5432
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: up-vibe-dev
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "admin", "-d", "up-vibe-dev"]
       interval: 10s
@@ -22,11 +22,11 @@ services:
     container_name: postgresql
 
   liquibase:
-    image: ${LIQUIBASE_IMAGE}
+    image: liquibase/liquibase:4.23
     volumes:
-      - ${LIQUIBASE_VOLUME_CONFIG}:/liquibase/config/
-      - ${LIQUIBASE_VOLUME_CHANGESETS}:/liquibase/changesets/
-      - ${LIQUIBASE_VOLUME_PROPERTIES}:/liquibase/liquibase.properties
+      - ./scripts/db/config:/liquibase/config/
+      - ./scripts/db/changesets:/liquibase/changesets/
+      - ./scripts/db/liquibase.properties:/liquibase/liquibase.properties
     command: --defaultsFile=liquibase.properties update
     networks:
       - up-vibe-network
@@ -36,40 +36,40 @@ services:
         condition: service_healthy
 
   rabbitmq:
-    image: ${RABBITMQ_IMAGE}
+    image: rabbitmq:3.12.2-management
     ports:
-      - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
-      - ${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}
+      - 5672:5672
+      - 15672:15672
     expose:
-      - ${RABBITMQ_PORT}
-      - ${RABBITMQ_MANAGEMENT_PORT}
+      - 5672
+      - 15672
     restart: always
     environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
     networks:
       - up-vibe-network
     container_name: rabbitmq
 
   server:
     build:
-      context: ${SERVER_CONTEXT}
-      dockerfile: ${SERVER_DOCKERFILE_DEV}
+      context: ./server
+      dockerfile: ./Dockerfile.dev
     ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
-      - ${SERVER_INSPECT_PORT}:${SERVER_INSPECT_PORT}
+      - 3000:3000
+      - 9229:9229
     expose:
-      - ${SERVER_PORT}
-      - ${SERVER_INSPECT_PORT}
-    command: ${SERVER_COMMAND_RUN}
+      - 3000
+      - 9229
+    command: npm run dev:debug:docker
     container_name: server
     restart: always
     volumes:
-      - ${SERVER_VOLUME_LOGS}:/usr/src/app/logs
-      - ${SERVER_VOLUME_CONFIG}:/usr/src/app/config
-      - ${SERVER_VOLUME_STORAGE}:/usr/src/app/storage
+      - ./server/logs:/usr/src/app/logs
+      - ./server/config:/usr/src/app/config
+      - ./storage:/usr/src/app/storage
       - ${SERVER_VOLUME_PLUGINS}:/usr/src/app/plugins
-      - ${SERVER_VOLUME_SRC}:/usr/src/app/src
+      - ./server/src:/usr/src/app/src
     depends_on:
       postgresql:
         condition: service_healthy
@@ -81,13 +81,13 @@ services:
       - DEBUG="*"
       - NODE_ENV=development
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${SERVER_PORT}/up-vibe/v1/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:$3000/up-vibe/v1/api/health"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - up-vibe-network
-    user: ${SERVER_USER}
+    user: root
 
 networks:
   up-vibe-network:
