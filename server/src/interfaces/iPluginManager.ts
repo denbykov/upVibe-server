@@ -9,9 +9,10 @@ export type iPlugin = iFilePlugin | iTagPlugin;
 
 export abstract class iPluginManager {
   public static PluginType: PluginType;
-  public abstract registerPlugin: (
+  public abstract loadPlugins: () => Promise<Map<string, iPlugin>>;
+  public abstract registerPlugins: (
     plugins: Map<string, iPlugin>
   ) => Promise<void>;
   public abstract getPlugin: (type: PluginType) => iPlugin | undefined;
-  public abstract getPlugins: () => Map<PluginType, iPlugin>;
+  public abstract setUp: () => Promise<void>;
 }

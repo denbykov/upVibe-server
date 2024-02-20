@@ -1,33 +1,14 @@
 import pg from 'pg';
 
+import { MappingFile, MappingFiles } from '@src/dto/mappingFiles';
 import { File } from '@src/entities/file';
-import { Response } from '@src/entities/response';
 import { FileSource, TagSource } from '@src/entities/source';
-import { Tag } from '@src/entities/tag';
 import { User } from '@src/entities/user';
 
 export abstract class iFileDatabase {
   public abstract getFileByUrl: (url: string) => Promise<File | null>;
-  public abstract getFilesByUser: (
-    user: User
-  ) => Promise<Array<
-    Record<
-      string,
-      | number
-      | string
-      | Record<string, number | string>
-      | Array<Record<string, number | string>>
-    >
-  > | null>;
-  public abstract getFileById: (
-    fileId: string
-  ) => Promise<Record<
-    string,
-    | string
-    | number
-    | Record<string, string | number>
-    | Array<Record<string, string | number>>
-  > | null>;
+  public abstract getFilesByUser: (user: User) => Promise<MappingFiles>;
+  public abstract getFileById: (fileId: string) => Promise<MappingFile>;
   public abstract getFileSources: () => Promise<FileSource[] | null>;
   public abstract getPictureBySourceId: (
     sourceId: string
@@ -56,13 +37,8 @@ export abstract class iFileDatabase {
     fileId: number,
     client: pg.PoolClient
   ) => Promise<void>;
-  public abstract insertTransactionFile: (
+  public abstract insertFileTransaction: (
     file: File,
-    user: User,
-    downloadFileBySource: (file: File) => Promise<Response>
-  ) => Promise<Response>;
-  public abstract insertFileTag: (
-    tag: Tag,
-    client: pg.PoolClient
-  ) => Promise<void>;
+    user: User
+  ) => Promise<File>;
 }

@@ -26,7 +26,7 @@ class FileController extends BaseController {
       new FileRepository(this.databasePool),
       this.pluginManager!
     );
-    const resultWorker = await fileWorker.manageFileDownload(url, user);
+    const resultWorker = await fileWorker.downloadFile(url, user);
     return res.status(resultWorker.httpCode).send(resultWorker.serialize());
   };
 

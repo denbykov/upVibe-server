@@ -10,8 +10,6 @@ import { iFilePlugin } from '@src/interfaces/iFilePlugin';
 import { iPluginManager } from '@src/interfaces/iPluginManager';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 import { PluginManager } from '@src/pluginManager';
-import { getCorrectUrl } from '@src/utils/server/getCorrectUrl';
-import { getAuthoritySource } from '@src/utils/server/getReferenceSource';
 import { dataLogger } from '@src/utils/server/logger';
 
 import { ErrorManager } from './errorManager';
@@ -31,38 +29,41 @@ export class FileWorker {
     dataLogger.trace('FileWorker initialized');
   }
 
-  public manageFileDownload = async (sourceUrl: string, user: User) => {
-    dataLogger.trace('FileWorker.manageFileDownload()');
-    const description = getAuthoritySource(sourceUrl) || '';
-    const sourceUrlCorrected = getCorrectUrl(sourceUrl, description);
-    const file = await this.db.getFileByUrl(sourceUrlCorrected);
+  public downloadFile = async (sourceUrl: string, user: User) => {
+    dataLogger.trace('FileWorker.downloadFile()');
+    const urlDescription = this.filePlugin.getSourceDescription(sourceUrl);
+    const correctUrl = await this.filePlugin.getCorrectUrl(sourceUrl);
+    const file = await this.db.getFileByUrl(correctUrl);
     if (!file) {
       const newFile: File | null = new File(
         0,
         randomUUID(),
-        new FileSource(0, sourceUrlCorrected, description, ''),
+        new FileSource(0, correctUrl, urlDescription, ''),
         Status.Created
       );
-      const responseFileRecord = await this.db.insertTransactionFile(
-        newFile,
-        user,
-        this.downloadFileBySource
-      );
-
-      return responseFileRecord;
+      try {
+        const fileRecord = await this.db.insertFileTransaction(newFile, user);
+        return this.requestFileProcessing(fileRecord);
+      } catch (err) {
+        return ErrorManager.responseError(
+          `FileWorker.manageFileDownload: ${err}`,
+          'Server error',
+          Response.Code.InternalServerError
+        );
+      }
     }
     return new Response(Response.Code.Ok, 'File already exists', 0);
   };
 
-  public downloadFileBySource = async (file: File) => {
-    dataLogger.trace('FileWorker.downloadFileBySource()');
+  public requestFileProcessing = async (file: File) => {
+    dataLogger.trace('FileWorker.requestFileProcessing()');
     try {
       await this.filePlugin.downloadFile(file);
       await this.tagPlugin.tagFile(file);
       return new Response(Response.Code.Ok, `File downloaded`);
     } catch (err) {
       return ErrorManager.responseError(
-        `FileWorker.downloadFileBySource: ${err}`,
+        `FileWorker.requestFileProcessing: ${err}`,
         'Server error',
         Response.Code.InternalServerError
       );
@@ -121,11 +122,12 @@ export class FileWorker {
   };
 
   public getPictureBySourceId = async (sourceId: string) => {
+    // FIXME: This method should return an image
     dataLogger.trace('FileWorker.getPictureBySourceId()');
     try {
       const source = await this.db.getPictureBySourceId(sourceId);
       if (!source) {
-        return new Response(Response.Code.NotFound, 'Source not found', -1);
+        return new Response(Response.Code.Ok, 'No picture', 0);
       }
       return new Response(Response.Code.Ok, source, 0);
     } catch (err) {

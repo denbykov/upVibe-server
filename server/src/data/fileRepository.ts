@@ -1,13 +1,12 @@
 import pg from 'pg';
 
+import { mapFile, mapFiles } from '@src/business/mapFiles';
+import { FileSources } from '@src/dto/file';
+import { MappingFile, MappingFiles } from '@src/dto/mappingFiles';
 import { File } from '@src/entities/file';
-import { Response } from '@src/entities/response';
 import { FileSource, TagSource } from '@src/entities/source';
-import { Status } from '@src/entities/status';
-import { Tag } from '@src/entities/tag';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
-import { displayFile, displayFiles } from '@src/utils/server/displayFiles';
 import { dataLogger } from '@src/utils/server/logger';
 
 import { GET_FILES_BY_USER_ID, GET_FILE_BY_ID } from './queries';
@@ -21,7 +20,17 @@ export class FileRepository implements iFileDatabase {
   public getFileByUrl = async (url: string): Promise<File | null> => {
     const client = await this.pool.connect();
     try {
-      const query = 'SELECT * FROM files WHERE source_url = $1';
+      const query =
+        'SELECT files.id as file_id, ' +
+        'files.path as file_path, ' +
+        'file_sources.id as file_sources_id, ' +
+        'files.source_url as file_sources_url, ' +
+        'file_sources.description as file_sources_description, ' +
+        'file_sources.logo_path as file_sources_logo_path, ' +
+        'files.status as file_status ' +
+        'FROM files ' +
+        'INNER JOIN file_sources ON files.source_id = file_sources.id ' +
+        'WHERE source_url = $1';
       dataLogger.debug(query);
       const queryExecution = await client.query(query, [url]);
       if (queryExecution.rows.length > 0) {
@@ -38,22 +47,12 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getFilesByUser = async (
-    user: User
-  ): Promise<Array<
-    Record<
-      string,
-      | number
-      | string
-      | Record<string, number | string>
-      | Array<Record<string, number | string>>
-    >
-  > | null> => {
+  public getFilesByUser = async (user: User): Promise<MappingFiles> => {
     const client = await this.pool.connect();
     try {
       dataLogger.debug(GET_FILES_BY_USER_ID);
       const query = await client.query(GET_FILES_BY_USER_ID, [user.id]);
-      return displayFiles(query);
+      return mapFiles(query);
     } catch (err) {
       dataLogger.error(`FilesRepository.getFilesByUser: ${err}`);
       return null;
@@ -63,21 +62,13 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getFileById = async (
-    fileId: string
-  ): Promise<Record<
-    string,
-    | string
-    | number
-    | Record<string, string | number>
-    | Array<Record<string, string | number>>
-  > | null> => {
+  public getFileById = async (fileId: string): Promise<MappingFile> => {
     const client = await this.pool.connect();
     try {
       dataLogger.debug(GET_FILE_BY_ID);
       dataLogger.debug('FileRepository.getFileById()' + fileId);
       const queryExecution = await client.query(GET_FILE_BY_ID, [fileId]);
-      return displayFile(queryExecution);
+      return mapFile(queryExecution);
     } catch (err) {
       dataLogger.error(`FilesRepository.getFileById: ${err}`);
       return null;
@@ -86,7 +77,7 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getFileSources = async (): Promise<FileSource[] | null> => {
+  public getFileSources = async (): Promise<FileSources | null> => {
     const client = await this.pool.connect();
     try {
       const query =
@@ -186,31 +177,6 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public insertFileTag = async (
-    tag: Tag,
-    client: pg.PoolClient
-  ): Promise<void> => {
-    try {
-      const query =
-        'INSERT INTO tags (file_id, title, artist, album, picture_path, year, track_number, source, status) ' +
-        'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-      await client.query(query, [
-        tag.fileId,
-        tag.title,
-        tag.artist,
-        tag.album,
-        tag.picturePath,
-        tag.year,
-        tag.trackNumber,
-        tag.sourceType.id,
-        tag.status,
-      ]);
-    } catch (err) {
-      dataLogger.error(`FilesRepository.insertFileTagRecord: ${err}`);
-      throw new Error('File tag not inserted');
-    }
-  };
-
   public insertUserFile = async (
     userId: number,
     fileId: number,
@@ -224,11 +190,10 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public insertTransactionFile = async (
+  public insertFileTransaction = async (
     file: File,
-    user: User,
-    downloadFileBySource: (file: File) => Promise<Response>
-  ): Promise<Response> => {
+    user: User
+  ): Promise<File> => {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
@@ -252,49 +217,16 @@ export class FileRepository implements iFileDatabase {
           insertFile.status
         );
         await this.insertUserFile(user.id, newFile.id, client);
-        const tagSourceId = (
-          await this.getTagSources(newFile.source.description, client)
-        ).id;
-        await this.insertFileTag(
-          new Tag(
-            0,
-            newFile.id,
-            'CR',
-            'CR',
-            'CR',
-            'CR',
-            0,
-            0,
-            new TagSource(tagSourceId, 'CR'),
-            Status.Created
-          ),
-          client
-        );
-        await this.insertFileTagMapping(
-          newFile.id,
-          user.id,
-          tagSourceId,
-          client
-        );
-        const response = await downloadFileBySource(newFile);
         await client.query('COMMIT');
-        return response;
+        return newFile;
       } catch (err) {
         await client.query('ROLLBACK');
         dataLogger.error(`FilesRepository.insertFileRecord: ${err}. ROLLBACK`);
-        return new Response(
-          Response.Code.InternalServerError,
-          'Server error',
-          -1
-        );
+        throw new Error('File not inserted');
       }
     } catch (err) {
       dataLogger.error(`FilesRepository.insertFileRecord: ${err}`);
-      return new Response(
-        Response.Code.InternalServerError,
-        'Server error',
-        -1
-      );
+      throw new Error('File not inserted');
     } finally {
       dataLogger.trace('FilesRepository.insertFileRecord: client.release()');
       client.release();

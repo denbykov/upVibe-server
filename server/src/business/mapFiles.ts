@@ -1,17 +1,10 @@
 import pg from 'pg';
 
+import { MappingFile, MappingFiles } from '@src/dto/mappingFiles';
 import { File } from '@src/entities/file';
 import { Tag, TagMapping } from '@src/entities/tag';
 
-const displayFile = (
-  data: pg.QueryArrayResult
-): Record<
-  string,
-  | string
-  | number
-  | Record<string, string | number>
-  | Array<Record<string, string | number>>
-> | null => {
+const mapFile = (data: pg.QueryArrayResult): MappingFile => {
   const file = File.fromJSON(data.rows[0]);
   const tags = data.rows.map((tag) => Tag.fromJSON(tag));
   const fileTags = tags.filter((tag) => {
@@ -39,17 +32,7 @@ const displayFile = (
   };
 };
 
-const displayFiles = (
-  data: pg.QueryArrayResult
-): Array<
-  Record<
-    string,
-    | string
-    | number
-    | Record<string, string | number>
-    | Array<Record<string, string | number>>
-  >
-> | null => {
+const mapFiles = (data: pg.QueryArrayResult): MappingFiles => {
   const removeDuplicates = (arr: File[]) => {
     return arr.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i);
   };
@@ -87,4 +70,4 @@ const displayFiles = (
   return collectedFiles;
 };
 
-export { displayFile, displayFiles };
+export { mapFile, mapFiles };

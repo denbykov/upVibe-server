@@ -8,6 +8,7 @@ export class Config {
   public appHttpsCert: string = '';
   public appPathStorage: string = '';
   public appPluginsLocation: string = '';
+  public appPluginsConfigLocation: string = '';
   public auth0Audience: string = '';
   public auth0Domain: string = '';
   public rabbitMQHost: string = '';
@@ -17,7 +18,7 @@ export class Config {
   public dbHost: string = '';
   public dbPort: number = 0;
   public dbUser: string = '';
-  public dbPasswrd: string = '';
+  public dbPassword: string = '';
   public dbName: string = '';
   public dbMax: number = 0;
   constructor(configEnv: JSON.JSONObject, configJson: JSON.JSONObject) {
@@ -53,6 +54,10 @@ export class Config {
       process.env.APP_PLUGINS_LOCATION ||
       configEnv.APP_PLUGINS_LOCATION ||
       configJson.APP_PLUGINS_LOCATION;
+    this.appPluginsConfigLocation =
+      process.env.APP_PLUGINS_CONFIG_LOCATION ||
+      configEnv.APP_PLUGINS_CONFIG_LOCATION ||
+      configJson.APP_PLUGINS_CONFIG_LOCATION;
     this.auth0Audience =
       process.env.AUTH0_AUDIENCE ||
       configEnv.AUTH0_AUDIENCE ||
@@ -69,7 +74,7 @@ export class Config {
       configJson.DB_PORT;
     this.dbUser =
       process.env.DB_USER || configEnv.DB_USER || configJson.DB_USER;
-    this.dbPasswrd =
+    this.dbPassword =
       process.env.DB_PASSWORD ||
       configEnv.DB_PASSWORD ||
       configJson.DB_PASSWORD;
