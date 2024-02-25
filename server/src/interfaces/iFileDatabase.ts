@@ -1,6 +1,7 @@
 import pg from 'pg';
 
-import { MappingFile, MappingFiles } from '@src/dto/mappingFiles';
+import { FileSources } from '@src/dto/file';
+import { MappingFiles } from '@src/dto/mappingFiles';
 import { File } from '@src/entities/file';
 import { FileSource, TagSource } from '@src/entities/source';
 import { User } from '@src/entities/user';
@@ -8,8 +9,7 @@ import { User } from '@src/entities/user';
 export abstract class iFileDatabase {
   public abstract getFileByUrl: (url: string) => Promise<File | null>;
   public abstract getFilesByUser: (user: User) => Promise<MappingFiles>;
-  public abstract getFileById: (fileId: string) => Promise<MappingFile>;
-  public abstract getFileSources: () => Promise<FileSource[] | null>;
+  public abstract getFileSources: () => Promise<FileSources | null>;
   public abstract getPictureBySourceId: (
     sourceId: string
   ) => Promise<FileSource | null>;

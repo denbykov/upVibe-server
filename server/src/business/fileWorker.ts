@@ -6,9 +6,6 @@ import { FileSource } from '@src/entities/source';
 import { Status } from '@src/entities/status';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
-import { iFilePlugin } from '@src/interfaces/iFilePlugin';
-import { iPluginManager } from '@src/interfaces/iPluginManager';
-import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 import { PluginManager } from '@src/pluginManager';
 import { dataLogger } from '@src/utils/server/logger';
 
@@ -16,29 +13,26 @@ import { ErrorManager } from './errorManager';
 
 export class FileWorker {
   private db: iFileDatabase;
-  private filePlugin: iFilePlugin;
-  private tagPlugin: iTagPlugin;
-  constructor(db: iFileDatabase, pluginManager: iPluginManager) {
+  private pluginManager: PluginManager;
+  constructor(db: iFileDatabase, pluginManager: PluginManager) {
     this.db = db;
-    this.filePlugin = pluginManager.getPlugin(
-      PluginManager.PluginType.FilePlugin
-    ) as iFilePlugin;
-    this.tagPlugin = pluginManager.getPlugin(
-      PluginManager.PluginType.TagPlugin
-    ) as iTagPlugin;
+    this.pluginManager = pluginManager;
     dataLogger.trace('FileWorker initialized');
   }
 
   public downloadFile = async (sourceUrl: string, user: User) => {
     dataLogger.trace('FileWorker.downloadFile()');
-    const urlDescription = this.filePlugin.getSourceDescription(sourceUrl);
-    const correctUrl = await this.filePlugin.getCorrectUrl(sourceUrl);
-    const file = await this.db.getFileByUrl(correctUrl);
+    const filePlugin = this.pluginManager.getPlugin(
+      PluginManager.PluginType.FilePlugin
+    );
+    const urlDescription = await filePlugin.getSourceDescription(sourceUrl);
+    const normalizedUrl = await filePlugin.getCorrectUrl(sourceUrl);
+    const file = await this.db.getFileByUrl(normalizedUrl);
     if (!file) {
       const newFile: File | null = new File(
         0,
         randomUUID(),
-        new FileSource(0, correctUrl, urlDescription, ''),
+        new FileSource(0, normalizedUrl, urlDescription, ''),
         Status.Created
       );
       try {
@@ -58,8 +52,14 @@ export class FileWorker {
   public requestFileProcessing = async (file: File) => {
     dataLogger.trace('FileWorker.requestFileProcessing()');
     try {
-      await this.filePlugin.downloadFile(file);
-      await this.tagPlugin.tagFile(file);
+      const filePlugin = this.pluginManager.getPlugin(
+        PluginManager.PluginType.FilePlugin
+      );
+      const tagPlugin = this.pluginManager.getPlugin(
+        PluginManager.PluginType.TagPlugin
+      );
+      await filePlugin.downloadFile(file);
+      await tagPlugin.tagFile(file);
       return new Response(Response.Code.Ok, `File downloaded`);
     } catch (err) {
       return ErrorManager.responseError(
@@ -81,23 +81,6 @@ export class FileWorker {
     } catch (err) {
       return ErrorManager.responseError(
         `FileWorker.getFilesByUser: ${err}`,
-        'Server error',
-        Response.Code.InternalServerError
-      );
-    }
-  };
-
-  public getFileById = async (fileId: string) => {
-    dataLogger.trace('FileWorker.getFileById()');
-    try {
-      const file = await this.db.getFileById(fileId);
-      if (!file) {
-        return new Response(Response.Code.NotFound, 'File not found', -1);
-      }
-      return new Response(Response.Code.Ok, file, 0);
-    } catch (err) {
-      return ErrorManager.responseError(
-        `FileWorker.getFileById: ${err}`,
         'Server error',
         Response.Code.InternalServerError
       );

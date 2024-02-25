@@ -6,10 +6,10 @@ import { FileController } from '@src/controllers';
 import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
 import { UserRepository } from '@src/data/userRepository';
 import { Config } from '@src/entities/config';
-import { iPluginManager } from '@src/interfaces/iPluginManager';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
+import { PluginManager } from '@src/pluginManager';
 
-import { BaseRoute } from './baseConfig';
+import { BaseRoute } from './base';
 import { GENERAL } from './permissions';
 
 export class FileRoute extends BaseRoute {
@@ -17,7 +17,7 @@ export class FileRoute extends BaseRoute {
     app: express.Application,
     config: Config,
     databasePool: pg.Pool,
-    pluginManager?: iPluginManager
+    pluginManager?: PluginManager
   ) {
     super(app, 'FileRoute', config, databasePool, pluginManager);
   }
@@ -44,28 +44,21 @@ export class FileRoute extends BaseRoute {
     this.app.get(
       `${apiURIFiles}`,
       auth0Middleware(this.config),
-      userManagementMiddleware([], userWorker),
-      controller.getFilesByUser
-    );
-
-    this.app.get(
-      `${apiURIFiles}/:fileId/download`,
-      auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),
-      controller.getFileById
+      controller.getFilesByUser
     );
 
     this.app.get(
       `${apiURIFiles}/sources`,
       auth0Middleware(this.config),
-      userManagementMiddleware([], userWorker),
+      userManagementMiddleware([GENERAL], userWorker),
       controller.getFileSources
     );
 
     this.app.get(
       `${apiURIFiles}/sources/:sourceId/picture`,
       auth0Middleware(this.config),
-      userManagementMiddleware([], userWorker),
+      userManagementMiddleware([GENERAL], userWorker),
       controller.getPictureBySourceId
     );
 

@@ -1,16 +1,16 @@
 import pg from 'pg';
 
 import { Config } from '@src/entities/config';
-import { iPluginManager } from '@src/interfaces/iPluginManager';
+import { PluginManager } from '@src/pluginManager';
 
 class BaseController {
   public config: Config;
   public databasePool: pg.Pool;
-  public pluginManager?: iPluginManager;
+  public pluginManager?: PluginManager;
   constructor(
     config: Config,
     databasePool: pg.Pool,
-    pluginManager?: iPluginManager
+    pluginManager?: PluginManager
   ) {
     this.config = config;
     this.databasePool = databasePool;

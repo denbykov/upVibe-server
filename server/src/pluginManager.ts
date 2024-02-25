@@ -2,17 +2,13 @@ import { readFileSync, readdirSync } from 'fs';
 import { Logger } from 'log4js';
 import path from 'path';
 
+import { MergedIPlugin, PluginType, iPlugin } from '@src/dto/plugin';
 import { Config } from '@src/entities/config';
-import {
-  PluginType,
-  iPlugin,
-  iPluginManager,
-} from '@src/interfaces/iPluginManager';
-import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
+import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
 
-class PluginManager implements iPluginManager {
-  private plugins: Map<PluginType, iPlugin> = new Map();
+class PluginManager {
   private config: Config;
+  public plugins: Map<PluginType, iPlugin> = new Map();
   private static instance: PluginManager;
   public static PluginType = PluginType;
   private dataLogger: Logger;
@@ -39,20 +35,15 @@ class PluginManager implements iPluginManager {
   };
 
   public loadPlugins = async (): Promise<Map<string, iPlugin>> => {
-    const pluginsFolderExclusions = ['utils', 'core', 'entities'];
-    const pluginsDir = readdirSync(this.config.appPluginsLocation).filter(
-      (file) => {
-        return !pluginsFolderExclusions.includes(file);
-      }
-    );
+    const pluginDirectories = readdirSync(this.config.appPluginsLocation);
     const plugins = new Map<string, iPlugin>();
-    const pluginConfig = parseConfigJSON(
+    const pluginConfig = parseJSONConfig(
       JSON.parse(readFileSync(this.config.appPluginsConfigLocation, 'utf8'))
     );
-    for (const plugin of pluginsDir) {
-      this.serverLogger.info(`Loading plugin ${plugin}`);
+    for (const directory of pluginDirectories) {
+      this.serverLogger.info(`Loading plugin ${directory}`);
       const { default: pluginClass } = await import(
-        path.join(this.config.appPluginsLocation, plugin)
+        path.join(this.config.appPluginsLocation, directory)
       );
       const pluginInstance = new pluginClass(pluginConfig, this.dataLogger);
       this.serverLogger.info('Create plugin instance');
@@ -61,8 +52,8 @@ class PluginManager implements iPluginManager {
     return plugins;
   };
 
-  public getPlugin = (type: PluginType): iPlugin | undefined => {
-    return this.plugins.get(type);
+  public getPlugin = (type: PluginType): MergedIPlugin => {
+    return this.plugins.get(type) as MergedIPlugin;
   };
 
   public setUp = async (): Promise<void> => {

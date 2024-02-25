@@ -2,21 +2,21 @@ import express from 'express';
 import pg from 'pg';
 
 import { Config } from '@src/entities/config';
-import { iPluginManager } from '@src/interfaces/iPluginManager';
+import { PluginManager } from '@src/pluginManager';
 
 export abstract class BaseRoute {
   app: express.Application;
   name: string;
   config: Config;
   databasePool: pg.Pool;
-  pluginManager?: iPluginManager;
+  pluginManager?: PluginManager;
 
   constructor(
     app: express.Application,
     name: string,
     config: Config,
     databasePool: pg.Pool,
-    pluginManager?: iPluginManager
+    pluginManager?: PluginManager
   ) {
     this.app = app;
     this.name = name;

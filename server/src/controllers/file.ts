@@ -4,7 +4,7 @@ import pg from 'pg';
 import { FileWorker } from '@src/business/fileWorker';
 import { FileRepository } from '@src/data';
 import { Config } from '@src/entities/config';
-import { iPluginManager } from '@src/interfaces/iPluginManager';
+import { PluginManager } from '@src/pluginManager';
 
 import { BaseController } from './base';
 
@@ -12,7 +12,7 @@ class FileController extends BaseController {
   constructor(
     config: Config,
     databasePool: pg.Pool,
-    pluginManager?: iPluginManager
+    pluginManager?: PluginManager
   ) {
     super(config, databasePool, pluginManager);
   }
@@ -40,16 +40,6 @@ class FileController extends BaseController {
       this.pluginManager!
     );
     const resultWorker = await fileWorker.getFilesByUser(user);
-    return res.status(resultWorker.httpCode).send(resultWorker.serialize());
-  };
-
-  public getFileById = async (req: Express.Request, res: Express.Response) => {
-    const { fileId } = req.params;
-    const fileWorker = new FileWorker(
-      new FileRepository(this.databasePool),
-      this.pluginManager!
-    );
-    const resultWorker = await fileWorker.getFileById(fileId);
     return res.status(resultWorker.httpCode).send(resultWorker.serialize());
   };
 

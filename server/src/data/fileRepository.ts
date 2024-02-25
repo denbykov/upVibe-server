@@ -1,15 +1,15 @@
 import pg from 'pg';
 
-import { mapFile, mapFiles } from '@src/business/mapFiles';
+import { mapFiles } from '@src/business/mapFiles';
 import { FileSources } from '@src/dto/file';
-import { MappingFile, MappingFiles } from '@src/dto/mappingFiles';
+import { MappingFiles } from '@src/dto/mappingFiles';
 import { File } from '@src/entities/file';
 import { FileSource, TagSource } from '@src/entities/source';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { dataLogger } from '@src/utils/server/logger';
 
-import { GET_FILES_BY_USER_ID, GET_FILE_BY_ID } from './queries';
+import { GET_FILES_BY_USER_ID } from './queries';
 
 export class FileRepository implements iFileDatabase {
   public pool: pg.Pool;
@@ -58,21 +58,6 @@ export class FileRepository implements iFileDatabase {
       return null;
     } finally {
       dataLogger.trace('FilesRepository.getFilesByUser: client.release()');
-      client.release();
-    }
-  };
-
-  public getFileById = async (fileId: string): Promise<MappingFile> => {
-    const client = await this.pool.connect();
-    try {
-      dataLogger.debug(GET_FILE_BY_ID);
-      dataLogger.debug('FileRepository.getFileById()' + fileId);
-      const queryExecution = await client.query(GET_FILE_BY_ID, [fileId]);
-      return mapFile(queryExecution);
-    } catch (err) {
-      dataLogger.error(`FilesRepository.getFileById: ${err}`);
-      return null;
-    } finally {
       client.release();
     }
   };

@@ -8,7 +8,7 @@ import { UserRepository } from '@src/data/userRepository';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 
-import { BaseRoute } from './baseConfig';
+import { BaseRoute } from './base';
 import { GENERAL } from './permissions';
 
 export class APIRoute extends BaseRoute {

@@ -1,7 +1,7 @@
+import dotenv from 'dotenv';
 import express, { Express } from 'express';
 import fs from 'fs';
 import https from 'https';
-import { Logger } from 'log4js';
 import pg from 'pg';
 
 import { Config } from '@src/entities/config';
@@ -13,34 +13,37 @@ import {
 } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
 import { APIRoute, BaseRoute, FileRoute, TagRoute } from '@src/routes';
+import { dataLogger, serverLogger } from '@src/utils/server/logger';
+import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
 
 export class App {
   private readonly app: Express;
   private routes: Array<BaseRoute> = [];
   protected pool: pg.Pool;
-  private serverLogger: Logger;
   private config: Config;
   private pluginManager: PluginManager;
-  constructor(
-    config: Config,
-    pluginManager: PluginManager,
-    serverLogger: Logger
-  ) {
+  constructor() {
     this.app = express();
     this.app.use(express.json());
     this.app.use(requestLoggerMiddleware);
+    const env = dotenv.config({ path: 'config/.env' }).parsed || {};
+    const configJson = parseJSONConfig(
+      JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
+    );
+    this.config = new Config(env, configJson);
     this.pool = new pg.Pool({
-      user: config.dbUser,
-      host: config.dbHost,
-      database: config.dbName,
-      port: config.dbPort,
-      password: config.dbPassword,
-      max: config.dbMax,
+      user: this.config.dbUser,
+      host: this.config.dbHost,
+      database: this.config.dbName,
+      port: this.config.dbPort,
+      password: this.config.dbPassword,
+      max: this.config.dbMax,
     });
-    this.pluginManager = pluginManager;
-
-    this.serverLogger = serverLogger;
-    this.config = config;
+    this.pluginManager = new PluginManager(
+      this.config,
+      dataLogger,
+      serverLogger
+    );
   }
 
   public getApp(): Express {
@@ -52,6 +55,7 @@ export class App {
   }
 
   public init = async () => {
+    await this.pluginManager.setUp();
     this.routes.push(new APIRoute(this.app, this.config, this.pool));
     this.routes.push(
       new FileRoute(this.app, this.config, this.pool, this.pluginManager)
@@ -64,7 +68,7 @@ export class App {
 
   public run = () => {
     if (this.config.appPort == undefined || this.config.appHost == undefined) {
-      this.serverLogger.error('appPort and appHost are not defined');
+      serverLogger.error('appPort and appHost are not defined');
       throw new Error('appPort and appHost are not defined');
     }
     if (this.config.appUseHttps) {
@@ -76,18 +80,18 @@ export class App {
         .createServer(httpsOptions, this.app)
         .listen(this.config.appPort, this.config.appHost, () => {
           this.routes.forEach((route) => {
-            this.serverLogger.info(`Routes configured for ${route.getName()}`);
+            serverLogger.info(`Routes configured for ${route.getName()}`);
           });
-          this.serverLogger.info(
+          serverLogger.info(
             `Server is running at https://${this.config.appHost}:${this.config.appPort}`
           );
         });
     } else {
       this.app.listen(this.config.appPort, this.config.appHost, () => {
         this.routes.forEach((route) => {
-          this.serverLogger.info(`Routes configured for ${route.getName()}`);
+          serverLogger.info(`Routes configured for ${route.getName()}`);
         });
-        this.serverLogger.info(
+        serverLogger.info(
           `Server is running at http://${this.config.appHost}:${this.config.appPort}`
         );
       });

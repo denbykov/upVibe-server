@@ -25,19 +25,4 @@
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "eslint.format.enable": true,
   "eslint.lintTask.enable": true,
-  "cSpell.words": [
-    "cirolosapio",
-    "codepaths",
-    "devcontainers",
-    "Fihurniak",
-    "liquibase",
-    "openapi",
-    "RABBITMQ",
-    "sowa",
-    "trivago",
-    "tsbuildinfo",
-    "upvibe",
-    "Volodymyr",
-    "youtu"
-  ]
 }

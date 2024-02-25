@@ -5,7 +5,7 @@ import { TagController } from '@src/controllers';
 import { Config } from '@src/entities/config';
 import auth0Middleware from '@src/middlewares/auth0';
 
-import { BaseRoute } from './baseConfig';
+import { BaseRoute } from './base';
 
 export class TagRoute extends BaseRoute {
   constructor(app: express.Application, config: Config, databasePool: pg.Pool) {
