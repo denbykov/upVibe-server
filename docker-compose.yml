@@ -2,11 +2,11 @@ version: "3.8"
 
 services:
   postgresql:
-    image: postgres:15.3
+    image: ${POSTGRES_IMAGE}
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     expose:
-      - 5432
+      - ${POSTGRES_PORT}
     restart: always
     environment:
       POSTGRES_USER: admin
@@ -22,7 +22,7 @@ services:
     container_name: postgresql
 
   liquibase:
-    image: liquibase/liquibase:4.23
+    image: ${LIQUIBASE_IMAGE}
     volumes:
       - ./scripts/db/config:/liquibase/config/
       - ./scripts/db/changesets:/liquibase/changesets/
@@ -36,13 +36,13 @@ services:
         condition: service_healthy
 
   rabbitmq:
-    image: rabbitmq:3.12.2-management
+    image: ${RABBITMQ_IMAGE}
     ports:
-      - 5672:5672
-      - 15672:15672
+      - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
+      - ${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}
     expose:
-      - 5672
-      - 15672
+      - ${RABBITMQ_PORT}
+      - ${RABBITMQ_MANAGEMENT_PORT}
     restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=admin
@@ -53,8 +53,8 @@ services:
 
   server:
     build:
-      context: ./server
-      dockerfile: ./Dockerfile.dev
+      context: ${SERVER_CONTEXT}
+      dockerfile: ${SERVER_DOCKERFILE_DEV}
     ports:
       - 3000:3000
       - 9229:9229
@@ -78,17 +78,8 @@ services:
         condition: service_completed_successfully
       rabbitmq:
         condition: service_started
-    environment:
-      - DEBUG="*"
-      - NODE_ENV=development
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:$3000/up-vibe/v1/api/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     networks:
       - up-vibe-network
-    user: root
 
 networks:
   up-vibe-network:
