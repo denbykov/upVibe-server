@@ -1,6 +1,6 @@
-import { User } from '@src/entities/user';
+import { UserDTO } from '@src/dto/user';
 
 export abstract class iUserDatabase {
-  public abstract getUserBySub(sub: string): Promise<User | null>;
-  public abstract insertUser(user: User): Promise<User | null>;
+  public abstract getUserBySub(sub: string): Promise<UserDTO | null>;
+  public abstract insertUser(user: UserDTO): Promise<UserDTO | null>;
 }

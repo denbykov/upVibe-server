@@ -1,4 +1,4 @@
-export class User {
+class UserDTO {
   public id: number;
   public sub: string;
   public name: string;
@@ -7,4 +7,10 @@ export class User {
     this.sub = sub;
     this.name = name;
   }
+
+  public static fromJSON(json: JSON.JSONObject): UserDTO {
+    return new UserDTO(json.id, json.sub, json.name);
+  }
 }
+
+export { UserDTO };

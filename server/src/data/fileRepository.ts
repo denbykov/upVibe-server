@@ -1,40 +1,33 @@
 import pg from 'pg';
 
-import { mapFiles } from '@src/business/mapFiles';
-import { FileSources } from '@src/dto/file';
-import { MappingFiles } from '@src/dto/mappingFiles';
+import { FileSourcesDTO } from '@src/dto/file';
+import { FileDTO } from '@src/dto/file';
+import { FileSourceDTO, TagSourceDTO } from '@src/dto/source';
+import { TaggedFileDTO } from '@src/dto/taggedFile';
+import { UserDTO } from '@src/dto/user';
 import { File } from '@src/entities/file';
-import { FileSource, TagSource } from '@src/entities/source';
-import { User } from '@src/entities/user';
+import { FileSource } from '@src/entities/source';
+import { TaggedFiles } from '@src/entities/taggedFile';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
+import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
-
-import { GET_FILES_BY_USER_ID } from './queries';
 
 export class FileRepository implements iFileDatabase {
   public pool: pg.Pool;
-  constructor(pool: pg.Pool) {
+  public sqlManager: SQLManager;
+  constructor(pool: pg.Pool, sqlManager: SQLManager) {
     this.pool = pool;
+    this.sqlManager = sqlManager;
   }
 
-  public getFileByUrl = async (url: string): Promise<File | null> => {
+  public getFileByUrl = async (url: string): Promise<FileDTO | null> => {
     const client = await this.pool.connect();
     try {
-      const query =
-        'SELECT files.id as file_id, ' +
-        'files.path as file_path, ' +
-        'file_sources.id as file_sources_id, ' +
-        'files.source_url as file_sources_url, ' +
-        'file_sources.description as file_sources_description, ' +
-        'file_sources.logo_path as file_sources_logo_path, ' +
-        'files.status as file_status ' +
-        'FROM files ' +
-        'INNER JOIN file_sources ON files.source_id = file_sources.id ' +
-        'WHERE source_url = $1';
+      const query = this.sqlManager.getQuery('getFileByUrl');
       dataLogger.debug(query);
       const queryExecution = await client.query(query, [url]);
       if (queryExecution.rows.length > 0) {
-        return File.fromJSON(queryExecution.rows[0]);
+        return FileDTO.fromJSON(queryExecution.rows[0]);
       } else {
         return null;
       }
@@ -47,12 +40,15 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getFilesByUser = async (user: User): Promise<MappingFiles> => {
+  public getFilesByUser = async (
+    user: UserDTO
+  ): Promise<TaggedFiles | null> => {
     const client = await this.pool.connect();
     try {
-      dataLogger.debug(GET_FILES_BY_USER_ID);
-      const query = await client.query(GET_FILES_BY_USER_ID, [user.id]);
-      return mapFiles(query);
+      const query = this.sqlManager.getQuery('getFilesByUser');
+      dataLogger.debug(query);
+      const queryExecution = await client.query(query, [user.id]);
+      return queryExecution.rows.map((row) => TaggedFileDTO.fromJSON(row));
     } catch (err) {
       dataLogger.error(`FilesRepository.getFilesByUser: ${err}`);
       return null;
@@ -62,17 +58,13 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getFileSources = async (): Promise<FileSources | null> => {
+  public getFileSources = async (): Promise<FileSourcesDTO | null> => {
     const client = await this.pool.connect();
     try {
-      const query =
-        'SELECT id as file_sources_id, ' +
-        'description as file_sources_description, ' +
-        'logo_path as file_sources_logo_path ' +
-        'FROM file_sources';
+      const query = this.sqlManager.getQuery('getFileSources');
       dataLogger.debug(query);
       const queryExecution = await client.query(query);
-      return queryExecution.rows.map((row) => FileSource.fromJSON(row));
+      return queryExecution.rows.map((row) => FileSourceDTO.fromJSON(row));
     } catch (err) {
       dataLogger.error(`FilesRepository.getSources: ${err}`);
       return null;
@@ -81,39 +73,14 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getFileSource = async (
-    description: string,
-    client: pg.PoolClient
-  ): Promise<FileSource> => {
-    try {
-      const query =
-        'SELECT id as file_sources_id, ' +
-        'description as file_sources_description, ' +
-        'logo_path as file_sources_logo_path ' +
-        'FROM file_sources ' +
-        'WHERE description = $1';
-      dataLogger.debug(query);
-      const queryExecution = await client.query(query, [description]);
-      return FileSource.fromJSON(queryExecution.rows[0]);
-    } catch (err) {
-      dataLogger.error(`FilesRepository.getFileSourceId: ${err}`);
-      throw new Error('File source not found');
-    }
-  };
-
   public getTagSources = async (
     description: string,
     client: pg.PoolClient
-  ): Promise<TagSource> => {
+  ): Promise<TagSourceDTO> => {
     try {
-      const query =
-        'SELECT tag_sources.id as tag_sources_id, ' +
-        'tag_sources.description as tag_sources_description, ' +
-        'tag_sources.logo_path as tag_sources_logo_path ' +
-        'FROM tag_sources ' +
-        'WHERE tag_sources.description = $1';
+      const query = this.sqlManager.getQuery('getTagSources');
       const queryExecution = await client.query(query, [description]);
-      return TagSource.fromJSON(queryExecution.rows[0]);
+      return TagSourceDTO.fromJSON(queryExecution.rows[0]);
     } catch (err) {
       dataLogger.error(`FilesRepository.getFileSourceId: ${err}`);
       throw new Error('File source not found');
@@ -121,48 +88,25 @@ export class FileRepository implements iFileDatabase {
   };
 
   public insertFile = async (
-    file: File,
-    sourceId: number,
+    file: FileDTO,
     client: pg.PoolClient
-  ): Promise<File> => {
+  ): Promise<FileDTO> => {
     try {
-      const query =
-        'INSERT INTO files (path, source_url, source_id, status) ' +
-        'VALUES ($1, $2, $3, $4) RETURNING id as file_id, ' +
-        'path as file_path, source_url as file_source_url, ' +
-        'source_id as file_source_id, status as file_status';
+      const query = this.sqlManager.getQuery('insertFile');
       const queryExecution = await client.query(query, [
         file.path,
-        file.source.url,
-        sourceId,
+        file.sourceUrl,
+        file.source.id,
         file.status,
       ]);
-      return File.fromJSON(queryExecution.rows[0]);
+      return FileDTO.fromJSON(queryExecution.rows[0]);
     } catch (err) {
       dataLogger.error(`FilesRepository.insertFileRecord: ${err}`);
       throw new Error('File not inserted');
     }
   };
 
-  public insertFileTagMapping = async (
-    fileId: number,
-    userId: number,
-    sourceId: number,
-    client: pg.PoolClient
-  ): Promise<void> => {
-    try {
-      const query =
-        'INSERT INTO tag_mappings (file_id, user_id, title, ' +
-        'artist, album, picture, year, track_number) VALUES ' +
-        '($1, $2, $3, $3, $3, $3, $3, $3)';
-      await client.query(query, [fileId, userId, sourceId]);
-    } catch (err) {
-      dataLogger.error(`FilesRepository.insertFileTagMapping: ${err}`);
-      throw new Error('File tag not inserted');
-    }
-  };
-
-  public insertUserFile = async (
+  public mapUserFile = async (
     userId: number,
     fileId: number,
     client: pg.PoolClient
@@ -176,34 +120,28 @@ export class FileRepository implements iFileDatabase {
   };
 
   public insertFileTransaction = async (
-    file: File,
-    user: User
+    file: FileDTO,
+    user: UserDTO
   ): Promise<File> => {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
       try {
-        const source = await this.getFileSource(
-          file.source.description,
-          client
-        );
-        const fileSourceId = source.id;
-        const sourceLogoPath = source.logoPath;
-        const insertFile = await this.insertFile(file, fileSourceId, client);
-        const newFile = new File(
-          insertFile.id,
-          insertFile.path,
-          new FileSource(
-            fileSourceId,
-            file.source.url,
-            file.source.description,
-            sourceLogoPath
-          ),
-          insertFile.status
-        );
-        await this.insertUserFile(user.id, newFile.id, client);
+        const recordFile = await this.insertFile(file, client);
+        await this.mapUserFile(user.id, recordFile.id, client);
         await client.query('COMMIT');
-        return newFile;
+        return new File(
+          recordFile.id,
+          recordFile.path,
+          new FileSource(
+            recordFile.source.id,
+            recordFile.source.description,
+            recordFile.source.logoPath
+          ),
+          recordFile.status,
+          recordFile.sourceUrl
+        );
+        // return recordFile;
       } catch (err) {
         await client.query('ROLLBACK');
         dataLogger.error(`FilesRepository.insertFileRecord: ${err}. ROLLBACK`);
@@ -220,16 +158,31 @@ export class FileRepository implements iFileDatabase {
 
   public getPictureBySourceId = async (
     sourceId: string
-  ): Promise<FileSource | null> => {
+  ): Promise<FileSourceDTO | null> => {
     const client = await this.pool.connect();
     try {
-      const query =
-        'SELECT logo_path as file_sources_logo_path FROM file_sources WHERE id = $1';
+      const query = this.sqlManager.getQuery('getPictureBySourceId');
       const queryExecution = await client.query(query, [sourceId]);
-      return FileSource.fromJSON(queryExecution.rows[0]) || null;
+      return FileSourceDTO.fromJSON(queryExecution.rows[0]) || null;
     } catch (err) {
       dataLogger.error(`FilesRepository.getFileSourceById: ${err}`);
       return null;
+    } finally {
+      client.release();
+    }
+  };
+
+  public getSourceIdByDescription = async (
+    description: string
+  ): Promise<number> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getSourceIdByDescription');
+      const queryExecution = await client.query(query, [description]);
+      return queryExecution.rows[0].id;
+    } catch (err) {
+      dataLogger.error(`FilesRepository.getSourceIdByDescription: ${err}`);
+      throw new Error('File source not found');
     } finally {
       client.release();
     }

@@ -1,13 +1,14 @@
 import express from 'express';
 import pg from 'pg';
 
-import { UserWorker } from '@src/business/userWorker';
+import { UserWorker } from '@src/business/user';
 import { FileController } from '@src/controllers';
 import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
 import { UserRepository } from '@src/data/userRepository';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
+import { SQLManager } from '@src/sqlManager';
 
 import { BaseRoute } from './base';
 import { GENERAL } from './permissions';
@@ -17,14 +18,16 @@ export class FileRoute extends BaseRoute {
     app: express.Application,
     config: Config,
     databasePool: pg.Pool,
+    sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'FileRoute', config, databasePool, pluginManager);
+    super(app, 'FileRoute', config, databasePool, sqlManager, pluginManager);
   }
   configureRoutes() {
     const controller: FileController = new FileController(
       this.config,
       this.databasePool,
+      this.sqlManager,
       this.pluginManager
     );
 
@@ -37,7 +40,7 @@ export class FileRoute extends BaseRoute {
     this.app.post(
       `${apiURIFiles}`,
       auth0Middleware(this.config),
-      userManagementMiddleware([], userWorker),
+      userManagementMiddleware([GENERAL], userWorker),
       controller.downloadFileBySource
     );
 

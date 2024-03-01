@@ -13,6 +13,7 @@ import {
 } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
 import { APIRoute, BaseRoute, FileRoute, TagRoute } from '@src/routes';
+import { SQLManager } from '@src/sqlManager';
 import { dataLogger, serverLogger } from '@src/utils/server/logger';
 import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
 
@@ -21,6 +22,7 @@ export class App {
   private routes: Array<BaseRoute> = [];
   protected pool: pg.Pool;
   private config: Config;
+  private sqlManager: SQLManager;
   private pluginManager: PluginManager;
   constructor() {
     this.app = express();
@@ -39,6 +41,7 @@ export class App {
       password: this.config.dbPassword,
       max: this.config.dbMax,
     });
+    this.sqlManager = new SQLManager(dataLogger, serverLogger);
     this.pluginManager = new PluginManager(
       this.config,
       dataLogger,
@@ -56,11 +59,22 @@ export class App {
 
   public init = async () => {
     await this.pluginManager.setUp();
-    this.routes.push(new APIRoute(this.app, this.config, this.pool));
+    this.sqlManager.setUp();
     this.routes.push(
-      new FileRoute(this.app, this.config, this.pool, this.pluginManager)
+      new APIRoute(this.app, this.config, this.pool, this.sqlManager)
     );
-    this.routes.push(new TagRoute(this.app, this.config, this.pool));
+    this.routes.push(
+      new FileRoute(
+        this.app,
+        this.config,
+        this.pool,
+        this.sqlManager,
+        this.pluginManager
+      )
+    );
+    this.routes.push(
+      new TagRoute(this.app, this.config, this.pool, this.sqlManager)
+    );
     this.app.use(errorAuth0Middleware);
     this.app.use(unmatchedRoutesMiddleware);
     this.app.use(BadJsonMiddleware);

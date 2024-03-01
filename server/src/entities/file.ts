@@ -8,19 +8,18 @@ export class File {
   public path: UUID;
   public source: FileSource;
   public status: Status;
-  constructor(id: number, path: UUID, source: FileSource, status: Status) {
+  public sourceUrl: string;
+  constructor(
+    id: number,
+    path: UUID,
+    source: FileSource,
+    status: Status,
+    sourceUrl: string
+  ) {
     this.id = id;
     this.path = path;
     this.source = source;
     this.status = status;
+    this.sourceUrl = sourceUrl;
   }
-
-  public static fromJSON = (json: JSON.JSONObject): File => {
-    return new File(
-      json.file_id,
-      json.file_path,
-      FileSource.fromJSON(json),
-      json.file_status
-    );
-  };
 }

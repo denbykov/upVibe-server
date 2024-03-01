@@ -1,16 +1,17 @@
 import Express from 'express';
 import pg from 'pg';
 
-import { TagWorker } from '@src/business/tagWorker';
+import { TagWorker } from '@src/business/tag';
 import { TagRepository } from '@src/data';
 import { Config } from '@src/entities/config';
+import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
 
 import { BaseController } from './base';
 
 class TagController extends BaseController {
-  constructor(config: Config, databasePool: pg.Pool) {
-    super(config, databasePool);
+  constructor(config: Config, databasePool: pg.Pool, sqlManager: SQLManager) {
+    super(config, databasePool, sqlManager);
   }
 
   public getFileTags = async (req: Express.Request, res: Express.Response) => {
@@ -21,7 +22,8 @@ class TagController extends BaseController {
     const fileId = Number(req.params.fileId);
     const tags = await tagWorker.getFileTags(fileId);
     dataLogger.trace(`TagController.getFileTags: ${tags}`);
-    return res.status(tags.httpCode).send(tags.serialize());
+    return res.status(tags.httpCode).json([tags.payload, tags.code]);
+    // return res.status(tags.httpCode).send(tags.serialize());
   };
 
   public getFilePictureTag = async (
@@ -48,7 +50,10 @@ class TagController extends BaseController {
           }
         );
     }
-    return res.status(picturePath.httpCode).send(picturePath.serialize());
+    return res
+      .status(picturePath.httpCode)
+      .json([picturePath.payload, picturePath.code]);
+    // return res.status(picturePath.httpCode).send(picturePath.serialize());
   };
 
   public getTagSources = async (
@@ -61,7 +66,8 @@ class TagController extends BaseController {
     );
     const sources = await tagWorker.getTagSources();
     dataLogger.trace(`TagController.getTagSources: ${sources}`);
-    return res.status(sources.httpCode).send(sources.serialize());
+    return res.status(sources.httpCode).json([sources.payload, sources.code]);
+    // return res.status(sources.httpCode).send(sources.serialize());
   };
 
   public getTagSourcePicture = async (
@@ -88,7 +94,10 @@ class TagController extends BaseController {
           }
         );
     }
-    return res.status(picturePath.httpCode).send(picturePath.serialize());
+    return res
+      .status(picturePath.httpCode)
+      .json([picturePath.payload, picturePath.code]);
+    // return res.status(picturePath.httpCode).send(picturePath.serialize());
   };
 }
 

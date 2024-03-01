@@ -84,21 +84,5 @@ export class Config {
       parseInt(<string>process.env.DB_MAX) ||
       parseInt(configEnv.DB_MAX) ||
       parseInt(configJson.DB_MAX);
-    this.rabbitMQHost =
-      process.env.RABBITMQ_HOST ||
-      configEnv.RABBITMQ_HOST ||
-      configJson.RABBITMQ_HOST;
-    this.rabbitMQPort =
-      parseInt(<string>process.env.RABBITMQ_PORT) ||
-      parseInt(configEnv.RABBITMQ_PORT) ||
-      parseInt(configJson.RABBITMQ_PORT);
-    this.rabbitMQUser =
-      process.env.RABBITMQ_USER ||
-      configEnv.RABBITMQ_USER ||
-      configJson.RABBITMQ_USER;
-    this.rabbitMQPassword =
-      process.env.RABBITMQ_PASSWORD ||
-      configEnv.RABBITMQ_PASSWORD ||
-      configJson.RABBITMQ_PASSWORD;
   }
 }

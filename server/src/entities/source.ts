@@ -8,30 +8,10 @@ class Source {
 }
 
 export class FileSource extends Source {
-  public url: string;
   public logoPath: string;
-  constructor(id: number, url: string, description: string, logoPath: string) {
+  constructor(id: number, description: string, logoPath: string) {
     super(id, description);
-    this.url = url;
     this.logoPath = logoPath;
-  }
-
-  public static fromJSON(json: JSON.JSONObject): FileSource {
-    return new FileSource(
-      json.file_sources_id,
-      json.file_sources_url,
-      json.file_sources_description,
-      json.file_sources_logo_path
-    );
-  }
-
-  public static toJSON(source: FileSource): FileSource {
-    return {
-      id: source.id,
-      url: source.url,
-      description: source.description,
-      logoPath: source.logoPath,
-    };
   }
 }
 
@@ -39,8 +19,6 @@ export class TagSource extends Source {
   constructor(id: number, description: string) {
     super(id, description);
   }
-
-  public static fromJSON(json: JSON.JSONObject): TagSource {
-    return new TagSource(json.tag_sources_id, json.tag_sources_description);
-  }
 }
+
+export type FileSources = FileSource[];
