@@ -68,6 +68,7 @@ services:
       - ./server/logs:/usr/src/app/logs
       - ./server/config:/usr/src/app/config
       - ./storage:/usr/src/app/storage
+      - ./server/src/sql:/usr/src/app/buildDebug/sql
       - ${SERVER_VOLUME_PLUGINS}:/usr/src/app/plugins
       - ./server/src:/usr/src/app/src
     depends_on:

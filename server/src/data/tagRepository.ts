@@ -1,7 +1,7 @@
 import pg from 'pg';
 
-import { TagSource } from '@src/entities/source';
-import { Tag } from '@src/entities/tag';
+import { TagSourceDTO } from '@src/dto/source';
+import { TagDTO } from '@src/dto/tag';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { dataLogger } from '@src/utils/server/logger';
 
@@ -10,7 +10,7 @@ export class TagRepository implements iTagDatabase {
   constructor(pool: pg.Pool) {
     this.pool = pool;
   }
-  public getFileTags = async (fileId: number): Promise<Tag | null> => {
+  public getFileTags = async (fileId: number): Promise<TagDTO | null> => {
     const client = await this.pool.connect();
     try {
       const query =
@@ -29,7 +29,7 @@ export class TagRepository implements iTagDatabase {
         return null;
       }
       const row = result.rows[0];
-      return Tag.fromJSON(row);
+      return TagDTO.fromJSON(row);
     } catch (err) {
       dataLogger.error(err);
       throw err;
@@ -58,7 +58,7 @@ export class TagRepository implements iTagDatabase {
     }
   };
 
-  public getTagSources = async (): Promise<TagSource[] | null> => {
+  public getTagSources = async (): Promise<TagSourceDTO[] | null> => {
     const client = await this.pool.connect();
     try {
       const query = 'SELECT  * FROM tag_sources ORDER BY id ASC';
@@ -68,9 +68,9 @@ export class TagRepository implements iTagDatabase {
         return null;
       }
       const rows = result.rows;
-      const sources: TagSource[] = [];
+      const sources: TagSourceDTO[] = [];
       rows.forEach((row) => {
-        sources.push(TagSource.fromJSON(row));
+        sources.push(TagSourceDTO.fromJSON(row));
       });
       return sources;
     } catch (err) {

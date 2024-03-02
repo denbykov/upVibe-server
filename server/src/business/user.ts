@@ -18,12 +18,8 @@ export class UserWorker {
     return user;
   };
 
-  public insertUser = async (user: User): Promise<User> => {
-    dataLogger.trace('UserWorker.insertUser()');
-    return await this.db.insertUser(user);
-  };
-
   public handleAuthorization = async (
+    rawToken: string,
     token: JSON.JSONObject,
     permissions: Array<string>
   ): Promise<User | null> => {
@@ -35,7 +31,8 @@ export class UserWorker {
     }
     let dbUser = await this.getUser(token.sub);
     if (!dbUser) {
-      await this.userInfoAgent.getUserInfoByToken(token.authorization || '');
+      dbUser = await this.userInfoAgent.getUserInfoByToken(rawToken || '');
+      await this.db.insertUser(dbUser!);
     }
     return dbUser;
   };

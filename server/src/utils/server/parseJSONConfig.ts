@@ -1,4 +1,4 @@
-export const parseConfigJSON = (json: JSON.JSONObject) => {
+export const parseJSONConfig = (json: JSON.JSONObject) => {
   try {
     const dict: { [key: string]: string } = {};
     for (const i of Object.keys(json)) {

@@ -1,6 +1,6 @@
-import { APIRoute } from './apiConfig';
-import { BaseRoute } from './baseConfig';
-import { FileRoute } from './fileConfig';
-import { TagRoute } from './tagConfig';
+import { APIRoute } from './api';
+import { BaseRoute } from './base';
+import { FileRoute } from './file';
+import { TagRoute } from './tag';
 
 export { BaseRoute, APIRoute, FileRoute, TagRoute };

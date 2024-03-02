@@ -11,10 +11,12 @@ export default (
   if (err instanceof SyntaxError && 'body' in err) {
     const response: Response = new Response(
       Response.Code.BadRequest,
-      'Bad JSON in request body',
+      { message: 'Bad JSON in request body' },
       1
     );
-    return res.status(response.httpCode).send(response.serialize());
+    return res
+      .status(response.httpCode)
+      .json({ ...response.payload, code: response.code });
   }
   next();
 };

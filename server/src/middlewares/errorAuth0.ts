@@ -15,30 +15,36 @@ const errorAuth0Handler = (
   if (error instanceof InvalidTokenError) {
     const message = new ServerResponse(
       ServerResponse.Code.Unauthorized,
-      'Bad credentials',
+      { message: 'Bad credentials' },
       1
     );
 
-    return response.status(message.httpCode).send(message.serialize());
+    return response
+      .status(message.httpCode)
+      .json({ ...message.payload, code: message.code });
   }
 
   if (error instanceof UnauthorizedError) {
     const message = new ServerResponse(
       ServerResponse.Code.Unauthorized,
-      'Requires authentication',
+      { message: 'Requires authentication' },
       1
     );
 
-    return response.status(message.httpCode).send(message.serialize());
+    return response
+      .status(message.httpCode)
+      .json({ ...message.payload, code: message.code });
   }
 
   const message = new ServerResponse(
     ServerResponse.Code.InternalServerError,
-    'Internal Server Error',
+    { message: 'Internal Server Error' },
     1
   );
 
-  response.status(message.httpCode).send(message.serialize());
+  response
+    .status(message.httpCode)
+    .json({ ...message.payload, code: message.code });
   next(error);
 };
 

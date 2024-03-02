@@ -11,40 +11,44 @@ import {
   requestLoggerMiddleware,
   unmatchedRoutesMiddleware,
 } from '@src/middlewares';
+import { PluginManager } from '@src/pluginManager';
 import { APIRoute, BaseRoute, FileRoute, TagRoute } from '@src/routes';
-import { serverLogger } from '@src/utils/server/logger';
-import { parseConfigJSON } from '@src/utils/server/parseConfigJSON';
-
-const env = dotenv.config({ path: 'config/.env' }).parsed || {};
-const configJson = parseConfigJSON(
-  JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
-);
-const config = new Config(env, configJson);
+import { SQLManager } from '@src/sqlManager';
+import { dataLogger, serverLogger } from '@src/utils/server/logger';
+import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
 
 export class App {
   private readonly app: Express;
   private routes: Array<BaseRoute> = [];
   protected pool: pg.Pool;
+  private config: Config;
+  private sqlManager: SQLManager;
+  private pluginManager: PluginManager;
   constructor() {
     this.app = express();
     this.app.use(express.json());
     this.app.use(requestLoggerMiddleware);
-
+    const env = dotenv.config({ path: 'config/.env' }).parsed || {};
+    const configJson = parseJSONConfig(
+      JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
+    );
+    this.config = new Config(env, configJson);
     this.pool = new pg.Pool({
-      user: config.dbUser,
-      host: config.dbHost,
-      database: config.dbName,
-      port: config.dbPort,
-      password: config.dbPasswrd,
-      max: config.dbMax,
+      user: this.config.dbUser,
+      host: this.config.dbHost,
+      database: this.config.dbName,
+      port: this.config.dbPort,
+      password: this.config.dbPassword,
+      max: this.config.dbMax,
     });
-    this.routes.push(new APIRoute(this.app, config, this.pool));
-    this.routes.push(new FileRoute(this.app, config, this.pool));
-    this.routes.push(new TagRoute(this.app, config, this.pool));
-    this.app.use(errorAuth0Middleware);
-    this.app.use(unmatchedRoutesMiddleware);
-    this.app.use(BadJsonMiddleware);
+    this.sqlManager = new SQLManager(dataLogger, serverLogger);
+    this.pluginManager = new PluginManager(
+      this.config,
+      dataLogger,
+      serverLogger
+    );
   }
+
   public getApp(): Express {
     return this.app;
   }
@@ -53,33 +57,56 @@ export class App {
     return this.routes;
   }
 
+  public init = async () => {
+    await this.pluginManager.setUp();
+    this.sqlManager.setUp();
+    this.routes.push(
+      new APIRoute(this.app, this.config, this.pool, this.sqlManager)
+    );
+    this.routes.push(
+      new FileRoute(
+        this.app,
+        this.config,
+        this.pool,
+        this.sqlManager,
+        this.pluginManager
+      )
+    );
+    this.routes.push(
+      new TagRoute(this.app, this.config, this.pool, this.sqlManager)
+    );
+    this.app.use(errorAuth0Middleware);
+    this.app.use(unmatchedRoutesMiddleware);
+    this.app.use(BadJsonMiddleware);
+  };
+
   public run = () => {
-    if (config.appPort == undefined || config.appHost == undefined) {
+    if (this.config.appPort == undefined || this.config.appHost == undefined) {
       serverLogger.error('appPort and appHost are not defined');
       throw new Error('appPort and appHost are not defined');
     }
-    if (config.appUseHttps) {
+    if (this.config.appUseHttps) {
       const httpsOptions = {
-        key: fs.readFileSync(config.appHttpsKey),
-        cert: fs.readFileSync(config.appHttpsCert),
+        key: fs.readFileSync(this.config.appHttpsKey),
+        cert: fs.readFileSync(this.config.appHttpsCert),
       };
       https
         .createServer(httpsOptions, this.app)
-        .listen(config.appPort, config.appHost, () => {
+        .listen(this.config.appPort, this.config.appHost, () => {
           this.routes.forEach((route) => {
             serverLogger.info(`Routes configured for ${route.getName()}`);
           });
           serverLogger.info(
-            `Server is running at https://${config.appHost}:${config.appPort}`
+            `Server is running at https://${this.config.appHost}:${this.config.appPort}`
           );
         });
     } else {
-      this.app.listen(config.appPort, config.appHost, () => {
+      this.app.listen(this.config.appPort, this.config.appHost, () => {
         this.routes.forEach((route) => {
           serverLogger.info(`Routes configured for ${route.getName()}`);
         });
         serverLogger.info(
-          `Server is running at http://${config.appHost}:${config.appPort}`
+          `Server is running at http://${this.config.appHost}:${this.config.appPort}`
         );
       });
     }
