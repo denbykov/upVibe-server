@@ -1,5 +1,5 @@
-import { iFilePlugin } from '@src/interfaces/iFilePlugin';
-import { iTagPlugin } from '@src/interfaces/iTagPlugin';
+import { iFilePlugin } from './iFilePlugin';
+import { iTagPlugin } from './iTagPlugin';
 
 export enum PluginType {
   FilePlugin = 'FilePlugin',

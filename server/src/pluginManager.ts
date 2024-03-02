@@ -2,8 +2,8 @@ import { readFileSync, readdirSync } from 'fs';
 import { Logger } from 'log4js';
 import path from 'path';
 
-import { MergedIPlugin, PluginType, iPlugin } from '@src/dto/plugin';
 import { Config } from '@src/entities/config';
+import { MergedIPlugin, PluginType, iPlugin } from '@src/interfaces/iPlugin';
 import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
 
 class PluginManager {
