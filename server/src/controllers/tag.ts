@@ -23,7 +23,6 @@ class TagController extends BaseController {
     const tags = await tagWorker.getFileTags(fileId);
     dataLogger.trace(`TagController.getFileTags: ${tags}`);
     return res.status(tags.httpCode).json([tags.payload, tags.code]);
-    // return res.status(tags.httpCode).send(tags.serialize());
   };
 
   public getFilePictureTag = async (
@@ -53,7 +52,6 @@ class TagController extends BaseController {
     return res
       .status(picturePath.httpCode)
       .json([picturePath.payload, picturePath.code]);
-    // return res.status(picturePath.httpCode).send(picturePath.serialize());
   };
 
   public getTagSources = async (
@@ -67,7 +65,6 @@ class TagController extends BaseController {
     const sources = await tagWorker.getTagSources();
     dataLogger.trace(`TagController.getTagSources: ${sources}`);
     return res.status(sources.httpCode).json([sources.payload, sources.code]);
-    // return res.status(sources.httpCode).send(sources.serialize());
   };
 
   public getTagSourcePicture = async (
@@ -97,7 +94,6 @@ class TagController extends BaseController {
     return res
       .status(picturePath.httpCode)
       .json([picturePath.payload, picturePath.code]);
-    // return res.status(picturePath.httpCode).send(picturePath.serialize());
   };
 }
 

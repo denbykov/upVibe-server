@@ -24,7 +24,7 @@
       "warn",
       {
         "terms": ["todo", "fixme", "xxx"],
-        "location": "anywhere"
+        "location": "start"
       }
     ]
   }

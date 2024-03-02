@@ -22,7 +22,7 @@ export abstract class iFileDatabase {
     file: FileDTO,
     client: pg.PoolClient
   ) => Promise<FileDTO>;
-  public abstract mapUserFile: (
+  public abstract insertUserFile: (
     userId: number,
     fileId: number,
     client: pg.PoolClient

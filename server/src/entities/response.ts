@@ -17,14 +17,6 @@ class Response {
     this.payload = payload;
     this.code = code;
   }
-
-  // public serialize() {
-  //   if (typeof this.payload === 'string') {
-  //     return { message: this.payload, code: this.code };
-  //   } else {
-  //     return { ...this.payload, code: this.code };
-  //   }
-  // }
 }
 
 export { Response };

@@ -106,7 +106,7 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public mapUserFile = async (
+  public insertUserFile = async (
     userId: number,
     fileId: number,
     client: pg.PoolClient
@@ -128,7 +128,7 @@ export class FileRepository implements iFileDatabase {
       await client.query('BEGIN');
       try {
         const recordFile = await this.insertFile(file, client);
-        await this.mapUserFile(user.id, recordFile.id, client);
+        await this.insertUserFile(user.id, recordFile.id, client);
         await client.query('COMMIT');
         return new File(
           recordFile.id,
@@ -141,7 +141,6 @@ export class FileRepository implements iFileDatabase {
           recordFile.status,
           recordFile.sourceUrl
         );
-        // return recordFile;
       } catch (err) {
         await client.query('ROLLBACK');
         dataLogger.error(`FilesRepository.insertFileRecord: ${err}. ROLLBACK`);
