@@ -123,7 +123,7 @@ export class FileWorker {
       if (!source) {
         return new Response(Response.Code.Ok, { message: 'No picture' }, 0);
       }
-      return new Response(Response.Code.Ok, source, 0);
+      return new Response(Response.Code.Ok, { logoPath: source.logoPath }, 0);
     } catch (err) {
       dataLogger.error(`FileWorker.getPictureBySourceId: ${err}`);
       return new Response(

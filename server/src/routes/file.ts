@@ -61,7 +61,7 @@ export class FileRoute extends BaseRoute {
     this.app.get(
       `${apiURIFiles}/sources/:sourceId/picture`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      userManagementMiddleware([], userWorker),
       controller.getPictureBySourceId
     );
 

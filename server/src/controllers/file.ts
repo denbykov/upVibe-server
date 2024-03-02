@@ -73,9 +73,10 @@ class FileController extends BaseController {
       this.pluginManager!
     );
     const resultWorker = await fileWorker.getPictureBySourceId(sourceId);
+    const { logoPath } = resultWorker.payload as { logoPath: string };
     return res
       .status(resultWorker.httpCode)
-      .json({ ...resultWorker.payload, code: resultWorker.code });
+      .sendFile(this.config.appPathStorage + '/pictures/' + logoPath);
   };
 }
 
