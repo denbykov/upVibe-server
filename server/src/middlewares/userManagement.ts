@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { UserWorker } from '@src/business/userWorker';
+import { UserWorker } from '@src/business/user';
 import { Response as ServerResponse } from '@src/entities/response';
 
 const userManagementMiddleware = (
@@ -9,18 +9,23 @@ const userManagementMiddleware = (
 ) => {
   return async (request: Request, response: Response, next: NextFunction) => {
     const rawToken = request.headers.authorization?.split(' ')[1].split('.')[1];
-    const token = JSON.parse(
+    const token: JSON.JSONObject = JSON.parse(
       Buffer.from(rawToken!, 'base64').toString('ascii')
     );
-    const dbUser = await worker.handleAuthorization(token, permissions);
-
+    const dbUser = await worker.handleAuthorization(
+      rawToken!,
+      token,
+      permissions
+    );
     if (!dbUser) {
       const message = new ServerResponse(
         ServerResponse.Code.Forbidden,
-        'Authorization error',
+        { message: 'Authorization error' },
         1
       );
-      return response.status(message.httpCode).send(message.serialize());
+      return response
+        .status(message.httpCode)
+        .json({ ...message.payload, code: message.code });
     }
 
     request.body.user = dbUser;

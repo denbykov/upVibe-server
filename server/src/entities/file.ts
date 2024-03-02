@@ -1,33 +1,25 @@
+import { UUID } from 'crypto';
+
+import { FileSource } from './source';
+import { Status } from './status';
+
 export class File {
   public id: number;
-  public source: {
-    id: number;
-    name: string;
-  };
-  public status: string;
-  public statusDescription: string;
+  public path: UUID;
+  public source: FileSource;
+  public status: Status;
   public sourceUrl: string;
   constructor(
     id: number,
-    source: { id: number; name: string },
-    status: string,
-    statusDescription: string,
+    path: UUID,
+    source: FileSource,
+    status: Status,
     sourceUrl: string
   ) {
     this.id = id;
+    this.path = path;
     this.source = source;
     this.status = status;
-    this.statusDescription = statusDescription;
     this.sourceUrl = sourceUrl;
   }
-
-  public static fromJSON = (json: JSON.JSONObject): File => {
-    return new File(
-      json.id,
-      { id: json.source_id, name: json.source_description },
-      json.status,
-      json.description,
-      json.source_url
-    );
-  };
 }

@@ -17,16 +17,24 @@ export class TagWorker {
     if (tags) {
       return new Response(Response.Code.Ok, { tags });
     }
-    return new Response(Response.Code.NotFound, 'No tags found', 1);
+    return new Response(
+      Response.Code.NotFound,
+      { message: 'No tags found' },
+      1
+    );
   };
 
   public getFilePictureTag = async (tagId: number): Promise<Response> => {
     dataLogger.trace('TagWorker.getFilePictureTag()');
     const picturePath = await this.db.getFilePictureTag(tagId);
     if (picturePath) {
-      return new Response(Response.Code.Ok, picturePath);
+      return new Response(Response.Code.Ok, { path: picturePath });
     }
-    return new Response(Response.Code.NotFound, 'No picture found', 1);
+    return new Response(
+      Response.Code.NotFound,
+      { message: 'No picture found' },
+      1
+    );
   };
 
   public getTagSources = async (): Promise<Response> => {
@@ -35,15 +43,23 @@ export class TagWorker {
     if (sources) {
       return new Response(Response.Code.Ok, { sources });
     }
-    return new Response(Response.Code.NotFound, 'No sources found', 1);
+    return new Response(
+      Response.Code.NotFound,
+      { message: 'No sources found' },
+      1
+    );
   };
 
   public getTagSourcePicture = async (sourceId: number): Promise<Response> => {
     dataLogger.trace('TagWorker.getTagSourcePicture()');
     const picturePath = await this.db.getTagSourcePicture(sourceId);
     if (picturePath) {
-      return new Response(Response.Code.Ok, picturePath);
+      return new Response(Response.Code.Ok, { path: picturePath });
     }
-    return new Response(Response.Code.NotFound, 'No picture found', 1);
+    return new Response(
+      Response.Code.NotFound,
+      { message: 'No picture found' },
+      1
+    );
   };
 }

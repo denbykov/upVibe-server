@@ -5,14 +5,15 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc && tsc-alias -p tsconfig.json",
+    "dev:build": "npx tsc -p tsconfig.dev.json && npx tsc-alias -p tsconfig.dev.json",
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "dev:debug:docker": "nodemon --inspect=0.0.0.0:9229 src/server.ts",
     "dev:build:docker": "npx tsc -p tsconfig.dev.json && npx tsc-alias -p tsconfig.dev.json",
     "dev:start:docker": "node buildDebug/server.js",
     "test": "jest --watch --coverage --config jest.config.ts",
-    "preitter": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint --fix \"src/**/*.ts\""
+    "lint": "eslint --fix \"src/**/*.ts\" && tsc --noEmit",
+    "lint:prettier": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
   "author": "Volodymyr Fihurniak",
@@ -40,7 +41,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.10.5",
     "@types/pg": "^8.10.2",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.9.0",

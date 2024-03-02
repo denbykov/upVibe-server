@@ -1,28 +1,24 @@
 export class Config {
   public apiURI: string = '';
   public apiVersion: string = '';
-  public apiAccessTokenSecret: string = '';
-  public apiRefreshTokenSecret: string = '';
-  public apiAccesTokenSecretExpires: string = '';
-  public apiRefreshTokenSecretExpires: string = '';
   public appPort: number = 0;
   public appHost: string = '';
   public appUseHttps: boolean = false;
   public appHttpsKey: string = '';
   public appHttpsCert: string = '';
   public appPathStorage: string = '';
+  public appPluginsLocation: string = '';
+  public appPluginsConfigLocation: string = '';
   public auth0Audience: string = '';
   public auth0Domain: string = '';
   public rabbitMQHost: string = '';
   public rabbitMQPort: number = 0;
   public rabbitMQUser: string = '';
   public rabbitMQPassword: string = '';
-  public rabbitMQDownloadingYouTubeQueue: string = '';
-  public rabbitMQTaggingYouTubeNativeQueue: string = '';
   public dbHost: string = '';
   public dbPort: number = 0;
   public dbUser: string = '';
-  public dbPasswrd: string = '';
+  public dbPassword: string = '';
   public dbName: string = '';
   public dbMax: number = 0;
   constructor(configEnv: JSON.JSONObject, configJson: JSON.JSONObject) {
@@ -32,22 +28,6 @@ export class Config {
       process.env.API_VERSION ||
       configEnv.API_VERSION ||
       configJson.API_VERSION;
-    this.apiAccessTokenSecret =
-      process.env.API_ACCESS_TOKEN_SECRET ||
-      configEnv.API_ACCESS_TOKEN_SECRET ||
-      configJson.API_ACCESS_TOKEN_SECRET;
-    this.apiRefreshTokenSecret =
-      process.env.API_REFRESH_TOKEN_SECRET ||
-      configEnv.API_REFRESH_TOKEN_SECRET ||
-      configJson.API_REFRESH_TOKEN_SECRET;
-    this.apiAccesTokenSecretExpires =
-      process.env.API_ACCESS_TOKEN_SECRET_EXPIRES ||
-      configEnv.API_ACCESS_TOKEN_SECRET_EXPIRES ||
-      configJson.API_ACCESS_TOKEN_SECRET_EXPIRES;
-    this.apiRefreshTokenSecretExpires =
-      process.env.API_REFRESH_TOKEN_SECRET_EXPIRES ||
-      configEnv.API_REFRESH_TOKEN_SECRET_EXPIRES ||
-      configJson.API_REFRESH_TOKEN_SECRET_EXPIRES;
     this.appPort =
       parseInt(<string>process.env.APP_PORT) ||
       parseInt(configEnv.APP_PORT) ||
@@ -70,6 +50,14 @@ export class Config {
       process.env.APP_PATH_STORAGE ||
       configEnv.APP_PATH_STORAGE ||
       configJson.APP_PATH_STORAGE;
+    this.appPluginsLocation =
+      process.env.APP_PLUGINS_LOCATION ||
+      configEnv.APP_PLUGINS_LOCATION ||
+      configJson.APP_PLUGINS_LOCATION;
+    this.appPluginsConfigLocation =
+      process.env.APP_PLUGINS_CONFIG_LOCATION ||
+      configEnv.APP_PLUGINS_CONFIG_LOCATION ||
+      configJson.APP_PLUGINS_CONFIG_LOCATION;
     this.auth0Audience =
       process.env.AUTH0_AUDIENCE ||
       configEnv.AUTH0_AUDIENCE ||
@@ -86,7 +74,7 @@ export class Config {
       configJson.DB_PORT;
     this.dbUser =
       process.env.DB_USER || configEnv.DB_USER || configJson.DB_USER;
-    this.dbPasswrd =
+    this.dbPassword =
       process.env.DB_PASSWORD ||
       configEnv.DB_PASSWORD ||
       configJson.DB_PASSWORD;
@@ -96,29 +84,5 @@ export class Config {
       parseInt(<string>process.env.DB_MAX) ||
       parseInt(configEnv.DB_MAX) ||
       parseInt(configJson.DB_MAX);
-    this.rabbitMQHost =
-      process.env.RABBITMQ_HOST ||
-      configEnv.RABBITMQ_HOST ||
-      configJson.RABBITMQ_HOST;
-    this.rabbitMQPort =
-      parseInt(<string>process.env.RABBITMQ_PORT) ||
-      parseInt(configEnv.RABBITMQ_PORT) ||
-      parseInt(configJson.RABBITMQ_PORT);
-    this.rabbitMQUser =
-      process.env.RABBITMQ_USER ||
-      configEnv.RABBITMQ_USER ||
-      configJson.RABBITMQ_USER;
-    this.rabbitMQPassword =
-      process.env.RABBITMQ_PASSWORD ||
-      configEnv.RABBITMQ_PASSWORD ||
-      configJson.RABBITMQ_PASSWORD;
-    this.rabbitMQDownloadingYouTubeQueue =
-      process.env.RABBITMQ_DOWNLOADING_YOUTUBE_QUEUE ||
-      configEnv.RABBITMQ_DOWNLOADING_YOUTUBE_QUEUE ||
-      configJson.RABBITMQ_DOWNLOADING_YOUTUBE_QUEUE;
-    this.rabbitMQTaggingYouTubeNativeQueue =
-      process.env.RABBITMQ_TAGGING_YOUTUBE_NATIVE_QUEUE ||
-      configEnv.RABBITMQ_TAGGING_YOUTUBE_NATIVE_QUEUE ||
-      configJson.RABBITMQ_TAGGING_YOUTUBE_NATIVE_QUEUE;
   }
 }

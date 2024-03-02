@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:9
+--changeset sowa:10
 
 CREATE TABLE tag_mapping_priority (
     user_id INT PRIMARY KEY,

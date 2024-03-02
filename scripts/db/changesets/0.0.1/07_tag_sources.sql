@@ -1,8 +1,8 @@
 --liquibase formatted sql
---changeset sowa:2
+--changeset sowa:7
 
-CREATE TABLE file_sources (
+CREATE TABLE tag_sources (
     id SERIAL PRIMARY KEY,
     description VARCHAR(255) NOT NULL,
-    image_path VARCHAR(255) NOT NULL UNIQUE
+    logo_path VARCHAR(255) NOT NULL UNIQUE
 );

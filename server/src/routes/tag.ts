@@ -4,18 +4,27 @@ import pg from 'pg';
 import { TagController } from '@src/controllers';
 import { Config } from '@src/entities/config';
 import auth0Middleware from '@src/middlewares/auth0';
+import { PluginManager } from '@src/pluginManager';
+import { SQLManager } from '@src/sqlManager';
 
-import { BaseRoute } from './baseConfig';
+import { BaseRoute } from './base';
 
 export class TagRoute extends BaseRoute {
-  constructor(app: express.Application, config: Config, databasePool: pg.Pool) {
-    super(app, 'TagRoute', config, databasePool);
+  constructor(
+    app: express.Application,
+    config: Config,
+    databasePool: pg.Pool,
+    sqlManager: SQLManager,
+    pluginManager?: PluginManager
+  ) {
+    super(app, 'TagRoute', config, databasePool, sqlManager, pluginManager);
   }
 
   configureRoutes() {
     const controller: TagController = new TagController(
       this.config,
-      this.databasePool
+      this.databasePool,
+      this.sqlManager
     );
 
     const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/library/files`;
