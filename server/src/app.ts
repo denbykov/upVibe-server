@@ -23,7 +23,7 @@ export class App {
   protected pool: pg.Pool;
   private config: Config;
   private sqlManager: SQLManager;
-  // private pluginManager: PluginManager;
+  private pluginManager: PluginManager;
   constructor() {
     this.app = express();
     this.app.use(express.json());
@@ -42,11 +42,11 @@ export class App {
       max: this.config.dbMax,
     });
     this.sqlManager = new SQLManager(dataLogger, serverLogger);
-    // this.pluginManager = new PluginManager(
-    //   this.config,
-    //   dataLogger,
-    //   serverLogger
-    // );
+    this.pluginManager = new PluginManager(
+      this.config,
+      dataLogger,
+      serverLogger
+    );
   }
 
   public getApp(): Express {
@@ -58,7 +58,7 @@ export class App {
   }
 
   public init = async () => {
-    // await this.pluginManager.setUp();
+    await this.pluginManager.setUp();
     this.sqlManager.setUp();
     this.routes.push(
       new APIRoute(this.app, this.config, this.pool, this.sqlManager)
@@ -69,7 +69,7 @@ export class App {
         this.config,
         this.pool,
         this.sqlManager,
-        // this.pluginManager
+        this.pluginManager
       )
     );
     this.routes.push(

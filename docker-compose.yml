@@ -78,9 +78,6 @@ services:
         condition: service_completed_successfully
       rabbitmq:
         condition: service_started
-    environment:
-      - DEBUG="*"
-      - NODE_ENV=development
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:$3000/up-vibe/v1/api/health"]
       interval: 10s
