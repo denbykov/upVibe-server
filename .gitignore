@@ -6,5 +6,5 @@ buildDebug
 rest
 server/tests/sql/
 storage
-.editorconfig
 volumes
+.env
