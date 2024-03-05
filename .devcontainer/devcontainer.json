@@ -6,6 +6,26 @@
 	"image": "mcr.microsoft.com/devcontainers/base:alpine-3.19",
 	"features": {
 		"ghcr.io/cirolosapio/devcontainers-features/alpine-node:0": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.autopep8",
+				"EditorConfig.EditorConfig",
+				"dbaeumer.vscode-eslint",
+				"GitHub.copilot",
+				"GitHub.codespaces",
+				"GitHub.copilot-chat",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"VisualStudioExptTeam.intellicode-api-usage-examples",
+				"xabikos.JavaScriptSnippets",
+				"Orta.vscode-jest",
+				"christian-kohler.path-intellisense",
+				"esbenp.prettier-vscode",
+				"mtxr.sqltools",
+				"mtxr.sqltools-driver-pg"
+			]
+		}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
