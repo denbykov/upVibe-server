@@ -10,7 +10,7 @@ export class UserInfoAgent implements iUserInfoAgent {
   }
   public getUserInfoByToken = async (token: string): Promise<User | null> => {
     const headers = new Headers();
-    headers.append('Authorization', token);
+    headers.append('Authorization', `Bearer ${token}`);
     const req = await fetch(`https://${this.config.auth0Domain}/userinfo`, {
       headers: headers,
     });
@@ -18,6 +18,6 @@ export class UserInfoAgent implements iUserInfoAgent {
     if (!reqData) {
       return null;
     }
-    return new User(0, reqData.sub, reqData.username!);
+    return new User(0, reqData.sub, reqData.nickname);
   };
 }

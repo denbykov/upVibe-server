@@ -5,7 +5,8 @@
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnPaste": true,
   "json.schemaDownload.enable": true,
-  "jest.autoRun": {
+  "jest.runMode": {
+    "type": "on-demand",
     "watch": false
   },
   "path-intellisense.mappings": {

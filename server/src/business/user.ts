@@ -20,16 +20,16 @@ export class UserWorker {
 
   public handleAuthorization = async (
     rawToken: string,
-    token: JSON.JSONObject,
+    payload: JSON.JSONObject,
     permissions: Array<string>
   ): Promise<User | null> => {
     dataLogger.trace('UserWorker.handleAuthorization()');
     for (const permission of permissions) {
-      if (!token.permissions.includes(permission)) {
+      if (!payload.permissions.includes(permission)) {
         return null;
       }
     }
-    let dbUser = await this.getUser(token.sub);
+    let dbUser = await this.getUser(payload.sub);
     if (!dbUser) {
       dbUser = await this.userInfoAgent.getUserInfoByToken(rawToken || '');
       await this.db.insertUser(dbUser!);
