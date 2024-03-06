@@ -21,9 +21,7 @@
 				"xabikos.JavaScriptSnippets",
 				"Orta.vscode-jest",
 				"christian-kohler.path-intellisense",
-				"esbenp.prettier-vscode",
-				"mtxr.sqltools",
-				"mtxr.sqltools-driver-pg"
+				"esbenp.prettier-vscode"
 			]
 		}
 	}

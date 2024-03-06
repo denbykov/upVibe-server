@@ -7,7 +7,7 @@
     "https_key": "config/ssl/privatekey.pem",
     "https_cert": "config/ssl/certificate.pem",
     "path_storage": "/usr/src/app/storage",
-    "plugins_location": "/usr/src/app/plugins/modules",
+    "plugins_location": "/usr/src/app/plugins",
     "plugins_config_location": "config/plugins.json"
   },
   "API": {

@@ -1,14 +1,13 @@
 import pg from 'pg';
 
 import { FileDTO } from '@src/dto/file';
-import { File } from '@src/entities/file';
 import { FileSources } from '@src/entities/source';
 import { FileSource, TagSource } from '@src/entities/source';
-import { TaggedFiles } from '@src/entities/taggedFile';
+import { TaggedFile, TaggedFiles } from '@src/entities/taggedFile';
 import { User } from '@src/entities/user';
 
 export abstract class iFileDatabase {
-  public abstract getFileByUrl: (url: string) => Promise<File | null>;
+  public abstract getFileByUrl: (url: string) => Promise<TaggedFile | null>;
   public abstract getFilesByUser: (user: User) => Promise<TaggedFiles | null>;
   public abstract getFileSources: () => Promise<FileSources | null>;
   public abstract getPictureBySourceId: (

@@ -14,7 +14,7 @@ const userManagementMiddleware = (
       Buffer.from(encodedTokenPayload!, 'base64').toString('ascii')
     );
     const dbUser = await worker.handleAuthorization(
-      rawToken!,
+      rawToken,
       tokenPayload,
       permissions
     );
