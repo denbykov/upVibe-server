@@ -9,3 +9,4 @@ storage
 volumes
 plugins
 .env
+*.workers

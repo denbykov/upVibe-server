@@ -42,11 +42,11 @@
 				"volumes": [
 					{
 						"localPath": "/home/sowa/Work/Projects/upVibe-private-workers/plugins/dist",
-						"containerPath": "/usr/src/app/plugins"
+						"containerPath": "/opt/upVibe/plugins"
 					},
 					{
 						"localPath": "${workspaceFolder}/server/src",
-						"containerPath": "/usr/src/app/src"
+						"containerPath": "/opt/upVibe/src"
 					}
 				],
 				"ports": [

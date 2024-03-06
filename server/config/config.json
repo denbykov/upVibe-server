@@ -6,8 +6,8 @@
     "use_https": true,
     "https_key": "config/ssl/privatekey.pem",
     "https_cert": "config/ssl/certificate.pem",
-    "path_storage": "/usr/src/app/storage",
-    "plugins_location": "/usr/src/app/plugins",
+    "path_storage": "/opt/upVibe/storage",
+    "plugins_location": "/opt/upVibe/plugins",
     "plugins_config_location": "config/plugins.json"
   },
   "API": {
