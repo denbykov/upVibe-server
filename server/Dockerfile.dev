@@ -2,14 +2,14 @@ FROM node:lts-alpine
 
 ENV NODE_ENV=development
 
-WORKDIR /usr/src/app
+WORKDIR /opt/upVibe
 
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
 COPY . .
 
 RUN npm install --silent && mv node_modules ../
 
-RUN chown -R root /usr/src/app
+RUN chown -R root /opt/upVibe
 USER root
 
 CMD ["npm", "run", "dev:build:docker"]

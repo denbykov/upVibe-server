@@ -65,11 +65,11 @@ services:
     container_name: server
     restart: always
     volumes:
-      - ./server/logs:/usr/src/app/logs
-      - ./server/config:/usr/src/app/config
-      - ./storage:/usr/src/app/storage
-      - ./server/src/sql:/usr/src/app/buildDebug/sql
-      - ./server/src:/usr/src/app/src
+      - ./server/logs:/opt/upVibe/logs
+      - ./server/config:/opt/upVibe/config
+      - ./storage:/opt/upVibe/storage
+      - ./server/src/sql:/opt/upVibe/buildDebug/sql
+      - ./server/src:/opt/upVibe/src
     depends_on:
       postgresql:
         condition: service_healthy

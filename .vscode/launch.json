@@ -6,7 +6,7 @@
             "port": 9229,
             "restart": true,
             "name": "Docker: Attach to Node",
-            "remoteRoot": "/usr/src/app",
+            "remoteRoot": "/opt/upVibe",
             "localRoot": "${workspaceFolder}/server"
         },
         {
