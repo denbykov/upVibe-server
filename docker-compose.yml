@@ -69,7 +69,6 @@ services:
       - ./server/config:/usr/src/app/config
       - ./storage:/usr/src/app/storage
       - ./server/src/sql:/usr/src/app/buildDebug/sql
-      - ./server/plugins:/usr/src/app/plugins
       - ./server/src:/usr/src/app/src
     depends_on:
       postgresql:

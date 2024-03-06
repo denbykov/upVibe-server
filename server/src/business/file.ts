@@ -25,40 +25,36 @@ export class FileWorker {
     );
     const sourceDescription = await filePlugin.getSourceDescription(sourceUrl);
     const normalizedUrl = await filePlugin.getCorrectUrl(sourceUrl);
-    const file = await this.db.getFileByUrl(normalizedUrl);
-    if (!file) {
-      const sourceId = await this.db.getSourceIdByDescription(
-        sourceDescription
-      );
-      const temporaryFile: FileDTO = new FileDTO(
-        0,
-        randomUUID(),
-        FileSourceDTO.fromJSON({
-          file_sources_id: sourceId,
-        }),
-        Status.Created,
-        normalizedUrl
-      );
-      try {
+    try {
+      const file = await this.db.getFileByUrl(normalizedUrl);
+      if (!file) {
+        const sourceId = await this.db.getSourceIdByDescription(
+          sourceDescription
+        );
+        const temporaryFile: FileDTO = new FileDTO(
+          0,
+          randomUUID(),
+          FileSourceDTO.fromJSON({
+            file_sources_id: sourceId,
+          }),
+          Status.Created,
+          normalizedUrl
+        );
         const fileRecord = await this.db.insertFileTransaction(
           temporaryFile,
           user
         );
         return this.requestFileProcessing(fileRecord, sourceDescription);
-      } catch (err) {
-        dataLogger.error(`FileWorker.downloadFile: ${err}`);
-        return new Response(
-          Response.Code.InternalServerError,
-          { message: 'Server error' },
-          -1
-        );
       }
+      return new Response(Response.Code.Ok, { file }, 0);
+    } catch (err) {
+      dataLogger.error(`FileWorker.downloadFile: ${err}`);
+      return new Response(
+        Response.Code.InternalServerError,
+        { message: 'Server error' },
+        -1
+      );
     }
-    return new Response(
-      Response.Code.Ok,
-      { message: 'File already exists' },
-      0
-    );
   };
 
   public requestFileProcessing = async (file: FileDTO, routingKey: string) => {
@@ -72,7 +68,8 @@ export class FileWorker {
       );
       await filePlugin.downloadFile(file, routingKey);
       await tagPlugin.tagFile(file, routingKey);
-      return new Response(Response.Code.Ok, { message: 'File downloaded' });
+      const taggedFile = await this.db.getFileByUrl(file.sourceUrl);
+      return new Response(Response.Code.Ok, { taggedFile });
     } catch (err) {
       dataLogger.error(`FileWorker.requestFileProcessing: ${err}`);
       return new Response(

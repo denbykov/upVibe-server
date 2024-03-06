@@ -7,7 +7,7 @@ import { TaggedFileDTO } from '@src/dto/taggedFile';
 import { UserDTO } from '@src/dto/user';
 import { File } from '@src/entities/file';
 import { FileSource } from '@src/entities/source';
-import { TaggedFiles } from '@src/entities/taggedFile';
+import { TaggedFile, TaggedFiles } from '@src/entities/taggedFile';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
@@ -20,14 +20,14 @@ export class FileRepository implements iFileDatabase {
     this.sqlManager = sqlManager;
   }
 
-  public getFileByUrl = async (url: string): Promise<FileDTO | null> => {
+  public getFileByUrl = async (url: string): Promise<TaggedFile | null> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getFileByUrl');
       dataLogger.debug(query);
       const queryExecution = await client.query(query, [url]);
       if (queryExecution.rows.length > 0) {
-        return FileDTO.fromJSON(queryExecution.rows[0]);
+        return TaggedFileDTO.fromJSON(queryExecution.rows[0]);
       } else {
         return null;
       }
