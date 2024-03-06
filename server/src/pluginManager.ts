@@ -35,7 +35,10 @@ class PluginManager {
   };
 
   public loadPlugins = async (): Promise<Map<string, iPlugin>> => {
-    const pluginDirectories = readdirSync(this.config.appPluginsLocation);
+    console.log(path.resolve(this.config.appPluginsLocation));
+    const pluginDirectories = readdirSync(
+      path.resolve(this.config.appPluginsLocation)
+    );
     const plugins = new Map<string, iPlugin>();
     const pluginConfig = parseJSONConfig(
       JSON.parse(readFileSync(this.config.appPluginsConfigLocation, 'utf8'))
@@ -43,7 +46,7 @@ class PluginManager {
     for (const directory of pluginDirectories) {
       this.serverLogger.info(`Loading plugin ${directory}`);
       const { default: pluginClass } = await import(
-        path.join(this.config.appPluginsLocation, directory)
+        path.resolve(this.config.appPluginsLocation, directory)
       );
       const pluginInstance = new pluginClass(pluginConfig, this.dataLogger);
       this.serverLogger.info('Create plugin instance');
