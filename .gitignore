@@ -7,4 +7,5 @@ rest
 server/tests/sql/
 storage
 volumes
+plugins
 .env
