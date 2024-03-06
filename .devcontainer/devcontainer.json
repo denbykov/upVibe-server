@@ -10,7 +10,6 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-python.autopep8",
 				"EditorConfig.EditorConfig",
 				"dbaeumer.vscode-eslint",
 				"GitHub.copilot",
