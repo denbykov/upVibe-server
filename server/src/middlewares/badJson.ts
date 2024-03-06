@@ -12,7 +12,7 @@ export default (
     const response: Response = new Response(
       Response.Code.BadRequest,
       { message: 'Bad JSON in request body' },
-      1
+      -1
     );
     return res
       .status(response.httpCode)

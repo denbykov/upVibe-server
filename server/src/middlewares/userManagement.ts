@@ -19,14 +19,10 @@ const userManagementMiddleware = (
       permissions
     );
     if (!dbUser) {
-      const message = new ServerResponse(
-        ServerResponse.Code.Forbidden,
-        { message: 'Authorization error' },
-        1
-      );
-      return response
-        .status(message.httpCode)
-        .json({ ...message.payload, code: message.code });
+      const message = new ServerResponse(ServerResponse.Code.Forbidden, {
+        message: 'Authorization error',
+      });
+      return response.status(message.httpCode).json({ ...message.payload });
     }
 
     request.body.user = dbUser;
