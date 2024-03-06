@@ -1,6 +1,7 @@
 {
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
+  "files.eol": "\n",
   "files.autoSave": "onFocusChange",
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnPaste": true,
