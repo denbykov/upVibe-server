@@ -18,10 +18,10 @@ class SQLManager {
   }
 
   public loadQueries = () => {
-    const sqlDirectory = path.join(__dirname, './sql');
+    const sqlDirectory = path.resolve('sql');
     const sqlFiles = fs.readdirSync(sqlDirectory);
     for (const file of sqlFiles) {
-      const query = fs.readFileSync(path.join(sqlDirectory, file), 'utf8');
+      const query = fs.readFileSync(path.resolve(sqlDirectory, file), 'utf8');
       this.queries.set(file.split('.')[0], query);
       this.dataLogger.info(`Query ${file} loaded`);
     }

@@ -16,6 +16,8 @@ export class UserRepository implements iUserDatabase {
       const result = await client.query(
         `SELECT * FROM users WHERE sub = '${sub}'`
       );
+
+      if (result.rows.length === 0) return null;
       return UserDTO.fromJSON(result.rows[0]);
     } catch (err) {
       dataLogger.error(`UserRepository.getUserBySub: ${err}`);
