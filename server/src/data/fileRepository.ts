@@ -27,7 +27,12 @@ export class FileRepository implements iFileDatabase {
       dataLogger.debug(query);
       const queryExecution = await client.query(query, [url]);
       if (queryExecution.rows.length > 0) {
-        return TaggedFileDTO.fromJSON(queryExecution.rows[0]);
+        const taggedFile = TaggedFileDTO.fromJSON(queryExecution.rows[0]);
+        if (taggedFile.tags?.title) {
+          return taggedFile;
+        }
+        taggedFile.tags = null;
+        return taggedFile;
       } else {
         return null;
       }

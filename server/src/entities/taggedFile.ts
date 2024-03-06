@@ -38,13 +38,13 @@ class TaggedFile {
   public source: TaggedFileSource;
   public status: string;
   public sourceUrl: string;
-  public tags: TaggedFileTag;
+  public tags: TaggedFileTag | null;
   constructor(
     id: number,
     source: TaggedFileSource,
     status: string,
     sourceUrl: string,
-    tags: TaggedFileTag
+    tags: TaggedFileTag | null
   ) {
     this.id = id;
     this.source = source;
