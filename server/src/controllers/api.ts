@@ -16,27 +16,21 @@ class APIController extends BaseController {
     const response: Response = new Response(Response.Code.Ok, {
       message: 'API is healthy!',
     });
-    return res
-      .status(response.httpCode)
-      .json({ ...response.payload, code: response.code });
+    return res.status(response.httpCode).json({ ...response.payload });
   };
 
   public getInfo = async (req: Express.Request, res: Express.Response) => {
     const response: Response = new Response(Response.Code.Ok, {
-      message: `Welcome to ${this.config.apiURI} API! Version: ${this.config.apiVersion} 🚀`,
+      message: `${this.config.apiVersion}`,
     });
-    return res
-      .status(response.httpCode)
-      .json({ ...response.payload, code: response.code });
+    return res.status(response.httpCode).json({ ...response.payload });
   };
 
   public authTest = async (req: Express.Request, res: Express.Response) => {
     const response: Response = new Response(Response.Code.Ok, {
       message: 'Auth test passed!',
     });
-    return res
-      .status(response.httpCode)
-      .json({ ...response.payload, code: response.code });
+    return res.status(response.httpCode).json({ ...response.payload });
   };
 }
 

@@ -46,7 +46,7 @@ export class FileWorker {
         );
         return this.requestFileProcessing(fileRecord, sourceDescription);
       }
-      return new Response(Response.Code.Ok, { file }, 0);
+      return new Response(Response.Code.Ok, { ...file });
     } catch (err) {
       dataLogger.error(`FileWorker.downloadFile: ${err}`);
       return new Response(

@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { readFileSync, readdirSync } from 'fs';
 import { Logger } from 'log4js';
 import path from 'path';
@@ -35,20 +36,25 @@ class PluginManager {
   };
 
   public loadPlugins = async (): Promise<Map<string, iPlugin>> => {
-    console.log(path.resolve(this.config.appPluginsLocation));
     const pluginDirectories = readdirSync(
       path.resolve(this.config.appPluginsLocation)
     );
     const plugins = new Map<string, iPlugin>();
+    const envConfig = dotenv.config({ path: 'config/.env' }).parsed || {};
     const pluginConfig = parseJSONConfig(
       JSON.parse(readFileSync(this.config.appPluginsConfigLocation, 'utf8'))
     );
+
     for (const directory of pluginDirectories) {
       this.serverLogger.info(`Loading plugin ${directory}`);
       const { default: pluginClass } = await import(
         path.resolve(this.config.appPluginsLocation, directory)
       );
-      const pluginInstance = new pluginClass(pluginConfig, this.dataLogger);
+      const pluginInstance = new pluginClass(
+        envConfig,
+        pluginConfig,
+        this.dataLogger
+      );
       this.serverLogger.info('Create plugin instance');
       plugins.set(pluginClass.pluginName, pluginInstance);
     }

@@ -57,13 +57,13 @@ class TaggedFileDTO {
   public source: TaggedFileSourceDTO;
   public status: string;
   public sourceUrl: string;
-  public tags: TaggedFileTagDTO;
+  public tags: TaggedFileTagDTO | null;
   constructor(
     id: number,
     source: TaggedFileSourceDTO,
     status: string,
     sourceUrl: string,
-    tags: TaggedFileTagDTO
+    tags: TaggedFileTagDTO | null
   ) {
     this.id = id;
     this.source = source;
