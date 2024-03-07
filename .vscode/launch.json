@@ -1,6 +1,25 @@
 {
     "configurations": [
         {
+            "name": "Node.js: Nodemon debug",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "cwd": "${workspaceFolder}/server",
+            "runtimeArgs": [
+                "run",
+                "dev"
+            ],
+        },
+        {
+            "name": "Node.js: Attach",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "restart": true,
+            "localRoot": "${workspaceFolder}/server",
+        },
+        {
             "type": "node",
             "request": "attach",
             "port": 9229,

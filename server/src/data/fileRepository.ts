@@ -27,7 +27,12 @@ export class FileRepository implements iFileDatabase {
       dataLogger.debug(query);
       const queryExecution = await client.query(query, [url]);
       if (queryExecution.rows.length > 0) {
-        return TaggedFileDTO.fromJSON(queryExecution.rows[0]);
+        const taggedFile = TaggedFileDTO.fromJSON(queryExecution.rows[0]);
+        if (taggedFile.tags?.title) {
+          return taggedFile;
+        }
+        taggedFile.tags = null;
+        return taggedFile;
       } else {
         return null;
       }
@@ -48,7 +53,14 @@ export class FileRepository implements iFileDatabase {
       const query = this.sqlManager.getQuery('getFilesByUser');
       dataLogger.debug(query);
       const queryExecution = await client.query(query, [user.id]);
-      return queryExecution.rows.map((row) => TaggedFileDTO.fromJSON(row));
+      return queryExecution.rows.map((row) => {
+        const taggedFile = TaggedFileDTO.fromJSON(row);
+        if (taggedFile.tags?.title) {
+          return taggedFile;
+        }
+        taggedFile.tags = null;
+        return taggedFile;
+      });
     } catch (err) {
       dataLogger.error(`FilesRepository.getFilesByUser: ${err}`);
       return null;

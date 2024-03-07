@@ -1,8 +1,5 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/alpine
 {
-	"name": "Alpine",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"name": "Alpine-3.19",
 	"image": "mcr.microsoft.com/devcontainers/base:alpine-3.19",
 	"features": {
 		"ghcr.io/cirolosapio/devcontainers-features/alpine-node:0": {}
@@ -20,23 +17,12 @@
 				"xabikos.JavaScriptSnippets",
 				"Orta.vscode-jest",
 				"christian-kohler.path-intellisense",
-				"esbenp.prettier-vscode"
+				"esbenp.prettier-vscode",
+				"ms-azuretools.vscode-docker",
+				"redhat.vscode-yaml",
+				"cweijan.vscode-postgresql-client2"
 			]
 		}
-	}
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "uname -a",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	},
+	"postCreateCommand": "bash .devcontainer/setup.sh"
 }

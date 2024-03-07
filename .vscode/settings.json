@@ -1,6 +1,7 @@
 {
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
+  "files.eol": "\n",
   "files.autoSave": "onFocusChange",
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnPaste": true,
@@ -25,17 +26,5 @@
   ],
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "eslint.format.enable": true,
-  "eslint.lintTask.enable": true,
-  "sqltools.connections": [
-    {
-      "previewLimit": 50,
-      "server": "host.docker.internal",
-      "port": 5432,
-      "askForPassword": true,
-      "driver": "PostgreSQL",
-      "name": "upVibe-server",
-      "database": "up-vibe-dev",
-      "username": "admin"
-    }
-  ],
+  "eslint.lintTask.enable": true
 }
