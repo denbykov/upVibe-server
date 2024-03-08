@@ -44,9 +44,7 @@ class FileController extends BaseController {
       this.pluginManager!
     );
     const resultWorker = await fileWorker.getFilesByUser(user);
-    return res
-      .status(resultWorker.httpCode)
-      .json([{ ...resultWorker.payload, code: resultWorker.code }]);
+    return res.status(resultWorker.httpCode).json(resultWorker.payload);
   };
 
   public getFileSources = async (

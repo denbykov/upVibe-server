@@ -44,7 +44,11 @@ export class FileWorker {
           temporaryFile,
           user
         );
-        return this.requestFileProcessing(fileRecord, sourceDescription);
+        return this.requestFileProcessing(
+          fileRecord,
+          user.id,
+          sourceDescription
+        );
       }
       return new Response(Response.Code.Ok, { ...file });
     } catch (err) {
@@ -57,7 +61,11 @@ export class FileWorker {
     }
   };
 
-  public requestFileProcessing = async (file: FileDTO, routingKey: string) => {
+  public requestFileProcessing = async (
+    file: FileDTO,
+    userId: number,
+    routingKey: string
+  ) => {
     dataLogger.trace('FileWorker.requestFileProcessing()');
     try {
       const filePlugin = this.pluginManager.getPlugin(
@@ -67,7 +75,7 @@ export class FileWorker {
         PluginManager.PluginType.TagPlugin
       );
       await filePlugin.downloadFile(file, routingKey);
-      await tagPlugin.tagFile(file, routingKey);
+      await tagPlugin.tagFile(file, userId, routingKey);
       const taggedFile = await this.db.getFileByUrl(file.sourceUrl);
       return new Response(Response.Code.Ok, { taggedFile });
     } catch (err) {
