@@ -7,7 +7,7 @@ import {
 import { Response as ServerResponse } from '@src/entities/response';
 
 const errorAuth0Handler = (
-  error: unknown,
+  error: Error,
   request: Request,
   response: Response,
   next: NextFunction

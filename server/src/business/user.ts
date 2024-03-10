@@ -6,6 +6,7 @@ import { dataLogger } from '@src/utils/server/logger';
 export class UserWorker {
   private db: iUserDatabase;
   private userInfoAgent: iUserInfoAgent;
+
   constructor(db: iUserDatabase, userInfoAgent: iUserInfoAgent) {
     this.db = db;
     this.userInfoAgent = userInfoAgent;

@@ -14,6 +14,7 @@ class PluginManager {
   public static PluginType = PluginType;
   private dataLogger: Logger;
   private serverLogger: Logger;
+
   constructor(config: Config, dataLogger: Logger, serverLogger: Logger) {
     this.config = config;
     this.dataLogger = dataLogger;

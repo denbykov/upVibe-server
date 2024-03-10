@@ -1,36 +1,29 @@
-import pg from 'pg';
-
 import { FileDTO } from '@src/dto/file';
-import { FileSources } from '@src/entities/source';
-import { FileSource, TagSource } from '@src/entities/source';
-import { TaggedFile, TaggedFiles } from '@src/entities/taggedFile';
-import { User } from '@src/entities/user';
+import { FileSourceDTO, TagSourceDTO } from '@src/dto/source';
+import { TaggedFileDTO } from '@src/dto/taggedFile';
+import { UserDTO } from '@src/dto/user';
 
 export abstract class iFileDatabase {
-  public abstract getFileByUrl: (url: string) => Promise<TaggedFile | null>;
-  public abstract getFilesByUser: (user: User) => Promise<TaggedFiles | null>;
-  public abstract getFileSources: () => Promise<FileSources | null>;
-  public abstract getPictureBySourceId: (
-    sourceId: string
-  ) => Promise<FileSource | null>;
+  public abstract getFileByUrl: (url: string) => Promise<FileDTO | null>;
+  public abstract getTaggedFileByUrl: (
+    url: string,
+    user: UserDTO
+  ) => Promise<TaggedFileDTO | null>;
+  public abstract getTaggedFilesByUser: (
+    user: UserDTO
+  ) => Promise<Array<TaggedFileDTO>>;
+  public abstract getFileSources: () => Promise<Array<FileSourceDTO>>;
   public abstract getTagSources: (
-    description: string,
-    client: pg.PoolClient
-  ) => Promise<TagSource>;
-  public abstract insertFile: (
-    file: FileDTO,
-    client: pg.PoolClient
-  ) => Promise<FileDTO>;
+    description: string
+  ) => Promise<Array<TagSourceDTO>>;
+  public abstract insertFile: (file: FileDTO) => Promise<FileDTO>;
   public abstract insertUserFile: (
     userId: number,
-    fileId: number,
-    client: pg.PoolClient
+    fileId: number
   ) => Promise<void>;
-  public abstract insertFileTransaction: (
-    file: FileDTO,
-    user: User
-  ) => Promise<FileDTO>;
-  public abstract getSourceIdByDescription: (
-    description: string
-  ) => Promise<number>;
+  public abstract getFileSource: (id: number) => Promise<FileSourceDTO>;
+  public abstract doesUserFileExist: (
+    userId: number,
+    fileId: number
+  ) => Promise<boolean>;
 }

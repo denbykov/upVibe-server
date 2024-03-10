@@ -12,6 +12,7 @@ class Response {
   public httpCode: Code;
   public payload: object;
   public code?: number;
+
   constructor(httpCode: Code, payload: object = {}, code?: number) {
     this.httpCode = httpCode;
     this.payload = payload;

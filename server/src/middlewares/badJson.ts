@@ -1,22 +1,16 @@
 import Express from 'express';
 
-import { Response } from '@src/entities/response';
-
 export default (
-  err: Express.ErrorRequestHandler,
-  req: Express.Request,
-  res: Express.Response,
+  error: Error,
+  request: Express.Request,
+  response: Express.Response,
   next: Express.NextFunction
 ) => {
-  if (err instanceof SyntaxError && 'body' in err) {
-    const response: Response = new Response(
-      Response.Code.BadRequest,
-      { message: 'Bad JSON in request body' },
-      -1
-    );
-    return res
-      .status(response.httpCode)
-      .json({ ...response.payload, code: response.code });
+  if (error instanceof SyntaxError && 'body' in error) {
+    //FixMe replace code with constant
+    return response
+      .status(400)
+      .json({ message: 'Bad JSON in request body', code: -1 });
   }
-  next();
+  next(error);
 };

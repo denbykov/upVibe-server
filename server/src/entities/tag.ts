@@ -12,6 +12,7 @@ export class Tag {
   public trackNumber: number;
   public sourceType: TagSource;
   public status: Status;
+
   constructor(
     id: number,
     fileId: number,
@@ -47,6 +48,7 @@ export class TagMapping {
   public picture: number;
   public year: number;
   public trackNumber: number;
+
   constructor(
     userId: number,
     id: number,

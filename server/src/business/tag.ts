@@ -1,14 +1,12 @@
-import { Config } from '@src/entities/config';
 import { Response } from '@src/entities/response';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class TagWorker {
   private db: iTagDatabase;
-  private config: Config;
-  constructor(db: iTagDatabase, config: Config) {
+
+  constructor(db: iTagDatabase) {
     this.db = db;
-    this.config = config;
     dataLogger.trace('TagWorker initialized');
   }
   public getFileTags = async (fileId: number): Promise<Response> => {

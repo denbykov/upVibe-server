@@ -2,7 +2,7 @@ import Express from 'express';
 import pg from 'pg';
 
 import { FileWorker } from '@src/business/file';
-import { FileRepository } from '@src/data';
+import { FileRepository, TagRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -20,59 +20,69 @@ class FileController extends BaseController {
   }
 
   public downloadFileBySource = async (
-    req: Express.Request,
-    res: Express.Response
+    request: Express.Request,
+    response: Express.Response,
+    next: Express.NextFunction
   ) => {
-    const { url, user } = req.body;
-    const fileWorker = new FileWorker(
-      new FileRepository(this.databasePool, this.sqlManager),
-      this.pluginManager!
-    );
-    const resultWorker = await fileWorker.downloadFile(url, user);
-    return res
-      .status(resultWorker.httpCode)
-      .json({ ...resultWorker.payload, code: resultWorker.code });
+    try {
+      const { url, user } = request.body;
+      const fileWorker = new FileWorker(
+        new FileRepository(this.databasePool, this.sqlManager),
+        new TagRepository(this.databasePool, this.sqlManager),
+        this.pluginManager!
+      );
+
+      const result = await fileWorker.downloadFile(url, user);
+      // FixMe replace code with constant
+      response.status(200).json(result!);
+    } catch (error) {
+      next(error);
+    }
   };
 
   public getFilesByUser = async (
-    req: Express.Request,
-    res: Express.Response
+    request: Express.Request,
+    response: Express.Response
   ) => {
-    const { user } = req.body;
+    const { user } = request.body;
     const fileWorker = new FileWorker(
       new FileRepository(this.databasePool, this.sqlManager),
+      new TagRepository(this.databasePool, this.sqlManager),
       this.pluginManager!
     );
-    const resultWorker = await fileWorker.getFilesByUser(user);
-    return res.status(resultWorker.httpCode).json(resultWorker.payload);
+
+    const result = await fileWorker.getTaggedFilesByUser(user);
+    // FixMe replace code with constant
+    return response.status(200).json(result!);
   };
 
   public getFileSources = async (
-    req: Express.Request,
-    res: Express.Response
+    request: Express.Request,
+    response: Express.Response
   ) => {
     const fileWorker = new FileWorker(
       new FileRepository(this.databasePool, this.sqlManager),
+      new TagRepository(this.databasePool, this.sqlManager),
       this.pluginManager!
     );
-    const resultWorker = await fileWorker.getFileSources();
-    return res
-      .status(resultWorker.httpCode)
-      .json({ ...resultWorker.payload, code: resultWorker.code });
+
+    const result = await fileWorker.getFileSources();
+    return response.status(200).json(result!);
   };
 
   public getPictureBySourceId = async (
-    req: Express.Request,
-    res: Express.Response
+    request: Express.Request,
+    response: Express.Response
   ) => {
-    const { sourceId } = req.params;
+    const { sourceId } = request.params;
     const fileWorker = new FileWorker(
       new FileRepository(this.databasePool, this.sqlManager),
+      new TagRepository(this.databasePool, this.sqlManager),
       this.pluginManager!
     );
-    const resultWorker = await fileWorker.getPictureBySourceId(sourceId);
+    const resultWorker = await fileWorker.getPictureBySource(Number(sourceId));
     const { logoPath } = resultWorker.payload as { logoPath: string };
-    return res
+    return response
       .status(resultWorker.httpCode)
       .sendFile(this.config.appPathStorage + '/pictures/' + logoPath);
   };

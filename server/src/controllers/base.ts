@@ -9,6 +9,7 @@ class BaseController {
   public databasePool: pg.Pool;
   public sqlManager: SQLManager;
   public pluginManager?: PluginManager;
+
   constructor(
     config: Config,
     databasePool: pg.Pool,

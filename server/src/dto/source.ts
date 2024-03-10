@@ -1,14 +1,17 @@
 class SourceDTO {
   public id: number;
   public description: string;
+
   constructor(id: number, description: string) {
     this.id = id;
     this.description = description;
   }
 }
 
+// FixMe: Create SourceDTO version with logoPath and inherit from it
 class FileSourceDTO extends SourceDTO {
   public logoPath: string;
+
   constructor(id: number, description: string, logoPath: string) {
     super(id, description);
     this.logoPath = logoPath;
@@ -16,18 +19,10 @@ class FileSourceDTO extends SourceDTO {
 
   public static fromJSON(json: JSON.JSONObject): FileSourceDTO {
     return new FileSourceDTO(
-      json.file_sources_id,
-      json.file_sources_description,
-      json.file_sources_logo_path
+      json.file_source_id,
+      json.file_source_description,
+      json.file_source_logo_path
     );
-  }
-
-  public static toJSON(source: FileSourceDTO): FileSourceDTO {
-    return {
-      id: source.id,
-      description: source.description,
-      logoPath: source.logoPath,
-    };
   }
 }
 

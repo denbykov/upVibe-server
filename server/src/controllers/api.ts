@@ -12,25 +12,32 @@ class APIController extends BaseController {
     super(config, databasePool, sqlManager);
   }
 
-  public healthCheck = async (req: Express.Request, res: Express.Response) => {
-    const response: Response = new Response(Response.Code.Ok, {
+  public healthCheck = async (
+    request: Express.Request,
+    response: Express.Response
+  ) => {
+    return response.status(Response.Code.Ok).json({
       message: 'API is healthy!',
     });
-    return res.status(response.httpCode).json({ ...response.payload });
   };
 
-  public getInfo = async (req: Express.Request, res: Express.Response) => {
-    const response: Response = new Response(Response.Code.Ok, {
+  public getInfo = async (
+    request: Express.Request,
+    response: Express.Response
+  ) => {
+    return response.status(Response.Code.Ok).json({
+      // FixMe: apiVersion should not be a part of the config, it should be established and taken from the build system
       message: `${this.config.apiVersion}`,
     });
-    return res.status(response.httpCode).json({ ...response.payload });
   };
 
-  public authTest = async (req: Express.Request, res: Express.Response) => {
-    const response: Response = new Response(Response.Code.Ok, {
+  public authTest = async (
+    request: Express.Request,
+    response: Express.Response
+  ) => {
+    return response.status(Response.Code.Ok).json({
       message: 'Auth test passed!',
     });
-    return res.status(response.httpCode).json({ ...response.payload });
   };
 }
 

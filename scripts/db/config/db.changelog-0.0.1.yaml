@@ -1,3 +1,5 @@
 databaseChangeLog:
   - includeAll:
       path: ./changesets/0.0.1
+  - includeAll:
+      path: ./changesets/0.0.1.workers

@@ -1,29 +1,13 @@
-class TaggedFileSourceDTO {
-  public id: number;
-  public description: string;
-  public logoPath: string;
-  constructor(id: number, description: string, logoPath: string) {
-    this.id = id;
-    this.description = description;
-    this.logoPath = logoPath;
-  }
+import { FileSourceDTO } from './source';
 
-  public static fromJSON = (json: JSON.JSONObject): TaggedFileSourceDTO => {
-    return new TaggedFileSourceDTO(
-      json.file_source_id,
-      json.file_source_description,
-      json.file_source_logo_path
-    );
-  };
-}
-
-class TaggedFileTagDTO {
+class ShortTagsDTO {
   public title: string;
   public artist: string;
   public album: string;
   public year: number;
   public trackNumber: number;
   public pictureId: number;
+
   constructor(
     title: string,
     artist: string,
@@ -40,8 +24,19 @@ class TaggedFileTagDTO {
     this.pictureId = pictureId;
   }
 
-  public static fromJSON = (json: JSON.JSONObject): TaggedFileTagDTO => {
-    return new TaggedFileTagDTO(
+  public empty = (): boolean => {
+    return (
+      this.title === null &&
+      this.artist === null &&
+      this.album === null &&
+      this.year === null &&
+      this.trackNumber === null &&
+      this.pictureId === null
+    );
+  };
+
+  public static fromJSON = (json: JSON.JSONObject): ShortTagsDTO => {
+    return new ShortTagsDTO(
       json.tag_title,
       json.tag_artist,
       json.tag_album,
@@ -54,16 +49,17 @@ class TaggedFileTagDTO {
 
 class TaggedFileDTO {
   public id: number;
-  public source: TaggedFileSourceDTO;
+  public source: FileSourceDTO;
   public status: string;
   public sourceUrl: string;
-  public tags: TaggedFileTagDTO | null;
+  public tags: ShortTagsDTO | null;
+
   constructor(
     id: number,
-    source: TaggedFileSourceDTO,
+    source: FileSourceDTO,
     status: string,
     sourceUrl: string,
-    tags: TaggedFileTagDTO | null
+    tags: ShortTagsDTO | null
   ) {
     this.id = id;
     this.source = source;
@@ -73,16 +69,15 @@ class TaggedFileDTO {
   }
 
   public static fromJSON = (json: JSON.JSONObject): TaggedFileDTO => {
+    const shortTags = ShortTagsDTO.fromJSON(json);
     return new TaggedFileDTO(
       json.file_id,
-      TaggedFileSourceDTO.fromJSON(json),
+      FileSourceDTO.fromJSON(json),
       json.file_status,
       json.file_source_url,
-      TaggedFileTagDTO.fromJSON(json)
+      shortTags.empty() ? null : shortTags
     );
   };
 }
 
-type TaggedFilesDTO = Array<TaggedFileDTO>;
-
-export { TaggedFileDTO, TaggedFilesDTO, TaggedFileSourceDTO, TaggedFileTagDTO };
+export { TaggedFileDTO, ShortTagsDTO };

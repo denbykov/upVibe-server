@@ -6,6 +6,7 @@ import { dataLogger } from '@src/utils/server/logger';
 
 export class UserRepository implements iUserDatabase {
   public pool: pg.Pool;
+
   constructor(pool: pg.Pool) {
     this.pool = pool;
   }

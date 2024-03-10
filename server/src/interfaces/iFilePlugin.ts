@@ -5,6 +5,6 @@ export abstract class iFilePlugin {
   public abstract getCorrectUrl: (url: string) => Promise<string>;
   public abstract downloadFile: (
     file: FileDTO,
-    routingKey: string
+    source: string
   ) => Promise<void>;
 }

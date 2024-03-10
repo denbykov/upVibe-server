@@ -7,6 +7,7 @@ class SQLManager {
   private queries: Map<string, string> = new Map();
   private dataLogger!: Logger;
   private serverLogger!: Logger;
+
   constructor(dataLogger: Logger, serverLogger: Logger) {
     if (SQLManager.instance) {
       return SQLManager.instance;

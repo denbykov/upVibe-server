@@ -4,6 +4,6 @@ export abstract class iTagPlugin {
   public abstract tagFile: (
     file: FileDTO,
     userId: number,
-    routingKey: string
+    source: string
   ) => Promise<void>;
 }
