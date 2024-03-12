@@ -1,7 +1,7 @@
-import { FileDTO } from '@src/dto/file';
-import { FileSourceDTO, TagSourceDTO } from '@src/dto/source';
-import { TaggedFileDTO } from '@src/dto/taggedFile';
-import { UserDTO } from '@src/dto/user';
+import { FileDTO } from '@src/dto/fileDTO';
+import { FileSourceDTO } from '@src/dto/sourceDTO';
+import { TaggedFileDTO } from '@src/dto/taggedFileDTO';
+import { UserDTO } from '@src/dto/userDTO';
 
 export abstract class iFileDatabase {
   public abstract getFileByUrl: (url: string) => Promise<FileDTO | null>;
@@ -13,9 +13,6 @@ export abstract class iFileDatabase {
     user: UserDTO
   ) => Promise<Array<TaggedFileDTO>>;
   public abstract getFileSources: () => Promise<Array<FileSourceDTO>>;
-  public abstract getTagSources: (
-    description: string
-  ) => Promise<Array<TagSourceDTO>>;
   public abstract insertFile: (file: FileDTO) => Promise<FileDTO>;
   public abstract insertUserFile: (
     userId: number,

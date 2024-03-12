@@ -5,7 +5,7 @@ info:
     name: Express v.4.18.2
     url: https://github.com/expressjs/express/blob/master/LICENSE
   version: 0.0.1
-    
+
 tags:
   - name: files
     description: File management
@@ -18,8 +18,8 @@ tags:
       url: http://swagger.io
   - name: user-management
     description: User management
-  
-paths:          
+
+paths:
   /up-vibe/v1/files:
     post:
       tags:
@@ -107,13 +107,12 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
-  /up-vibe/v1/files/sources/{sourceId}/picture:
+  /up-vibe/v1/files/sources/{sourceId}/logo:
     get:
       tags:
         - files
-      summary: Get picture for the given source id
-      description: Returns array of the available file sources
-      operationId: getFileSourcePicture
+      summary: Get logo for the given source id
+      operationId: getFileSourceLogo
       parameters:
         - name: sourceId
           in: path
@@ -228,13 +227,12 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
-  /up-vibe/v1/tags/sources/{sourceId}/picture:
+  /up-vibe/v1/tags/sources/{sourceId}/logo:
     get:
       tags:
         - tags
-      summary: Get picture for the given source id
-      description: Returns array of the available file sources
-      operationId: getTagSourcePicture
+      summary: Get logo for the given source id
+      operationId: getTagSourceLogo
       parameters:
         - name: sourceId
           in: path

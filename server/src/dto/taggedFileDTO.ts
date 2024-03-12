@@ -1,4 +1,4 @@
-import { FileSourceDTO } from './source';
+import { FileSourceDTO } from './sourceDTO';
 
 class ShortTagsDTO {
   public title: string;

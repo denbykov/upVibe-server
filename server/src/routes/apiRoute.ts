@@ -1,7 +1,7 @@
 import express from 'express';
 import pg from 'pg';
 
-import { UserWorker } from '@src/business/user';
+import { UserWorker } from '@src/business/userWorker';
 import { APIController } from '@src/controllers';
 import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
 import { UserRepository } from '@src/data/userRepository';
@@ -10,7 +10,7 @@ import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
-import { BaseRoute } from './base';
+import { BaseRoute } from './baseRoute';
 import { GENERAL } from './permissions';
 
 export class APIRoute extends BaseRoute {

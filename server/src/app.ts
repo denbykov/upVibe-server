@@ -6,8 +6,8 @@ import pg from 'pg';
 
 import { Config } from '@src/entities/config';
 import {
-  BadJsonMiddleware,
-  errorAuth0Middleware,
+  auth0ErrorHandlingMiddleware,
+  errorHandlingMiddleware,
   requestLoggerMiddleware,
   unmatchedRoutesMiddleware,
 } from '@src/middlewares';
@@ -81,8 +81,8 @@ export class App {
       new TagRoute(this.app, this.config, this.pool, this.sqlManager)
     );
 
-    this.app.use(errorAuth0Middleware);
-    this.app.use(BadJsonMiddleware);
+    this.app.use(auth0ErrorHandlingMiddleware);
+    this.app.use(errorHandlingMiddleware);
     this.app.use(unmatchedRoutesMiddleware);
   };
 

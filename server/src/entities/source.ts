@@ -1,4 +1,4 @@
-import { FileSourceDTO } from '@src/dto/source';
+import { FileSourceDTO, TagSourceDTO } from '@src/dto/sourceDTO';
 
 class Source {
   public id: number;
@@ -24,4 +24,8 @@ export class TagSource extends Source {
   constructor(id: number, source: string) {
     super(id, source);
   }
+
+  public static fromDTO = (dto: TagSourceDTO): TagSource => {
+    return new TagSource(dto.id, dto.description);
+  };
 }

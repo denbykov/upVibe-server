@@ -1,9 +1,9 @@
 import pg from 'pg';
 
-import { FileDTO } from '@src/dto/file';
-import { FileSourceDTO, TagSourceDTO } from '@src/dto/source';
-import { TaggedFileDTO } from '@src/dto/taggedFile';
-import { UserDTO } from '@src/dto/user';
+import { FileDTO } from '@src/dto/fileDTO';
+import { FileSourceDTO } from '@src/dto/sourceDTO';
+import { TaggedFileDTO } from '@src/dto/taggedFileDTO';
+import { UserDTO } from '@src/dto/userDTO';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
@@ -69,8 +69,7 @@ export class FileRepository implements iFileDatabase {
       dataLogger.debug(query);
       const queryResult = await client.query(query, [user.id]);
       return queryResult.rows.map((row) => {
-        const taggedFile = TaggedFileDTO.fromJSON(row);
-        return taggedFile;
+        return TaggedFileDTO.fromJSON(row);
       });
     } catch (err) {
       dataLogger.error(err);
@@ -87,24 +86,6 @@ export class FileRepository implements iFileDatabase {
       dataLogger.debug(query);
       const queryResult = await client.query(query);
       return queryResult.rows.map((row) => FileSourceDTO.fromJSON(row));
-    } catch (err) {
-      dataLogger.error(err);
-      throw err;
-    } finally {
-      client.release();
-    }
-  };
-
-  public getTagSources = async (
-    description: string
-  ): Promise<Array<TagSourceDTO>> => {
-    const client = await this.pool.connect();
-    try {
-      // FixMe: Fix it
-      const query = this.sqlManager.getQuery('getTagSources');
-      const queryResult = await client.query(query, [description]);
-      //   return TagSourceDTO.fromJSON(queryResult.rows[0]);
-      return Array<TagSourceDTO>();
     } catch (err) {
       dataLogger.error(err);
       throw err;

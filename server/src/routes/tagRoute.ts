@@ -3,11 +3,11 @@ import pg from 'pg';
 
 import { TagController } from '@src/controllers';
 import { Config } from '@src/entities/config';
-import auth0Middleware from '@src/middlewares/auth0';
+import auth0Middleware from '@src/middlewares/auth0Middleware';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
-import { BaseRoute } from './base';
+import { BaseRoute } from './baseRoute';
 
 export class TagRoute extends BaseRoute {
   constructor(
@@ -27,8 +27,8 @@ export class TagRoute extends BaseRoute {
       this.sqlManager
     );
 
-    const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/library/files`;
-    const apiURITags = `/${this.config.apiURI}/${this.config.apiVersion}/library/tags`;
+    const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/files`;
+    const apiURITags = `/${this.config.apiURI}/${this.config.apiVersion}/tags`;
 
     this.app.get(
       `${apiURIFiles}/:fileId/tags`,
@@ -39,19 +39,19 @@ export class TagRoute extends BaseRoute {
     this.app.get(
       `${apiURITags}/:tagId/picture`,
       auth0Middleware(this.config),
-      controller.getFilePictureTag
+      controller.getPictureOfTag
     );
 
     this.app.get(
       `${apiURITags}/sources`,
       auth0Middleware(this.config),
-      controller.getTagSources
+      controller.getSources
     );
 
     this.app.get(
-      `${apiURITags}/sources/:sourceId/picture`,
+      `${apiURITags}/sources/:sourceId/logo`,
       auth0Middleware(this.config),
-      controller.getTagSourcePicture
+      controller.getSourceLogo
     );
 
     return this.app;

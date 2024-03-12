@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 const { iTagDatabase } = require('@src/interfaces/iTagDatabase');
-const { TagWorker } = require('@src/business/tagWorker.business');
+const { TagWorker } = require('@src/business/tagWorkerWorker.business');
 const { Config } = require('@src/entities/config');
 const { Response } = require('@src/entities/response');
 

@@ -1,7 +1,7 @@
 import express from 'express';
 import pg from 'pg';
 
-import { UserWorker } from '@src/business/user';
+import { UserWorker } from '@src/business/userWorker';
 import { FileController } from '@src/controllers';
 import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
 import { UserRepository } from '@src/data/userRepository';
@@ -10,7 +10,7 @@ import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
-import { BaseRoute } from './base';
+import { BaseRoute } from './baseRoute';
 import { GENERAL } from './permissions';
 
 export class FileRoute extends BaseRoute {
@@ -55,14 +55,14 @@ export class FileRoute extends BaseRoute {
       `${apiURIFiles}/sources`,
       auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),
-      controller.getFileSources
+      controller.getSources
     );
 
     this.app.get(
-      `${apiURIFiles}/sources/:sourceId/picture`,
+      `${apiURIFiles}/sources/:sourceId/logo`,
       auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),
-      controller.getPictureBySourceId
+      controller.getSourceLogo
     );
 
     return this.app;

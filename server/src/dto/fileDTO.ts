@@ -1,17 +1,15 @@
-import { Status } from './status';
-
 class FileDTO {
   public id: number;
   public path: string;
   public sourceId: number;
-  public status: Status;
+  public status: string;
   public sourceUrl: string;
 
   constructor(
     id: number,
     path: string,
     sourceId: number,
-    status: Status,
+    status: string,
     sourceUrl: string
   ) {
     this.id = id;

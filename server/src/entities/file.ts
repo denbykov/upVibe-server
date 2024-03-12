@@ -1,4 +1,4 @@
-import { ShortTagsDTO, TaggedFileDTO } from '@src/dto/taggedFile';
+import { ShortTagsDTO, TaggedFileDTO } from '@src/dto/taggedFileDTO';
 
 import { FileSource } from './source';
 

@@ -2,10 +2,10 @@ import Express from 'express';
 import pg from 'pg';
 
 import { Config } from '@src/entities/config';
-import { Response } from '@src/entities/response';
 import { SQLManager } from '@src/sqlManager';
+import { APP_VERSION } from '@src/version';
 
-import { BaseController } from './base';
+import { BaseController } from './baseController';
 
 class APIController extends BaseController {
   constructor(config: Config, databasePool: pg.Pool, sqlManager: SQLManager) {
@@ -16,7 +16,7 @@ class APIController extends BaseController {
     request: Express.Request,
     response: Express.Response
   ) => {
-    return response.status(Response.Code.Ok).json({
+    return response.status(200).json({
       message: 'API is healthy!',
     });
   };
@@ -25,9 +25,8 @@ class APIController extends BaseController {
     request: Express.Request,
     response: Express.Response
   ) => {
-    return response.status(Response.Code.Ok).json({
-      // FixMe: apiVersion should not be a part of the config, it should be established and taken from the build system
-      message: `${this.config.apiVersion}`,
+    return response.status(200).json({
+      version: `${APP_VERSION}`,
     });
   };
 
@@ -35,7 +34,7 @@ class APIController extends BaseController {
     request: Express.Request,
     response: Express.Response
   ) => {
-    return response.status(Response.Code.Ok).json({
+    return response.status(200).json({
       message: 'Auth test passed!',
     });
   };
