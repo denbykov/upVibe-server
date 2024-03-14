@@ -1,4 +1,4 @@
-import { UserDTO } from '@src/dto/user';
+import { UserDTO } from '@src/dto/userDTO';
 
 export abstract class iUserDatabase {
   public abstract getUserBySub(sub: string): Promise<UserDTO | null>;

@@ -1,10 +1,11 @@
-import { FileDTO } from '@src/dto/file';
+import { FileDTO } from '@src/dto/fileDTO';
 
 export abstract class iFilePlugin {
-  public abstract getSourceDescription: (url: string) => Promise<string>;
-  public abstract getCorrectUrl: (url: string) => Promise<string>;
+  pluginName!: string;
+  public abstract getSource: (url: string) => Promise<number>;
+  public abstract normalizeUrl: (url: string) => Promise<string>;
   public abstract downloadFile: (
     file: FileDTO,
-    routingKey: string
+    source: string
   ) => Promise<void>;
 }

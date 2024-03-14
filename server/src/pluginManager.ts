@@ -4,20 +4,25 @@ import { Logger } from 'log4js';
 import path from 'path';
 
 import { Config } from '@src/entities/config';
-import { MergedIPlugin, PluginType, iPlugin } from '@src/interfaces/iPlugin';
 import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
+
+import { iFilePlugin } from './interfaces/iFilePlugin';
+import { iTagPlugin } from './interfaces/iTagPlugin';
 
 class PluginManager {
   private config: Config;
-  public plugins: Map<PluginType, iPlugin> = new Map();
+  private filePlugin: iFilePlugin | null;
+  private tagPlugin: iTagPlugin | null;
   private static instance: PluginManager;
-  public static PluginType = PluginType;
   private dataLogger: Logger;
   private serverLogger: Logger;
+
   constructor(config: Config, dataLogger: Logger, serverLogger: Logger) {
     this.config = config;
     this.dataLogger = dataLogger;
     this.serverLogger = serverLogger;
+    this.filePlugin = null;
+    this.tagPlugin = null;
     this.serverLogger.info('PluginManager instance created');
     if (PluginManager.instance) {
       return PluginManager.instance;
@@ -25,21 +30,41 @@ class PluginManager {
     PluginManager.instance = this;
   }
 
-  public registerPlugins = async (
-    plugins: Map<string, iPlugin>
-  ): Promise<void> => {
-    const pluginsMap = plugins;
-    pluginsMap.forEach(async (plugin, name) => {
-      this.plugins.set(name as PluginType, plugin as iPlugin);
-      this.dataLogger.info(`Plugin ${name} registered`);
-    });
+  private checkPlugins = (): void => {
+    if (!this.filePlugin) {
+      throw new Error('FilePlugin not registered');
+    }
+    if (!this.tagPlugin) {
+      throw new Error('TagPlugin not registered');
+    }
   };
 
-  public loadPlugins = async (): Promise<Map<string, iPlugin>> => {
+  private registerPlugin = (plugin: iFilePlugin | iTagPlugin): void => {
+    let pluginRegistered = false;
+
+    if (plugin.pluginName === 'FilePlugin' && !this.filePlugin) {
+      this.filePlugin = plugin as iFilePlugin;
+      pluginRegistered = true;
+    } else if (plugin.pluginName === 'FilePlugin') {
+      throw new Error(`${plugin.pluginName} already registered`);
+    }
+
+    if (plugin.pluginName === 'TagPlugin' && !this.tagPlugin) {
+      this.tagPlugin = plugin as iTagPlugin;
+      pluginRegistered = true;
+    } else if (plugin.pluginName === 'TagPlugin') {
+      throw new Error(`${plugin.pluginName} already registered`);
+    }
+
+    if (!pluginRegistered) {
+      throw new Error(`Unknown plugin type {plugin.pluginName}`);
+    }
+  };
+
+  private loadPlugins = async (): Promise<void> => {
     const pluginDirectories = readdirSync(
       path.resolve(this.config.appPluginsLocation)
     );
-    const plugins = new Map<string, iPlugin>();
     const envConfig = dotenv.config({ path: 'config/.env' }).parsed || {};
     const pluginConfig = parseJSONConfig(
       JSON.parse(readFileSync(this.config.appPluginsConfigLocation, 'utf8'))
@@ -56,18 +81,21 @@ class PluginManager {
         this.dataLogger
       );
       this.serverLogger.info('Create plugin instance');
-      plugins.set(pluginClass.pluginName, pluginInstance);
+      this.registerPlugin(pluginInstance);
     }
-    return plugins;
-  };
-
-  public getPlugin = (type: PluginType): MergedIPlugin => {
-    return this.plugins.get(type) as MergedIPlugin;
+    this.checkPlugins();
   };
 
   public setUp = async (): Promise<void> => {
-    const plugins = await this.loadPlugins();
-    await this.registerPlugins(plugins);
+    await this.loadPlugins();
+  };
+
+  public getFilePlugin = (): iFilePlugin => {
+    return this.filePlugin!;
+  };
+
+  public getTagPlugin = (): iTagPlugin => {
+    return this.tagPlugin!;
   };
 }
 

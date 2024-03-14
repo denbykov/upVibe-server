@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prebuild": "node -p \"'export const APP_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "build": "npx tsc && tsc-alias -p tsconfig.json",
     "dev:build": "npx tsc -p tsconfig.dev.json && npx tsc-alias -p tsconfig.dev.json",
     "start": "node dist/server.js",
@@ -16,8 +17,6 @@
     "lint:prettier": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
-  "author": "Volodymyr Fihurniak",
-  "license": "ISC",
   "dependencies": {
     "amqplib": "^0.10.3",
     "dotenv": "^16.3.1",

@@ -5,6 +5,7 @@ import { readJSON } from '@src/utils/server/readJSON';
 
 export class UserInfoAgent implements iUserInfoAgent {
   private config: Config;
+
   constructor(config: Config) {
     this.config = config;
   }
