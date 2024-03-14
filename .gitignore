@@ -10,3 +10,4 @@ volumes
 plugins
 .env
 *.workers
+version.ts

@@ -21,6 +21,7 @@ export class Config {
   public dbPassword: string = '';
   public dbName: string = '';
   public dbMax: number = 0;
+
   constructor(configEnv: JSON.JSONObject, configJson: JSON.JSONObject) {
     this.apiURI =
       process.env.API_URI || configEnv.API_URI || configJson.API_URI;

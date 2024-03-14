@@ -1,5 +1,10 @@
-import { FileDTO } from '@src/dto/file';
+import { FileDTO } from '@src/dto/fileDTO';
 
 export abstract class iTagPlugin {
-  public abstract tagFile: (file: FileDTO, routingKey: string) => Promise<void>;
+  pluginName!: string;
+  public abstract tagFile: (
+    file: FileDTO,
+    userId: number,
+    source: string
+  ) => Promise<void>;
 }

@@ -6,8 +6,8 @@ import pg from 'pg';
 
 import { Config } from '@src/entities/config';
 import {
-  BadJsonMiddleware,
-  errorAuth0Middleware,
+  auth0ErrorHandlingMiddleware,
+  errorHandlingMiddleware,
   requestLoggerMiddleware,
   unmatchedRoutesMiddleware,
 } from '@src/middlewares';
@@ -24,10 +24,9 @@ export class App {
   private config: Config;
   private sqlManager: SQLManager;
   private pluginManager: PluginManager;
+
   constructor() {
     this.app = express();
-    this.app.use(express.json());
-    this.app.use(requestLoggerMiddleware);
     const env = dotenv.config({ path: 'config/.env' }).parsed || {};
     const configJson = parseJSONConfig(
       JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
@@ -60,9 +59,14 @@ export class App {
   public init = async () => {
     await this.pluginManager.setUp();
     this.sqlManager.setUp();
+
+    this.app.use(requestLoggerMiddleware);
+    this.app.use(express.json());
+
     this.routes.push(
       new APIRoute(this.app, this.config, this.pool, this.sqlManager)
     );
+
     this.routes.push(
       new FileRoute(
         this.app,
@@ -72,12 +76,14 @@ export class App {
         this.pluginManager
       )
     );
+
     this.routes.push(
       new TagRoute(this.app, this.config, this.pool, this.sqlManager)
     );
-    this.app.use(errorAuth0Middleware);
+
+    this.app.use(auth0ErrorHandlingMiddleware);
+    this.app.use(errorHandlingMiddleware);
     this.app.use(unmatchedRoutesMiddleware);
-    this.app.use(BadJsonMiddleware);
   };
 
   public run = () => {

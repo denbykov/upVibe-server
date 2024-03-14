@@ -12,7 +12,7 @@ f.source_url as file_source_url,
 (SELECT track_number FROM tags as t WHERE t.id = tm.track_number) as tag_track_number,
 tm.picture as tag_picture_id
 FROM files as f
-JOIN file_sources as fs ON f.source_id = fs.id
-JOIN tag_mappings as tm ON f.id = tm.file_id
-INNER JOIN user_files as uf ON f.id = uf.file_id
-WHERE uf.user_id = $1
+LEFT JOIN file_sources as fs ON f.source_id = fs.id
+LEFT JOIN tag_mappings as tm ON f.id = tm.file_id AND tm.user_id = $2
+LEFT JOIN user_files as uf ON f.id = uf.file_id
+WHERE f.source_url = $1

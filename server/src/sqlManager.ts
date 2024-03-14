@@ -7,6 +7,7 @@ class SQLManager {
   private queries: Map<string, string> = new Map();
   private dataLogger!: Logger;
   private serverLogger!: Logger;
+
   constructor(dataLogger: Logger, serverLogger: Logger) {
     if (SQLManager.instance) {
       return SQLManager.instance;
@@ -29,7 +30,11 @@ class SQLManager {
 
   public getQuery = (queryName: string): string => {
     this.dataLogger.info(`SQLManager.getQuery(${queryName})`);
-    return this.queries.get(queryName) || '';
+    const query = this.queries.get(queryName)!;
+    if (query.length == 0) {
+      throw new Error(`Query ${queryName} is empty`);
+    }
+    return query;
   };
 
   public setUp = () => {

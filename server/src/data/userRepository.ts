@@ -1,11 +1,12 @@
 import pg from 'pg';
 
-import { UserDTO } from '@src/dto/user';
+import { UserDTO } from '@src/dto/userDTO';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class UserRepository implements iUserDatabase {
   public pool: pg.Pool;
+
   constructor(pool: pg.Pool) {
     this.pool = pool;
   }

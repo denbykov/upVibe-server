@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { UserWorker } from '@src/business/user';
-import { Response as ServerResponse } from '@src/entities/response';
+import { UserWorker } from '@src/business/userWorker';
 
 const userManagementMiddleware = (
   permissions: Array<string>,
@@ -19,10 +18,9 @@ const userManagementMiddleware = (
       permissions
     );
     if (!dbUser) {
-      const message = new ServerResponse(ServerResponse.Code.Forbidden, {
+      return response.status(403).json({
         message: 'Authorization error',
       });
-      return response.status(message.httpCode).json({ ...message.payload });
     }
 
     request.body.user = dbUser;
