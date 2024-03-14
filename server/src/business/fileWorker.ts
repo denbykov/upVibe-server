@@ -12,8 +12,6 @@ import { iFilePlugin } from '@src/interfaces/iFilePlugin';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 
-// import { businessLogger } from '@src/utils/server/logger';
-
 export class FileWorker {
   private db: iFileDatabase;
   private tagDb: iTagDatabase;
