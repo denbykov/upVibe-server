@@ -78,7 +78,7 @@ services:
       rabbitmq:
         condition: service_started
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:$3000/up-vibe/v1/api/health"]
+      test: curl -f http://localhost:3000/up-vibe/v1/api/health || exit 1
       interval: 10s
       timeout: 5s
       retries: 5
