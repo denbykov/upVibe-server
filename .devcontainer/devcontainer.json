@@ -20,7 +20,8 @@
 				"esbenp.prettier-vscode",
 				"ms-azuretools.vscode-docker",
 				"redhat.vscode-yaml",
-				"cweijan.vscode-postgresql-client2"
+				"cweijan.vscode-postgresql-client2",
+				"YoavBls.pretty-ts-errors"
 			]
 		}
 	},

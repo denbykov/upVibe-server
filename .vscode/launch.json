@@ -4,6 +4,7 @@
             "name": "Node.js: Nodemon debug",
             "type": "node",
             "request": "launch",
+            "outputCapture": "std",
             "runtimeExecutable": "npm",
             "cwd": "${workspaceFolder}/server",
             "runtimeArgs": [
@@ -27,17 +28,6 @@
             "name": "Docker: Attach to Node",
             "remoteRoot": "/opt/upVibe",
             "localRoot": "${workspaceFolder}/server"
-        },
-        {
-            "name": "Docker Node.js Launch",
-            "type": "docker",
-            "request": "launch",
-            "preLaunchTask": "docker-run: debug",
-            "platform": "node",
-            "node": {
-                "package": "${workspaceFolder}/server/package.json",
-                "localRoot": "${workspaceFolder}/server"
-            }
         },
     ]
 }
