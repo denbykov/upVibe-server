@@ -1,3 +1,5 @@
+import { Tag } from '@src/entities/tag';
+
 class TagDTO {
   constructor(
     public id: number,
@@ -26,6 +28,21 @@ class TagDTO {
       json.tag_picture_path
     );
   }
+
+  public toEntity = (): Tag => {
+    return new Tag(
+      this.id,
+      this.fileId,
+      this.source,
+      this.status,
+      this.title,
+      this.artist,
+      this.album,
+      this.year,
+      this.trackNumber,
+      this.picturePath
+    );
+  };
 }
 
 export { TagDTO };

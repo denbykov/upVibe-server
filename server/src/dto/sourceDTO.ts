@@ -1,3 +1,5 @@
+import { FileSource, TagSource } from '@src/entities/source';
+
 class SourceDTO {
   public id: number;
   public description: string;
@@ -22,6 +24,10 @@ class FileSourceDTO extends SourceDTO {
       json.file_source_logo_path
     );
   }
+
+  public toEntity(): FileSource {
+    return new FileSource(this.id, this.description);
+  }
 }
 
 class TagSourceDTO extends SourceDTO {
@@ -35,6 +41,10 @@ class TagSourceDTO extends SourceDTO {
       json.tag_source_description,
       json.tag_source_logo_path
     );
+  }
+
+  public toEntity(): TagSource {
+    return new TagSource(this.id, this.description);
   }
 }
 

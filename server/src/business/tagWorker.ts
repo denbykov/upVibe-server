@@ -15,14 +15,14 @@ export class TagWorker {
   public getFileTags = async (fileId: number): Promise<Array<Tag>> => {
     const tags = await this.db.getFileTags(fileId);
     return tags.map((tag) => {
-      return Tag.fromDTO(tag);
+      return tag.toEntity();
     });
   };
 
   public getSources = async (): Promise<Array<TagSource>> => {
     const sources = await this.db.getTagSources();
     return sources.map((source) => {
-      return TagSource.fromDTO(source);
+      return source.toEntity();
     });
   };
 

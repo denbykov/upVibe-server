@@ -63,6 +63,31 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+  /up-vibe/v1/files/{fileId}:
+    get:
+      tags:
+        - files
+      summary: Get file
+      description: Return information about file
+      operationId: getTaggedFile
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+      security:
+        - api_key: []
+        - upvibe-auth:
+            - user
   /up-vibe/v1/files/{fileId}/download:
     get:
       tags:
