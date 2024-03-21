@@ -159,4 +159,20 @@ export class FileRepository implements iFileDatabase {
       client.release();
     }
   };
+
+  public getTaggedFile = async (
+    id: number,
+    userId: number
+  ): Promise<TaggedFileDTO> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getTaggedFile');
+      const queryResult = await client.query(query, [id, userId]);
+      return TaggedFileDTO.fromJSON(queryResult.rows[0]);
+    } catch (err) {
+      throw new Error(`FilesRepository.getTaggedFile: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
 }

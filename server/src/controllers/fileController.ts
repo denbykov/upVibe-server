@@ -74,6 +74,17 @@ class FileController extends BaseController {
     const result = await fileWorker.getSourceLogo(Number(sourceId));
     return response.status(200).sendFile(result);
   };
+
+  public getTaggedFile = async (
+    request: Express.Request,
+    response: Express.Response
+  ) => {
+    const { user } = request.body;
+    const { fileId } = request.params;
+    const fileWorker = this.buildFileWorker();
+    const result = await fileWorker.getTaggedFile(Number(fileId), user);
+    return response.status(200).json(result);
+  };
 }
 
 export { FileController };

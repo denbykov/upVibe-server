@@ -19,6 +19,10 @@ export abstract class iFileDatabase {
     fileId: number
   ) => Promise<void>;
   public abstract getFileSource: (id: number) => Promise<FileSourceDTO>;
+  public abstract getTaggedFile: (
+    id: number,
+    userId: number
+  ) => Promise<TaggedFileDTO>;
   public abstract doesUserFileExist: (
     userId: number,
     fileId: number
