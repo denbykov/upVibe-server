@@ -1,3 +1,5 @@
+import { File, ShortTags } from '@src/entities/file';
+
 import { FileSourceDTO } from './sourceDTO';
 
 class ShortTagsDTO {
@@ -45,6 +47,17 @@ class ShortTagsDTO {
       json.tag_picture_id
     );
   };
+
+  public toEntity = (): ShortTags => {
+    return new ShortTags(
+      this.title,
+      this.artist,
+      this.album,
+      this.year,
+      this.trackNumber,
+      this.pictureId
+    );
+  };
 }
 
 class TaggedFileDTO {
@@ -76,6 +89,16 @@ class TaggedFileDTO {
       json.file_status,
       json.file_source_url,
       shortTags.empty() ? null : shortTags
+    );
+  };
+
+  public toEntity = (): File => {
+    return new File(
+      this.id,
+      this.source.toEntity(),
+      this.status,
+      this.sourceUrl,
+      this.tags ? this.tags.toEntity() : null
     );
   };
 }

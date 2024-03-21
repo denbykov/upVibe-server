@@ -52,6 +52,13 @@ export class FileRoute extends BaseRoute {
     );
 
     this.app.get(
+      `${apiURIFiles}/:fileId`,
+      auth0Middleware(this.config),
+      userManagementMiddleware([GENERAL], userWorker),
+      controller.getTaggedFile
+    );
+
+    this.app.get(
       `${apiURIFiles}/sources`,
       auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),

@@ -55,7 +55,7 @@ export class FileWorker {
       TagMappingDTO.allFromOneSource(user.id, file!.id, sourceId)
     );
     const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
-    return File.fromDTO(taggedFile!);
+    return taggedFile!.toEntity();
   };
 
   public requestFileProcessing = async (
@@ -71,7 +71,7 @@ export class FileWorker {
     const userFiles = await this.db.getTaggedFilesByUser(user);
 
     const files: Array<File> = userFiles.map((file) => {
-      return File.fromDTO(file);
+      return file.toEntity();
     });
 
     return files;
@@ -80,7 +80,7 @@ export class FileWorker {
   public getSources = async (): Promise<Array<FileSource>> => {
     const sources = await this.db.getFileSources();
     return sources.map((source) => {
-      return FileSource.fromDTO(source);
+      return source.toEntity();
     });
   };
 
@@ -95,5 +95,14 @@ export class FileWorker {
     }
 
     return source.logoPath;
+  };
+
+  public getTaggedFile = async (id: number, user: User): Promise<File> => {
+    const file = await this.db.getTaggedFile(id, user.id);
+    if (!file) {
+      throw new ProcessingError('File not found');
+    }
+
+    return file.toEntity();
   };
 }

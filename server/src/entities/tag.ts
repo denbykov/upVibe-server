@@ -1,5 +1,3 @@
-import { TagDTO } from '@src/dto/tagDTO';
-
 export class Tag {
   constructor(
     public id: number,
@@ -13,19 +11,4 @@ export class Tag {
     public trackNumber: number | null,
     public pictureId: string | null
   ) {}
-
-  public static fromDTO = (dto: TagDTO): Tag => {
-    return new Tag(
-      dto.id,
-      dto.fileId,
-      dto.source,
-      dto.status,
-      dto.title,
-      dto.artist,
-      dto.album,
-      dto.year,
-      dto.trackNumber,
-      dto.picturePath
-    );
-  };
 }
