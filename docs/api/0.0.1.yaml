@@ -157,7 +157,7 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
-  /up-vibe/v1/files/{fileId}/tags:
+  /up-vibe/v1/files/{fileId}/parse-tags:
     post:
       tags:
         - tags
@@ -184,6 +184,7 @@ paths:
       security:
         - upvibe-auth:
             - user
+  /up-vibe/v1/files/{fileId}/tags:
     get:
       tags:
         - tags
