@@ -13,11 +13,10 @@ tags:
     description: File management
   - name: tags
     description: Tag management
+  - name: sources
+    description: Source management
   - name: tag-mappings
     description: Tag mappings management
-    externalDocs:
-      description: Find out more
-      url: http://swagger.io
   - name: user-management
     description: User management
 

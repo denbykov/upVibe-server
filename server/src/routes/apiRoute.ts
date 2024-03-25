@@ -45,7 +45,7 @@ export class APIRoute extends BaseRoute {
 
     const theme = {
       explorer: false,
-      customCss: swaggerTheme.getBuffer(SwaggerThemeNameEnum.DRACULA),
+      customCss: swaggerTheme.getBuffer(SwaggerThemeNameEnum.DARK_MONOKAI),
     };
 
     this.app.use(

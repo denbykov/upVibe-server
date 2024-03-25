@@ -26,5 +26,11 @@
 		}
 	},
 	"postCreateCommand": "bash .devcontainer/setup.sh",
-  "remoteUser": "developer"
+	"mounts": [
+		{
+			"source": "${localEnv:HOME}${localEnv:USERPROFILE}/workspace/upVibe-private-workers/storage",
+			"target": "/workspaces/upVibe-server/storage",
+			"type": "bind"
+		}
+  	]
 }
