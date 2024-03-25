@@ -7,4 +7,5 @@ export abstract class iTagPlugin {
     userId: number,
     source: string
   ) => Promise<void>;
+  public abstract parseTags: (fileId: number, source: string) => Promise<void>;
 }

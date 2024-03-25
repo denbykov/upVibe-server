@@ -1,5 +1,9 @@
 import express from 'express';
+import fs from 'fs';
 import pg from 'pg';
+import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yaml';
 
 import { UserWorker } from '@src/business/userWorker';
 import { APIController } from '@src/controllers';
@@ -34,6 +38,20 @@ export class APIRoute extends BaseRoute {
     const userWorker = new UserWorker(
       new UserRepository(this.databasePool),
       new UserInfoAgent(this.config)
+    );
+
+    const swaggerTheme = new SwaggerTheme();
+    const swaggerSpec = YAML.parse(fs.readFileSync('api/0.0.1.yaml', 'utf8'));
+
+    const theme = {
+      explorer: false,
+      customCss: swaggerTheme.getBuffer(SwaggerThemeNameEnum.DRACULA),
+    };
+
+    this.app.use(
+      `${apiURI}/api-docs`,
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerSpec, theme)
     );
 
     this.app.get(`${apiURI}/health`, controller.healthCheck);

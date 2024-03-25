@@ -24,7 +24,8 @@ export class TagRoute extends BaseRoute {
     const controller: TagController = new TagController(
       this.config,
       this.databasePool,
-      this.sqlManager
+      this.sqlManager,
+      this.pluginManager
     );
 
     const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/files`;
@@ -52,6 +53,12 @@ export class TagRoute extends BaseRoute {
       `${apiURITags}/sources/:sourceId/logo`,
       auth0Middleware(this.config),
       controller.getSourceLogo
+    );
+
+    this.app.post(
+      `${apiURIFiles}/:fileId/parse-tags`,
+      auth0Middleware(this.config),
+      controller.parseTags
     );
 
     return this.app;
