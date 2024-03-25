@@ -25,5 +25,12 @@
 			]
 		}
 	},
-	"postCreateCommand": "bash .devcontainer/setup.sh"
+	"postCreateCommand": "bash .devcontainer/setup.sh",
+	"mounts": [
+		{
+			"source": "${localEnv:HOME}${localEnv:USERPROFILE}/workspace/upVibe-private-workers/storage",
+			"target": "/workspaces/upVibe-server/storage",
+			"type": "bind"
+		}
+  	]
 }

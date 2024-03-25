@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: upVibe-Server
   license:
@@ -7,19 +7,58 @@ info:
   version: 0.0.1
 
 tags:
+  - name: api
+    description: API management
   - name: files
     description: File management
   - name: tags
     description: Tag management
+  - name: sources
+    description: Source management
   - name: tag-mappings
     description: Tag mappings management
-    externalDocs:
-      description: Find out more
-      url: http://swagger.io
   - name: user-management
     description: User management
 
 paths:
+  /up-vibe/v1/health:
+    get:
+      tags:
+        - api
+      summary: Health check
+      description: Health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIHealth'
+  /up-vibe/v1/auth-test:
+    get:
+      tags:
+        - api
+      summary: Test authentication
+      description: Test authentication
+      operationId: authTest
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTestSuccess'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTestFail'
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
   /up-vibe/v1/files:
     post:
       tags:
@@ -46,6 +85,7 @@ paths:
       security:
         - upvibe-auth:
             - user
+        - BearerAuth: []
     get:
       tags:
         - files
@@ -63,6 +103,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
   /up-vibe/v1/files/{fileId}:
     get:
       tags:
@@ -88,6 +130,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
   /up-vibe/v1/files/{fileId}/download:
     get:
       tags:
@@ -111,9 +155,10 @@ paths:
                 type: string
                 format: binary
       security:
-        - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
   /up-vibe/v1/files/sources:
     get:
       tags:
@@ -132,6 +177,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
   /up-vibe/v1/files/sources/{sourceId}/logo:
     get:
       tags:
@@ -157,7 +204,9 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
-  /up-vibe/v1/files/{fileId}/tags:
+        - BearerAuth: []
+
+  /up-vibe/v1/files/{fileId}/parse-tags:
     post:
       tags:
         - tags
@@ -184,6 +233,9 @@ paths:
       security:
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
+  /up-vibe/v1/files/{fileId}/tags:
     get:
       tags:
         - tags
@@ -208,6 +260,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
   /up-vibe/v1/tags/pictures/{pictureId}:
     get:
       tags:
@@ -234,6 +288,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
   /up-vibe/v1/tags/sources:
     get:
       tags:
@@ -252,6 +308,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
   /up-vibe/v1/tags/sources/{sourceId}/logo:
     get:
       tags:
@@ -277,6 +335,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
   /up-vibe/v1/files/tag-mapping-priority:
     get:
       tags:
@@ -295,6 +355,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
     put:
       tags:
         - tag-mappings
@@ -314,6 +376,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
   /up-vibe/v1/files/{fileId}/tag-mapping:
     get:
       tags:
@@ -339,6 +403,8 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
     put:
       tags:
         - tag-mappings
@@ -365,8 +431,28 @@ paths:
         - api_key: []
         - upvibe-auth:
             - user
+        - BearerAuth: []
+
 components:
   schemas:
+    APIHealth:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "API is healthly!"
+    AuthTestSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Auth test passed!"
+    AuthTestFail:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Requires authentication"
     FileCreationRequest:
       type: object
       properties:
@@ -567,11 +653,11 @@ components:
     upvibe-auth:
       type: oauth2
       flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+        authorizationCode:
+          authorizationUrl: https://up-vibe.eu.auth0.com/authorize
+          tokenUrl: https://up-vibe.eu.auth0.com/oauth/token
           scopes:
-            write:pets: modify pets in your account
-            user: read your pets
+            user: user
     BearerAuth:
       type: http
       scheme: bearer
@@ -579,3 +665,9 @@ components:
       type: apiKey
       name: api_key
       in: header
+
+security:
+  - BearerAuth: []
+  - api_key: []
+  - upvibe-auth:
+      - user

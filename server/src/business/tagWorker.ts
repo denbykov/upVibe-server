@@ -1,15 +1,18 @@
 import { TagSource } from '@src/entities/source';
 import { Tag } from '@src/entities/tag';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
+import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 import { dataLogger } from '@src/utils/server/logger';
 
 import { ProcessingError } from './processingError';
 
 export class TagWorker {
   private db: iTagDatabase;
+  private tagPlugin: iTagPlugin;
 
-  constructor(db: iTagDatabase) {
+  constructor(db: iTagDatabase, tagPlugin: iTagPlugin) {
     this.db = db;
+    this.tagPlugin = tagPlugin;
     dataLogger.trace('TagWorker initialized');
   }
   public getFileTags = async (fileId: number): Promise<Array<Tag>> => {
@@ -47,5 +50,15 @@ export class TagWorker {
     }
 
     return tag.picturePath;
+  };
+
+  public parseTags = async (fileId: number): Promise<Array<Tag>> => {
+    const tagSources = await this.getSources();
+    tagSources.map((tagSource) => {
+      if (tagSource.source !== 'youtube') {
+        return this.tagPlugin.parseTags(fileId, tagSource.source);
+      }
+    });
+    return this.getFileTags(fileId);
   };
 }

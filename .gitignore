@@ -5,6 +5,7 @@ logs
 buildDebug
 rest
 server/tests/sql/
+server/api
 storage
 volumes
 plugins

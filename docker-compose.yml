@@ -52,16 +52,12 @@ services:
     container_name: rabbitmq
 
   server:
-    build:
-      context: ./server
-      dockerfile: ./Dockerfile.dev
+    image: up-vibe-server:1.0.0
     ports:
       - 3000:3000
-      - 9229:9229
     expose:
       - 3000
-      - 9229
-    command: npm run dev:debug:docker
+    command: npm run start
     container_name: server
     restart: always
     volumes:
@@ -84,7 +80,6 @@ services:
       retries: 5
     networks:
       - up-vibe-network
-    user: root
 
 networks:
   up-vibe-network:
