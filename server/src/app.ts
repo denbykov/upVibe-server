@@ -78,7 +78,13 @@ export class App {
     );
 
     this.routes.push(
-      new TagRoute(this.app, this.config, this.pool, this.sqlManager)
+      new TagRoute(
+        this.app,
+        this.config,
+        this.pool,
+        this.sqlManager,
+        this.pluginManager
+      )
     );
 
     this.app.use(auth0ErrorHandlingMiddleware);
