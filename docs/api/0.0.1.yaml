@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: '3.0.3'
 info:
   title: upVibe-Server
   license:
@@ -9,12 +9,12 @@ info:
 tags:
   - name: api
     description: API management
+  - name: sources
+    description: Source management
   - name: files
     description: File management
   - name: tags
     description: Tag management
-  - name: sources
-    description: Source management
   - name: tag-mappings
     description: Tag mappings management
   - name: user-management
@@ -34,7 +34,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/APIHealth'
+                $ref: '#/components/schemas/APIMessage'
+              example:
+                  message: "API is healthly!"
   /up-vibe/v1/auth-test:
     get:
       tags:
@@ -48,17 +50,119 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthTestSuccess'
+                $ref: '#/components/schemas/APIMessage'
+              example:
+                  message: "Auth test passed!"
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthTestFail'
+                $ref: '#/components/schemas/APIMessage'
+              example:
+                  message: "Requires authentication"
       security:
+        - BearerAuth: []
         - upvibe-auth:
             - user
+  /up-vibe/v1/info:
+    get:
+      tags:
+        - api
+      summary: Get API info
+      description: Get API info
+      operationId: getApiInfo
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                    example: "1.0.0"
+  /up-vibe/v1/sources:
+    get:
+      tags:
+        - sources
+      summary: Get sources
+      description: Returns array of the available sources
+      operationId: getSources
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Source'
+              example:
+                - id: 1
+                  description: "youtube"
+                - id: 2
+                  description: "itunes"
+                - id: 3
+                  description: "spotify"
+      security:
         - BearerAuth: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/sources/{sourceId}:
+    get:
+      tags:
+        - sources
+      summary: Get source
+      description: Return information about source
+      operationId: getSource
+      parameters:
+        - name: sourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+              example:
+                id: 1
+                description: "youtube"
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/sources/{sourceId}/logo:
+    get:
+      tags:
+        - sources
+      summary: Get logo for the given source id
+      operationId: getSourceLogo
+      parameters:
+        - name: sourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
   /up-vibe/v1/files:
     post:
       tags:
@@ -72,6 +176,16 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/FileCreationRequest'
+            examples:
+              youtube:
+                value:
+                  url: "https://www.youtube.com/watch?v=6JYIGclVQdw"
+              itunes:
+                value:
+                  url: "https://music.apple.com/us/album/chaos-in-the-streets/1560000000?i=1560000001"
+              spotify:
+                value:
+                  url: "https://open.spotify.com/track/6JYIGclVQdw"
         required: true
       responses:
         '200':
@@ -80,12 +194,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/File'
+              examples:
+                youtube:
+                  value:
+                    id: 1
+                    source:
+                      id: 1
+                      description: "youtube"
+                    status: "I"
+                    sourceUrl: "https://youtu.be//6JYIGclVQdw"
+                    tags:
+                      title: "Chaos in the Streets"
+                      artist: "Magnavolt"
+                      album: "Chaos in the Streets"
+                      year: 2021
+                      trackNumber: 1
+                      puctureId: 1
+        '400':
+          description: File already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "File already exists"
+                code: -1
         '405':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "Invalid input"
+                code: -1
       security:
+        - BearerAuth: []
         - upvibe-auth:
             - user
-        - BearerAuth: []
     get:
       tags:
         - files
@@ -98,13 +244,42 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Files'
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+              examples:
+                youtube:
+                  value:
+                    - id: 1
+                      source:
+                        id: 1
+                        description: "youtube"
+                      status: "I"
+                      sourceUrl: "https://youtu.be//6JYIGclVQdw"
+                      tags:
+                        title: "Chaos in the Streets"
+                        artist: "Magnavolt"
+                        album: "Chaos in the Streets"
+                        year: 2021
+                        trackNumber: 1
+                        puctureId: 1
+                    - id: 2
+                      source:
+                        id: 2
+                        description: "itunes"
+                      status: "I"
+                      sourceUrl: "https://music.apple.com/us/album/"
+                      tags:
+                        title: "Chaos in the Streets"
+                        artist: "Magnavolt"
+                        album: "Chaos in the Streets"
+                        year: 2021
+                        trackNumber: 1
+                        puctureId: 1
       security:
-        - api_key: []
         - upvibe-auth:
             - user
         - BearerAuth: []
-
   /up-vibe/v1/files/{fileId}:
     get:
       tags:
@@ -127,11 +302,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/File'
       security:
-        - api_key: []
         - upvibe-auth:
             - user
         - BearerAuth: []
-
   /up-vibe/v1/files/{fileId}/download:
     get:
       tags:
@@ -158,54 +331,6 @@ paths:
         - upvibe-auth:
             - user
         - BearerAuth: []
-
-  /up-vibe/v1/files/sources:
-    get:
-      tags:
-        - files
-      summary: Get file sources
-      description: Returns array of the available file sources
-      operationId: getFileSources
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FileSources'
-      security:
-        - api_key: []
-        - upvibe-auth:
-            - user
-        - BearerAuth: []
-
-  /up-vibe/v1/files/sources/{sourceId}/logo:
-    get:
-      tags:
-        - files
-      summary: Get logo for the given source id
-      operationId: getFileSourceLogo
-      parameters:
-        - name: sourceId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-      security:
-        - api_key: []
-        - upvibe-auth:
-            - user
-        - BearerAuth: []
-
   /up-vibe/v1/files/{fileId}/parse-tags:
     post:
       tags:
@@ -227,14 +352,49 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tag'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+              example:
+                - id: 1
+                  source:
+                    id: 1
+                    description: "youtube"
+                  status: "I"
+                  sourceUrl: "https://youtu.be//6JYIGclVQdw"
+                  tags:
+                    title: "Chaos in the Streets"
+                    artist: "Magnavolt"
+                    album: "Chaos in the Streets"
+                    year: 2021
+                    trackNumber: 1
+                    puctureId: 1
+                - id: 2
+                  source:
+                    id: 2
+                    description: "itunes"
+                  status: "I"
+                  sourceUrl: "https://music.apple.com/us/album/"
+                  tags:
+                    title: "Chaos in the Streets"
+                    artist: "Magnavolt"
+                    album: "Chaos in the Streets"
+                    year: 2021
+                    trackNumber: 1
+                    puctureId: 1
         '405':
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "Invalid input"
+                code: -1
       security:
         - upvibe-auth:
             - user
         - BearerAuth: []
-
   /up-vibe/v1/files/{fileId}/tags:
     get:
       tags:
@@ -255,88 +415,85 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tags'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+              example:
+                - id: 1
+                  source:
+                    id: 1
+                    description: "youtube"
+                  status: "I"
+                  sourceUrl: "https://youtu.be//6JYIGclVQdw"
+                  tags:
+                    title: "Chaos in the Streets"
+                    artist: "Magnavolt"
+                    album: "Chaos in the Streets"
+                    year: 2021
+                    trackNumber: 1
+                    puctureId: 1
+                - id: 2
+                  source:
+                    id: 2
+                    description: "itunes"
+                  status: "I"
+                  sourceUrl: "https://music.apple.com/us/album/"
+                  tags:
+                    title: "Chaos in the Streets"
+                    artist: "Magnavolt"
+                    album: "Chaos in the Streets"
+                    year: 2021
+                    trackNumber: 1
+                    puctureId: 1
       security:
-        - api_key: []
         - upvibe-auth:
             - user
         - BearerAuth: []
-
-  /up-vibe/v1/tags/pictures/{pictureId}:
+  /up-vibe/v1/files/{fileId}/tags/{tagId}:
     get:
       tags:
         - tags
-      summary: Download picture
-      description: Returns tag picture with given id
-      operationId: getTagPicture
+      summary: Get tag for given fileId
+      description: Get tag for given fileId
+      operationId: getTag
       parameters:
-        - name: pictureId
+        - name: fileId
           in: path
           required: true
           schema:
             type: integer
             format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-      security:
-        - api_key: []
-        - upvibe-auth:
-            - user
-        - BearerAuth: []
-
-  /up-vibe/v1/tags/sources:
-    get:
-      tags:
-        - tags
-      summary: Get tag sources
-      description: Returns array of the available tag sources
-      operationId: getTagSources
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TagSources'
+                $ref: '#/components/schemas/Tag'
+              example:
+                id: 1
+                source:
+                  id: 1
+                  description: "youtube"
+                status: "I"
+                sourceUrl: "https://youtu.be//6JYIGclVQdw"
+                tags:
+                  title: "Chaos in the Streets"
+                  artist: "Magnavolt"
+                  album: "Chaos in the Streets"
+                  year: 2021
+                  trackNumber: 1
+                  puctureId: 1
       security:
-        - api_key: []
         - upvibe-auth:
             - user
         - BearerAuth: []
-
-  /up-vibe/v1/tags/sources/{sourceId}/logo:
-    get:
-      tags:
-        - tags
-      summary: Get logo for the given source id
-      operationId: getTagSourceLogo
-      parameters:
-        - name: sourceId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-      security:
-        - api_key: []
-        - upvibe-auth:
-            - user
-        - BearerAuth: []
-
   /up-vibe/v1/files/tag-mapping-priority:
     get:
       tags:
@@ -351,12 +508,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagMappingPriority'
+              example:
+                title:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                artist:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                album:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                year:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                trackNumber:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                puctureId:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
       security:
-        - api_key: []
         - upvibe-auth:
             - user
         - BearerAuth: []
-
     put:
       tags:
         - tag-mappings
@@ -368,16 +566,57 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TagMappingPriority'
+              example:
+                title:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                artist:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                album:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                year:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                trackNumber:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                puctureId:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
         required: true
       responses:
         '200':
           description: successful operation
       security:
-        - api_key: []
         - upvibe-auth:
             - user
         - BearerAuth: []
-
   /up-vibe/v1/files/{fileId}/tag-mapping:
     get:
       tags:
@@ -399,12 +638,53 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagMapping'
+                example:
+                  title:
+                    - id: 1
+                      description: "youtube"
+                    - id: 2
+                      description: "itunes"
+                    - id: 3
+                      description: "spotify"
+                  artist:
+                    - id: 1
+                      description: "youtube"
+                    - id: 2
+                      description: "itunes"
+                    - id: 3
+                      description: "spotify"
+                  album:
+                    - id: 1
+                      description: "youtube"
+                    - id: 2
+                      description: "itunes"
+                    - id: 3
+                      description: "spotify"
+                  year:
+                    - id: 1
+                      description: "youtube"
+                    - id: 2
+                      description: "itunes"
+                    - id: 3
+                      description: "spotify"
+                  trackNumber:
+                    - id: 1
+                      description: "youtube"
+                    - id: 2
+                      description: "itunes"
+                    - id: 3
+                      description: "spotify"
+                  puctureId:
+                    - id: 1
+                      description: "youtube"
+                    - id: 2
+                      description: "itunes"
+                    - id: 3
+                      description: "spotify"
       security:
-        - api_key: []
         - upvibe-auth:
             - user
         - BearerAuth: []
-
     put:
       tags:
         - tag-mappings
@@ -423,232 +703,175 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TagMapping'
+              example:
+                title:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                artist:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                album:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                year:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                trackNumber:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
+                puctureId:
+                  - id: 1
+                    description: "youtube"
+                  - id: 2
+                    description: "itunes"
+                  - id: 3
+                    description: "spotify"
         required: true
       responses:
         '200':
           description: successful operation
       security:
-        - api_key: []
         - upvibe-auth:
             - user
         - BearerAuth: []
 
 components:
   schemas:
-    APIHealth:
+    APIMessage:
       type: object
       properties:
         message:
           type: string
-          example: "API is healthly!"
-    AuthTestSuccess:
+    APIMessageError:
       type: object
       properties:
         message:
           type: string
-          example: "Auth test passed!"
-    AuthTestFail:
-      type: object
-      properties:
-        message:
-          type: string
-          example: "Requires authentication"
+        code:
+          type: integer
+          format: int32
     FileCreationRequest:
       type: object
       properties:
         url:
           type: string
-          example: https://www.some.storage.com/files/123
-    FileSource:
+    Source:
       type: object
       properties:
         id:
           type: integer
           format: int64
-          example: 10
-        source:
+        description::
           type: string
-          example: some-source
-    FileSources:
-      type: array
-      items:
-        $ref: '#/components/schemas/FileSource'
-    File:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 10
-        source:
-          $ref: '#/components/schemas/FileSource'
-        status:
+        logo:
           type: string
-          example: I
-        sourceUrl:
-          description: May contain source location
-          type: string
-          example: https://some/url
-        tags:
-          $ref: '#/components/schemas/ShortTag'
-    Files:
-      type: array
-      items:
-        $ref: '#/components/schemas/File'
-    TagSource:
-      type: object
-      properties:
-        source:
-          type: integer
-          format: int64
-          example: 2
-    CustomTag:
-      type: object
-      properties:
-        title:
-          type: string
-          example: "Chaos in the Streets"
-        artist:
-          type: string
-          example: "Magnavolt"
-        album:
-          type: string
-          example: "Chaos in the Streets"
-        year:
-          type: integer
-          example: 2021
-        trackNumber:
-          type: integer
-          example: 1
     Tag:
       type: object
       properties:
         id:
           type: integer
           format: int64
-          example: 10
         source:
-          $ref: '#/components/schemas/TagSource'
+          $ref: '#/components/schemas/Source'
         status:
           type: string
-          example: inProgress
-          enum:
-            - ready
-            - inProgress
-            - error
-        statusDescription:
+        sourceUrl:
+          description: May contain source location
           type: string
-          example: "The tag is being parsed"
-        title:
-          type: string
-          example: "Chaos in the Streets"
-        artist:
-          type: string
-          example: "Magnavolt"
-        album:
-          type: string
-          example: "Chaos in the Streets"
-        year:
-          type: integer
-          example: 2021
-        trackNumber:
-          type: integer
-          example: 1
-        puctureId:
-          type: string
-          example: "123"
+        tags:
+          $ref: '#/components/schemas/ShortTag'
     ShortTag:
       type: object
       properties:
         title:
           type: string
-          example: "Chaos in the Streets"
         artist:
           type: string
-          example: "Magnavolt"
         album:
           type: string
-          example: "Chaos in the Streets"
         year:
           type: integer
-          example: 2021
         trackNumber:
           type: integer
-          example: 1
         puctureId:
-          type: string
-          example: "123"
-    ActualTag:
+          type: integer
+    File:
       type: object
       properties:
-        title:
-          type: string
-          example: "Chaos in the Streets"
-        artist:
-          type: string
-          example: "Magnavolt"
-        album:
-          type: string
-          example: "Chaos in the Streets"
-        year:
+        id:
           type: integer
-          example: 2021
-        trackNumber:
-          type: integer
-          example: 1
-        puctureId:
+          format: int64
+        source:
+          $ref: '#/components/schemas/Source'
+        status:
           type: string
-          example: "123"
-    Tags:
-      type: array
-      items:
-        $ref: '#/components/schemas/Tag'
-    TagSources:
-      type: array
-      items:
-        $ref: '#/components/schemas/TagSource'
+        sourceUrl:
+          description: May contain source location
+          type: string
+        tags:
+          $ref: '#/components/schemas/ShortTag'
     TagMappingPriority:
       type: object
       properties:
         title:
           type: array
           items:
-            $ref: '#/components/schemas/TagSource'
+            $ref: '#/components/schemas/Source'
         artist:
           type: array
           items:
-            $ref: '#/components/schemas/TagSource'
+            $ref: '#/components/schemas/Source'
         album:
           type: array
           items:
-            $ref: '#/components/schemas/TagSource'
+            $ref: '#/components/schemas/Source'
         year:
           type: array
           items:
-            $ref: '#/components/schemas/TagSource'
+            $ref: '#/components/schemas/Source'
         trackNumber:
           type: array
           items:
-            $ref: '#/components/schemas/TagSource'
+            $ref: '#/components/schemas/Source'
         puctureId:
           type: array
           items:
-            $ref: '#/components/schemas/TagSource'
+            $ref: '#/components/schemas/Source'
     TagMapping:
       type: object
       properties:
         title:
-          $ref: '#/components/schemas/TagSource'
+          $ref: '#/components/schemas/TagMappingPriority'
         artist:
-          $ref: '#/components/schemas/TagSource'
+          $ref: '#/components/schemas/TagMappingPriority'
         album:
-          $ref: '#/components/schemas/TagSource'
+          $ref: '#/components/schemas/TagMappingPriority'
         year:
-          $ref: '#/components/schemas/TagSource'
+          $ref: '#/components/schemas/TagMappingPriority'
         trackNumber:
-          $ref: '#/components/schemas/TagSource'
+          $ref: '#/components/schemas/TagMappingPriority'
         puctureId:
-          $ref: '#/components/schemas/TagSource'
+          $ref: '#/components/schemas/TagMappingPriority'
   securitySchemes:
     upvibe-auth:
       type: oauth2
@@ -661,13 +884,8 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
 
 security:
   - BearerAuth: []
-  - api_key: []
   - upvibe-auth:
       - user
