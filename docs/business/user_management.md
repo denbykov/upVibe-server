@@ -19,7 +19,44 @@ User permissions should be configured in the auth0, for example, using its RBAC 
 The server recognizes the following permissions:
 - user - grants access to basic user functionality.
 
-# User handling
+# User registration
+
+The server does not perform conventional user registration and credentials containment. But it does need a user to be added to its database, as well as the current device user is using.  
+To achieve this, after the authentication via auth0, the client should generate uuid and send a registration request to the server via POST /up-vibe/v1/register request. The client has to pass a request with the related file id as a url parameter.
+
+The server should:
+
+#### AC 1
+
+Get the user's id from the "sub" claim of the access token and use it to find the respective record in the [users](../database/users/users.md) table filtering by:  
+sub = access_token.sub  
+Does the record exist?
+- yes - go to AC 3
+- no - continue
+
+#### AC 2
+
+Request the user's nickname from the auth0 /userinfo endpoint. Then, insert the record into the [users](../database/users/users.md) table with the following values:  
+sub = access_token.sub  
+name = user_info.nickname  
+
+#### AC 3
+
+Insert record in the [devices](../database/users/devices.md) table with the following values:  
+id = request.body.id  
+user_id = (created_user/read_user).id  
+name = request.body.name  
+
+#### AC 4
+
+For each record in the [user_files](../database/files/user_files.md) table filtering by:  
+user_id = (created_user/read_user).id  
+
+Insert record in the [file_synchronization](../database/files/file_synchronization.md) table with the following values:  
+device_id = created_device.id  
+user_file_id = record.id  
+
+# User handling middeware
 
 This functionality should be executed on each endpoint that requires authentication after the access token validation and before business logic execution. It must provide the user`s data to the respective business logic part in the case of successful execution or abort an operation. 
 
@@ -33,26 +70,12 @@ Does the token contain all permissions required by the business logic?
 
 #### AC 2
 
-Get the user's id from the "sub" claim of the access token and use it to find the respective record in the [users](../database/users/users.md) table.
+Get the user's id from the "sub" claim of the access token and use it to find the respective record in the [users](../database/users/users.md) table filtering by:  
+sub = access_token.sub  
 Does the record exist?
-- yes - go to AC 4
-- no - go to AC 3
+- yes - continue
+- no - reject request with error code 403
 
 #### AC 3
 
-Request the user's nickname from the auth0 /userinfo endpoint. Then, insert the record into the [users](../database/users/users.md) table with the following values:  
-sub = access_token.sub  
-id = next id  
-name = user_info.nickname  
-
-Go to AC 5
-
-#### AC 4
-
-Read the user's data from the [users](../database/users/users.md) table filtering by:  
-sub = access_token.sub 
-
-#### AC 5
-
 Pass the user's data to the next layer.
-
