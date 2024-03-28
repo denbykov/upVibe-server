@@ -1,10 +1,10 @@
-# About  
+# About
 
-This page describes the public.tags table  
+This page describes the public.tags table
 
 ![Alt text](tags.png)
 
-## Structure definition  
+## Structure definition
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
@@ -16,5 +16,5 @@ This page describes the public.tags table
 | picture_path | VARCHAR(255) |
 | year | SMALLINT |
 | track_number | INT |
-| source | INT | NOT NULL,<br/> FK to public.tag_sources(id) |
+| source | INT | NOT NULL,<br/> FK to public.sources(id) |
 | status | VARCHAR(2) | NOT NULL,<br/> FK to public.tag_statuses(status) |
