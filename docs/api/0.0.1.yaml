@@ -99,13 +99,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Source'
-              example:
-                - id: 1
-                  description: "youtube"
-                - id: 2
-                  description: "itunes"
-                - id: 3
-                  description: "spotify"
       security:
         - BearerAuth: []
         - upvibe-auth:
@@ -131,9 +124,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Source'
-              example:
-                id: 1
-                description: "youtube"
       security:
         - BearerAuth: []
         - upvibe-auth:
@@ -176,16 +166,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/FileCreationRequest'
-            examples:
-              youtube:
-                value:
-                  url: "https://www.youtube.com/watch?v=6JYIGclVQdw"
-              itunes:
-                value:
-                  url: "https://music.apple.com/us/album/chaos-in-the-streets/1560000000?i=1560000001"
-              spotify:
-                value:
-                  url: "https://open.spotify.com/track/6JYIGclVQdw"
         required: true
       responses:
         '200':
@@ -194,22 +174,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/File'
-              examples:
-                youtube:
-                  value:
-                    id: 1
-                    source:
-                      id: 1
-                      description: "youtube"
-                    status: "I"
-                    sourceUrl: "https://youtu.be//6JYIGclVQdw"
-                    tags:
-                      title: "Chaos in the Streets"
-                      artist: "Magnavolt"
-                      album: "Chaos in the Streets"
-                      year: 2021
-                      trackNumber: 1
-                      puctureId: 1
         '400':
           description: File already exists
           content:
@@ -247,35 +211,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/File'
-              examples:
-                youtube:
-                  value:
-                    - id: 1
-                      source:
-                        id: 1
-                        description: "youtube"
-                      status: "I"
-                      sourceUrl: "https://youtu.be//6JYIGclVQdw"
-                      tags:
-                        title: "Chaos in the Streets"
-                        artist: "Magnavolt"
-                        album: "Chaos in the Streets"
-                        year: 2021
-                        trackNumber: 1
-                        puctureId: 1
-                    - id: 2
-                      source:
-                        id: 2
-                        description: "itunes"
-                      status: "I"
-                      sourceUrl: "https://music.apple.com/us/album/"
-                      tags:
-                        title: "Chaos in the Streets"
-                        artist: "Magnavolt"
-                        album: "Chaos in the Streets"
-                        year: 2021
-                        trackNumber: 1
-                        puctureId: 1
       security:
         - upvibe-auth:
             - user
@@ -355,33 +290,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Tag'
-              example:
-                - id: 1
-                  source:
-                    id: 1
-                    description: "youtube"
-                  status: "I"
-                  sourceUrl: "https://youtu.be//6JYIGclVQdw"
-                  tags:
-                    title: "Chaos in the Streets"
-                    artist: "Magnavolt"
-                    album: "Chaos in the Streets"
-                    year: 2021
-                    trackNumber: 1
-                    puctureId: 1
-                - id: 2
-                  source:
-                    id: 2
-                    description: "itunes"
-                  status: "I"
-                  sourceUrl: "https://music.apple.com/us/album/"
-                  tags:
-                    title: "Chaos in the Streets"
-                    artist: "Magnavolt"
-                    album: "Chaos in the Streets"
-                    year: 2021
-                    trackNumber: 1
-                    puctureId: 1
         '405':
           description: Invalid input
           content:
@@ -418,33 +326,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Tag'
-              example:
-                - id: 1
-                  source:
-                    id: 1
-                    description: "youtube"
-                  status: "I"
-                  sourceUrl: "https://youtu.be//6JYIGclVQdw"
-                  tags:
-                    title: "Chaos in the Streets"
-                    artist: "Magnavolt"
-                    album: "Chaos in the Streets"
-                    year: 2021
-                    trackNumber: 1
-                    puctureId: 1
-                - id: 2
-                  source:
-                    id: 2
-                    description: "itunes"
-                  status: "I"
-                  sourceUrl: "https://music.apple.com/us/album/"
-                  tags:
-                    title: "Chaos in the Streets"
-                    artist: "Magnavolt"
-                    album: "Chaos in the Streets"
-                    year: 2021
-                    trackNumber: 1
-                    puctureId: 1
       security:
         - upvibe-auth:
             - user
@@ -476,20 +357,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Tag'
-              example:
-                id: 1
-                source:
-                  id: 1
-                  description: "youtube"
-                status: "I"
-                sourceUrl: "https://youtu.be//6JYIGclVQdw"
-                tags:
-                  title: "Chaos in the Streets"
-                  artist: "Magnavolt"
-                  album: "Chaos in the Streets"
-                  year: 2021
-                  trackNumber: 1
-                  puctureId: 1
       security:
         - upvibe-auth:
             - user
@@ -508,49 +375,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagMappingPriority'
-              example:
-                title:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                artist:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                album:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                year:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                trackNumber:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                puctureId:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
       security:
         - upvibe-auth:
             - user
@@ -566,49 +390,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TagMappingPriority'
-              example:
-                title:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                artist:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                album:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                year:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                trackNumber:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                puctureId:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
         required: true
       responses:
         '200':
@@ -638,49 +419,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TagMapping'
-                example:
-                  title:
-                    - id: 1
-                      description: "youtube"
-                    - id: 2
-                      description: "itunes"
-                    - id: 3
-                      description: "spotify"
-                  artist:
-                    - id: 1
-                      description: "youtube"
-                    - id: 2
-                      description: "itunes"
-                    - id: 3
-                      description: "spotify"
-                  album:
-                    - id: 1
-                      description: "youtube"
-                    - id: 2
-                      description: "itunes"
-                    - id: 3
-                      description: "spotify"
-                  year:
-                    - id: 1
-                      description: "youtube"
-                    - id: 2
-                      description: "itunes"
-                    - id: 3
-                      description: "spotify"
-                  trackNumber:
-                    - id: 1
-                      description: "youtube"
-                    - id: 2
-                      description: "itunes"
-                    - id: 3
-                      description: "spotify"
-                  puctureId:
-                    - id: 1
-                      description: "youtube"
-                    - id: 2
-                      description: "itunes"
-                    - id: 3
-                      description: "spotify"
       security:
         - upvibe-auth:
             - user
@@ -703,49 +441,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TagMapping'
-              example:
-                title:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                artist:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                album:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                year:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                trackNumber:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
-                puctureId:
-                  - id: 1
-                    description: "youtube"
-                  - id: 2
-                    description: "itunes"
-                  - id: 3
-                    description: "spotify"
         required: true
       responses:
         '200':
@@ -781,9 +476,7 @@ components:
         id:
           type: integer
           format: int64
-        description::
-          type: string
-        logo:
+        description:
           type: string
     Tag:
       type: object
@@ -813,8 +506,6 @@ components:
           type: integer
         trackNumber:
           type: integer
-        puctureId:
-          type: integer
     File:
       type: object
       properties:
@@ -836,42 +527,42 @@ components:
         title:
           type: array
           items:
-            $ref: '#/components/schemas/Source'
+            type: integer
         artist:
           type: array
           items:
-            $ref: '#/components/schemas/Source'
+            type: integer
         album:
           type: array
           items:
-            $ref: '#/components/schemas/Source'
+            type: integer
         year:
           type: array
           items:
-            $ref: '#/components/schemas/Source'
+            type: integer
         trackNumber:
           type: array
           items:
-            $ref: '#/components/schemas/Source'
-        puctureId:
+            type: integer
+        picture:
           type: array
           items:
-            $ref: '#/components/schemas/Source'
+            type: integer
     TagMapping:
       type: object
       properties:
         title:
-          $ref: '#/components/schemas/TagMappingPriority'
+          type: integer
         artist:
-          $ref: '#/components/schemas/TagMappingPriority'
+          type: integer
         album:
-          $ref: '#/components/schemas/TagMappingPriority'
+          type: integer
         year:
-          $ref: '#/components/schemas/TagMappingPriority'
+          type: integer
         trackNumber:
-          $ref: '#/components/schemas/TagMappingPriority'
-        puctureId:
-          $ref: '#/components/schemas/TagMappingPriority'
+          type: integer
+        picture:
+          type: integer
   securitySchemes:
     upvibe-auth:
       type: oauth2
