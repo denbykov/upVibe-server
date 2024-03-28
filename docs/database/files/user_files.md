@@ -8,5 +8,7 @@ This page describes the public.user_files table
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
-| user_id | INT | NOT NULL, PK,<br/> FK to public.users(id) |
-| file_id | INT | NOT NULL, PK,<br/> FK to public.files(id) |
+| id | SERIAL | PK |
+| user_id | INT | PK,<br/> FK to public.users(id) |
+| file_id | INT | PK,<br/> FK to public.files(id) |
+| added_ts | TIMESTAMPTZ | NOT NULL, DEFAULT CURRENT_TIMESTAMP |
