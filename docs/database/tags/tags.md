@@ -2,7 +2,7 @@
 
 This page describes the public.tags table
 
-![Alt text](tags.png)
+![alt text](tags.png)
 
 ## Structure definition
 
@@ -10,6 +10,7 @@ This page describes the public.tags table
 | - | - | - | - |
 | id | SERIAL | PK |
 | file_id | INT | NOT NULL,<br/> FK to public.files(id) |
+| is_primary | BOOLEAN | NOT NULL,<br/> DEFAULT FALSE |
 | title | VARCHAR(255) |
 | artist | VARCHAR(255) |
 | album | VARCHAR(255) |

@@ -2,7 +2,7 @@
 
 This page describes the public.sources table
 
-![Alt text](sources.png)
+![alt text](sources.png)
 
 ## Structure definition
 
@@ -10,5 +10,5 @@ This page describes the public.sources table
 | - | - | - | - |
 | id | SERIAL | PK |
 | description | VARCHAR(255) | NOT NULL |
-| is_primary | BOOLEAN | NOT NULL |
+| allow_for_secondary_tag_parsing | BOOLEAN | NOT NULL |
 | logo_path | VARCHAR(255) | NOT NULL |

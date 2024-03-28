@@ -24,6 +24,7 @@ body:
     "uuid": "uuid",
 }
 ```
+This plugin should also provide an API for getting source id by the url(getSource method), and an API for url normalization(normalizeUrl).
 - Parser  
 This plugin is responsible for the communication with parsing workers. For example, the amqp message produced by this plugin should look like one of the following:
 ```json
@@ -56,70 +57,72 @@ The client can request the server to download a file via POST /up-vibe/v1/files 
 
 The server should:
 
-#### AC 1
+#### AC 1.1
+
+Via the filePlugin perform request.body.url normalization and get sourceId  
+normalizedUrl = normalize request.body.url  
+sourceId = get source id for request.body.url  
+
+#### AC 1.2
 
 Try to find a record in the [files](../database/files/files.md) table by the following filter:  
-source_url = request.body.url  
+source_url = normalizedUrl  
 
 Does the record exist?
-- yes - go to AC 7
+- yes - go to AC 6
 - no - go to AC 2
 
 #### AC 2
 
-Generate the unique universal id for the requested file and try to create a new record in the [files](../database/files/files.md) table with the following values:  
-path = UUID  
-source_url = request.body.url  
+Insert a new record in the [files](../database/files/files.md) table with the following values:  
+path = null  
+source_url = normalizedUrl  
 status = "CR"  
 
 #### AC 3
 
-Does the file creation fail because the UUID is taken?
-- yes - go to AC 1
-- no - go to AC 3
+Request file downloading.  
+Value mapping for the request:  
+file_id = created_file.id  
+url = normalizedUrl  
+uuid = created_file.uuid  
 
 #### AC 4
 
-Request file downloading via its downloader plugin.  
-Value mapping for the request:  
-file_id = created_file.id  
-url = request.body.url  
-uuid = UUID  
-
-Does the plugin report an error?
-- yes - abort the operation and send the error response to the user (errorCode -1)
-- no - continue
+Create a native tag record in the [tags](../database/tags/tags.md) table with the following values:  
+file_id = created_file.id   
+source = sourceId  
+status = "CR"  
+is_primary = true
 
 #### AC 5
 
-Create a record in the [tags](../database/tags/tags.md) table with the following values:  
-file_id = created_file.id   
-source = 1  
-status = "CR"  
+Request native tag parsing.  
+Value mapping for the request:  
+tag_id = created_tag.id  
+url = normalizedUrl  
 
 #### AC 6
 
-Request tag parsing via its parser plugin.  
-Value mapping for the request:  
-tag_id = created_tag.id  
-url = request.body.url  
-
-Does the plugin report an error?
-- yes - abort the operation and send the error response to the user (errorCode -1)
-- no - send a successful response to the user
+Create a record in the [user_files](../database/files/user_files.md) table with the following values:  
+user_id = request.user.id  
+file_id = (created_file / found_file).id  
 
 #### AC 7
 
-Create a record in the [user_files](../database/files/user_files.md) table with the following values:  
-user_id = request.user.id   
-file_id = (created_file / found_file).id  
-
-#### AC 8
-
 Create a record in the [tag_mappings](../database/tags/tag_mappings.md) table with the following values:  
-user_id = request.user.id   
+user_id = request.user.id  
 file_id = (created_file / found_file).id  
-and all tags according to the user's mapping priority
+all tags = sourceId  
+
+### AC 8
+
+For each record in the [devices](../database/users/devices.md) table fulfilling following filter:  
+user_id = request.user.id  
+  
+Create a record in the [file_synchronization](../database/files/file_synchronization.md) table with the following values:  
+device_id = record.id  
+user_file_id = created_user_file.id  
 
 # Tag parsing  
 
@@ -131,26 +134,26 @@ The server should:
 
 Try to find a record in the [tags](../database/tags/tags.md) table by the following filter:  
 file_id = request.url.file_id  
-source = 1  
+is_primary = true  
 
 Does the record exist?  
-- yes - go to AC 2  
-- no - abort the operation and send the "Native tag is not found" (errorCode 1) error response to the user  
+- yes - continue  
+- no - abort the operation and send the "Primary tag is not found" message  
 
 #### AC 2
 
-Check the status of the found native tag.
+Check the status of the found primary tag.
 
 If a status is:
-- "С" - go to AC 3
-- "E" - abort the operation and send the "Native tag parsing is failed" (errorCode 2) error response to the user   
-- otherwise - abort the operation and send the "Native tag is being parsed" (errorCode 3) error response to the user
+- "С" - continue  
+- "E" - abort the operation and send "Primary tag parsing failed" message  
+- otherwise abort the operation and send "Primary tag parsing in progress" message
 
 #### AC 3
 
 Create records in the [tags](../database/tags/tags.md) table with the following values:  
 file_id = request.url.file_id  
-source = [all sources except for 1]  
+source = [all sources with record.allow_for_secondary_tag_parsing = true]  
 status = "CR"  
 
 #### AC 4
