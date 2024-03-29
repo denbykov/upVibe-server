@@ -7,7 +7,7 @@ CREATE TABLE files (
     source_url VARCHAR(255) NOT NULL UNIQUE,
     sources INT NOT NULL,
     status VARCHAR(2) NOT NULL,
-    CONSTRAINT fk_sources_files_id FOREIGN KEY (sources) REFERENCES file_sources(id),
+    CONSTRAINT fk_sources_files_id FOREIGN KEY (sources) REFERENCES sources(id),
     CONSTRAINT fk_status_files FOREIGN KEY (status) REFERENCES file_statuses(status)
 );
 
