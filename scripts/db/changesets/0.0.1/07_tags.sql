@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:8
+--changeset sowa:7
 
 CREATE TABLE tags (
     id SERIAL PRIMARY KEY,
@@ -13,6 +13,6 @@ CREATE TABLE tags (
     source INT NOT NULL,
     status VARCHAR(2) NOT NULL,
     CONSTRAINT fk_file_id_tags FOREIGN KEY (file_id) REFERENCES files(id),
-    CONSTRAINT fk_source_type_tags FOREIGN KEY (source) REFERENCES tag_sources(id),
+    CONSTRAINT fk_source_type_tags FOREIGN KEY (source) REFERENCES sources(id),
     CONSTRAINT fk_status_tags FOREIGN KEY (status) REFERENCES tag_statuses(status)
 );
