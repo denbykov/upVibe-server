@@ -3,7 +3,7 @@ f.id as file_id,
 s.id as source_id,
 s.description as source_description,
 s.allow_for_secondary_tag_parsing as source_allow_for_secondary_tag_parsing,
-s.logo_path as source_logo_path
+s.logo_path as source_logo_path,
 f.status as file_status,
 f.source_url as file_source_url,
 (SELECT title FROM tags as t WHERE t.id = tm.title) as tag_title,
