@@ -1,6 +1,6 @@
 import { File, ShortTags } from '@src/entities/file';
 
-import { FileSourceDTO } from './sourceDTO';
+import { SourceDTO } from './sourceDTO';
 
 class ShortTagsDTO {
   public title: string;
@@ -62,14 +62,14 @@ class ShortTagsDTO {
 
 class TaggedFileDTO {
   public id: number;
-  public source: FileSourceDTO;
+  public source: SourceDTO;
   public status: string;
   public sourceUrl: string;
   public tags: ShortTagsDTO | null;
 
   constructor(
     id: number,
-    source: FileSourceDTO,
+    source: SourceDTO,
     status: string,
     sourceUrl: string,
     tags: ShortTagsDTO | null
@@ -85,7 +85,7 @@ class TaggedFileDTO {
     const shortTags = ShortTagsDTO.fromJSON(json);
     return new TaggedFileDTO(
       json.file_id,
-      FileSourceDTO.fromJSON(json),
+      SourceDTO.fromJSON(json),
       json.file_status,
       json.file_source_url,
       shortTags.empty() ? null : shortTags

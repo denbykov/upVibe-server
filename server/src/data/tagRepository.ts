@@ -1,6 +1,5 @@
 import pg from 'pg';
 
-import { TagSourceDTO } from '@src/dto/sourceDTO';
 import { TagDTO } from '@src/dto/tagDTO';
 import { TagMappingDTO } from '@src/dto/tagMappingDTO';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
@@ -41,43 +40,6 @@ export class TagRepository implements iTagDatabase {
       const queryResult = await client.query(query, [tagId]);
       if (queryResult.rows.length > 0) {
         const result = TagDTO.fromJSON(queryResult.rows[0]);
-        return result;
-      } else {
-        return null;
-      }
-    } catch (err) {
-      dataLogger.error(err);
-      throw err;
-    } finally {
-      client.release();
-    }
-  };
-
-  public getTagSources = async (): Promise<Array<TagSourceDTO>> => {
-    const client = await this.pool.connect();
-    try {
-      const query = this.sqlManager.getQuery('getTagSources');
-      dataLogger.debug(query);
-      const queryResult = await client.query(query);
-      return queryResult.rows.map((row) => TagSourceDTO.fromJSON(row));
-    } catch (err) {
-      dataLogger.error(err);
-      throw err;
-    } finally {
-      client.release();
-    }
-  };
-
-  public getTagSource = async (
-    sourceId: number
-  ): Promise<TagSourceDTO | null> => {
-    const client = await this.pool.connect();
-    try {
-      const query = this.sqlManager.getQuery('getTagSource');
-      dataLogger.debug(query);
-      const queryResult = await client.query(query, [sourceId]);
-      if (queryResult.rows.length > 0) {
-        const result = TagSourceDTO.fromJSON(queryResult.rows[0]);
         return result;
       } else {
         return null;

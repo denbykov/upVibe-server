@@ -103,31 +103,6 @@ paths:
         - BearerAuth: []
         - upvibe-auth:
             - user
-  /up-vibe/v1/sources/{sourceId}:
-    get:
-      tags:
-        - sources
-      summary: Get source
-      description: Return information about source
-      operationId: getSource
-      parameters:
-        - name: sourceId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Source'
-      security:
-        - BearerAuth: []
-        - upvibe-auth:
-            - user
   /up-vibe/v1/sources/{sourceId}/logo:
     get:
       tags:

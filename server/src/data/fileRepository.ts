@@ -1,7 +1,6 @@
 import pg from 'pg';
 
 import { FileDTO } from '@src/dto/fileDTO';
-import { FileSourceDTO } from '@src/dto/sourceDTO';
 import { TaggedFileDTO } from '@src/dto/taggedFileDTO';
 import { UserDTO } from '@src/dto/userDTO';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
@@ -79,21 +78,6 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getFileSources = async (): Promise<Array<FileSourceDTO>> => {
-    const client = await this.pool.connect();
-    try {
-      const query = this.sqlManager.getQuery('getFileSources');
-      dataLogger.debug(query);
-      const queryResult = await client.query(query);
-      return queryResult.rows.map((row) => FileSourceDTO.fromJSON(row));
-    } catch (err) {
-      dataLogger.error(err);
-      throw err;
-    } finally {
-      client.release();
-    }
-  };
-
   public insertFile = async (file: FileDTO): Promise<FileDTO> => {
     const client = await this.pool.connect();
     try {
@@ -124,19 +108,6 @@ export class FileRepository implements iFileDatabase {
     } catch (err) {
       dataLogger.error(err);
       throw err;
-    } finally {
-      client.release();
-    }
-  };
-
-  public getFileSource = async (id: number): Promise<FileSourceDTO> => {
-    const client = await this.pool.connect();
-    try {
-      const query = this.sqlManager.getQuery('getFileSource');
-      const queryResult = await client.query(query, [id]);
-      return FileSourceDTO.fromJSON(queryResult.rows[0]);
-    } catch (err) {
-      throw new Error(`FilesRepository.getFileSource: ${err}`);
     } finally {
       client.release();
     }

@@ -42,37 +42,6 @@ class TagController extends BaseController {
     }
   };
 
-  public getSources = async (
-    request: Express.Request,
-    response: Express.Response,
-    next: Express.NextFunction
-  ) => {
-    try {
-      const tagWorker = this.buildTagWorker();
-
-      const result = await tagWorker.getSources();
-      return response.status(200).json(result);
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  public getSourceLogo = async (
-    request: Express.Request,
-    response: Express.Response,
-    next: Express.NextFunction
-  ) => {
-    try {
-      const tagWorker = this.buildTagWorker();
-
-      const sourceId = Number(request.params.sourceId);
-      const result = await tagWorker.getSourceLogo(sourceId);
-      return response.status(200).sendFile(result);
-    } catch (error) {
-      next(error);
-    }
-  };
-
   public getPictureOfTag = async (
     request: Express.Request,
     response: Express.Response,
