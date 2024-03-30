@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:4
+--changeset VolodymyrFihurniak:4
 
 CREATE TABLE files (
     id SERIAL PRIMARY KEY,

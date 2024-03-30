@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:5
+--changeset VolodymyrFihurniak:5
 
 CREATE TABLE user_files (
     user_id INT NOT NULL,

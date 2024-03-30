@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:6
+--changeset VolodymyrFihurniak:6
 
 CREATE TABLE tag_statuses (
     status VARCHAR(2) PRIMARY KEY,

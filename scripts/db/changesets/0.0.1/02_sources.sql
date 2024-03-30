@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:2
+--changeset denbykov:2
 
 CREATE TABLE sources (
     id SERIAL PRIMARY KEY,
