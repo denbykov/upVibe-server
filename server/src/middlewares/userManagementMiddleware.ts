@@ -13,12 +13,7 @@ const userManagementMiddleware = (
       Buffer.from(encodedTokenPayload!, 'base64').toString('ascii')
     );
     const dbUser = await worker.handleAuthorization(tokenPayload, permissions);
-
-    const { deviceName } = request.body;
-    if (!dbUser && deviceName) {
-      request.body.rawToken = rawToken;
-    }
-
+    request.body.rawToken = rawToken;
     request.body.user = dbUser;
     next();
   };

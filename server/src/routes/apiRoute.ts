@@ -68,7 +68,6 @@ export class APIRoute extends BaseRoute {
     this.app.post(
       `${apiURI}/register`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
       controller.register
     );
 

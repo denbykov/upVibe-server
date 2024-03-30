@@ -1,7 +1,7 @@
 import Express from 'express';
 import pg from 'pg';
 
-import { APIWorker } from '@src/business/apiWorker';
+import { UserWorker } from '@src/business/userWorker';
 import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
 import { UserRepository } from '@src/data/userRepository';
 import { Config } from '@src/entities/config';
@@ -15,8 +15,8 @@ class APIController extends BaseController {
     super(config, databasePool, sqlManager);
   }
 
-  private buildAPIWorker = (): APIWorker => {
-    return new APIWorker(
+  private buildUserWorker = (): UserWorker => {
+    return new UserWorker(
       new UserRepository(this.databasePool),
       new UserInfoAgent(this.config)
     );
@@ -53,21 +53,18 @@ class APIController extends BaseController {
     request: Express.Request,
     response: Express.Response
   ) => {
-    const { user } = request.body;
-    if (user) {
-      return response.status(400).json({
-        message: 'User already exists',
-        code: -1,
-      });
-    }
-    const apiWorker = this.buildAPIWorker();
-    const reg = await apiWorker.registerUser(
-      request.body.rawToken,
+    const rawToken = request.headers.authorization!.split(' ')[1];
+    const encodedTokenPayload = rawToken.split('.')[1];
+    const tokenPayload: JSON.JSONObject = JSON.parse(
+      Buffer.from(encodedTokenPayload!, 'base64').toString('ascii')
+    );
+    const userWorker = this.buildUserWorker();
+    const reg = await userWorker.handleRegistration(
+      rawToken,
+      tokenPayload,
       request.body.deviceName
     );
-    reg
-      ? response.status(200).json({ message: 'User registered!' })
-      : response.status(500).json({ message: 'User registration failed!' });
+    return response.status(200).json(reg);
   };
 }
 
