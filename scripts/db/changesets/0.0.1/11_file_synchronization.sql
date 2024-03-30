@@ -10,5 +10,5 @@ CREATE TABLE file_synchronization (
     device_ts TIMESTAMP NOT NULL,
     CONSTRAINT pk_file_synchronization PRIMARY KEY (device_id, user_file_id),
     CONSTRAINT fk_device_id_file_synchronization FOREIGN KEY (device_id) REFERENCES devices(id),
-    CONSTRAINT fk_user_file_id_file_synchronization FOREIGN KEY (user_file_id) REFERENCES user_files(file_id)
+    CONSTRAINT fk_user_file_id_file_synchronization FOREIGN KEY (user_file_id) REFERENCES user_files(id)
 );
