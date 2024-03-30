@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:10
+--changeset VolodymyrFihurniak:10
 
 CREATE TABLE devices (
     id SERIAL PRIMARY KEY,
