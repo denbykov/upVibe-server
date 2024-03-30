@@ -34,7 +34,7 @@ export class APIRoute extends BaseRoute {
       this.databasePool,
       this.sqlManager
     );
-    const apiURI = `/${this.config.apiURI}/${this.config.apiVersion}`;
+    const apiURI = `/${this.config.apiURI}/v1`;
     const userWorker = new UserWorker(
       new UserRepository(this.databasePool),
       new UserInfoAgent(this.config)
@@ -55,6 +55,7 @@ export class APIRoute extends BaseRoute {
     );
 
     this.app.get(`${apiURI}/health`, controller.healthCheck);
+
     this.app.get(`${apiURI}/info`, controller.getInfo);
 
     this.app.get(
@@ -62,6 +63,13 @@ export class APIRoute extends BaseRoute {
       auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),
       controller.authTest
+    );
+
+    this.app.post(
+      `${apiURI}/register`,
+      auth0Middleware(this.config),
+      userManagementMiddleware([GENERAL], userWorker),
+      controller.register
     );
 
     return this.app;

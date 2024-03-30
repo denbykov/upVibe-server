@@ -20,7 +20,6 @@ export class UserWorker {
   };
 
   public handleAuthorization = async (
-    rawToken: string,
     payload: JSON.JSONObject,
     permissions: Array<string>
   ): Promise<User | null> => {
@@ -30,11 +29,7 @@ export class UserWorker {
         return null;
       }
     }
-    let dbUser = await this.getUser(payload.sub);
-    if (!dbUser) {
-      dbUser = await this.userInfoAgent.getUserInfoByToken(rawToken || '');
-      await this.db.insertUser(dbUser!);
-    }
-    return dbUser;
+    const dbUser = await this.getUser(payload.sub);
+    return dbUser ? dbUser : null;
   };
 }

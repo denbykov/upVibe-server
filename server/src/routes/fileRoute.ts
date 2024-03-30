@@ -31,7 +31,7 @@ export class FileRoute extends BaseRoute {
       this.pluginManager
     );
 
-    const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/files`;
+    const apiURIFiles = `/${this.config.apiURI}/v1/files`;
     const userWorker = new UserWorker(
       new UserRepository(this.databasePool),
       new UserInfoAgent(this.config)

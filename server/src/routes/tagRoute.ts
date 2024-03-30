@@ -28,8 +28,8 @@ export class TagRoute extends BaseRoute {
       this.pluginManager
     );
 
-    const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/files`;
-    const apiURITags = `/${this.config.apiURI}/${this.config.apiVersion}/tags`;
+    const apiURIFiles = `/${this.config.apiURI}/v1/files`;
+    const apiURITags = `/${this.config.apiURI}/v1/tags`;
 
     this.app.get(
       `${apiURIFiles}/:fileId/tags`,

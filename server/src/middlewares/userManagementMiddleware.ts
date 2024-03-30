@@ -12,15 +12,11 @@ const userManagementMiddleware = (
     const tokenPayload: JSON.JSONObject = JSON.parse(
       Buffer.from(encodedTokenPayload!, 'base64').toString('ascii')
     );
-    const dbUser = await worker.handleAuthorization(
-      rawToken,
-      tokenPayload,
-      permissions
-    );
-    if (!dbUser) {
-      return response.status(403).json({
-        message: 'Authorization error',
-      });
+    const dbUser = await worker.handleAuthorization(tokenPayload, permissions);
+
+    const { deviceName } = request.body;
+    if (!dbUser && deviceName) {
+      request.body.rawToken = rawToken;
     }
 
     request.body.user = dbUser;

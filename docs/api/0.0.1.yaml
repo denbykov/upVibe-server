@@ -83,6 +83,45 @@ paths:
                   version:
                     type: string
                     example: "1.0.0"
+  /up-vibe/v1/register:
+    post:
+      tags:
+        - api
+      summary: Register a new user
+      description: Register a new user
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceName:
+                  type: string
+                  example: "dd938aa5-6520-492a-bf61-8927aa58872c"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessage'
+              example:
+                  message: "User registered"
+        '400':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "User already exists"
+                code: -1
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+
   /up-vibe/v1/sources:
     get:
       tags:
@@ -575,6 +614,7 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
+
 
 security:
   - BearerAuth: []
