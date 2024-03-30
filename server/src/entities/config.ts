@@ -38,7 +38,7 @@ export class Config {
     this.appUseHttps =
       process.env.APP_USE_HTTPS === 'true' ||
       configEnv.APP_USE_HTTPS === 'true' ||
-      configJson.APP_USE_HTTPS === 'true';
+      configJson.APP_USE_HTTPS;
     this.appHttpsKey =
       process.env.APP_HTTPS_KEY ||
       configEnv.APP_HTTPS_KEY ||
