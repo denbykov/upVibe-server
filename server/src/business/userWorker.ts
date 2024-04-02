@@ -70,9 +70,9 @@ export class UserWorker {
       return await this.registerUserDevice(dbUser, deviceName);
     }
     const dbDevice = await this.db.getDeviceByUser(dbUser);
-    if (!dbDevice) {
-      return await this.registerUserDevice(dbUser, deviceName);
+    if (dbDevice) {
+      throw new ProcessingError('Device already registered');
     }
-    return dbDevice;
+    return await this.registerUserDevice(dbUser, deviceName);
   };
 }
