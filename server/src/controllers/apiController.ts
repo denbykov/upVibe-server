@@ -24,29 +24,44 @@ class APIController extends BaseController {
 
   public healthCheck = async (
     request: Express.Request,
-    response: Express.Response
+    response: Express.Response,
+    next: Express.NextFunction
   ) => {
-    return response.status(200).json({
-      message: 'API is healthy!',
-    });
+    try {
+      return response.status(200).json({
+        message: 'API is healthy!',
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 
   public getInfo = async (
     request: Express.Request,
-    response: Express.Response
+    response: Express.Response,
+    next: Express.NextFunction
   ) => {
-    return response.status(200).json({
-      version: `${APP_VERSION}`,
-    });
+    try {
+      return response.status(200).json({
+        version: `${APP_VERSION}`,
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 
   public authTest = async (
     request: Express.Request,
-    response: Express.Response
+    response: Express.Response,
+    next: Express.NextFunction
   ) => {
-    return response.status(200).json({
-      message: 'Auth test passed!',
-    });
+    try {
+      return response.status(200).json({
+        message: 'Auth test passed!',
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 
   public register = async (

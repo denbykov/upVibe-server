@@ -12,7 +12,13 @@ import {
   unmatchedRoutesMiddleware,
 } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
-import { APIRoute, BaseRoute, FileRoute, TagRoute } from '@src/routes';
+import {
+  APIRoute,
+  BaseRoute,
+  FileRoute,
+  SourceRoute,
+  TagRoute,
+} from '@src/routes';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger, serverLogger } from '@src/utils/server/logger';
 import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
@@ -79,6 +85,16 @@ export class App {
 
     this.routes.push(
       new TagRoute(
+        this.app,
+        this.config,
+        this.pool,
+        this.sqlManager,
+        this.pluginManager
+      )
+    );
+
+    this.routes.push(
+      new SourceRoute(
         this.app,
         this.config,
         this.pool,
