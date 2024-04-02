@@ -87,8 +87,8 @@ paths:
     post:
       tags:
         - api
-      summary:  Register a new user(if does not exist) and device
-      description:  Register a new user(if does not exist) and device, if user already exists, only device is registered
+      summary:  Register a new user and device
+      description:  Register a new user and device, if user already exists, only device is registered
       operationId: registerUser
       requestBody:
         content:
