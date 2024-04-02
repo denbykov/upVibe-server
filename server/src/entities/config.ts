@@ -1,6 +1,4 @@
 export class Config {
-  public apiURI: string = '';
-  public apiVersion: string = '';
   public appPort: number = 0;
   public appHost: string = '';
   public appUseHttps: boolean = false;
@@ -23,12 +21,6 @@ export class Config {
   public dbMax: number = 0;
 
   constructor(configEnv: JSON.JSONObject, configJson: JSON.JSONObject) {
-    this.apiURI =
-      process.env.API_URI || configEnv.API_URI || configJson.API_URI;
-    this.apiVersion =
-      process.env.API_VERSION ||
-      configEnv.API_VERSION ||
-      configJson.API_VERSION;
     this.appPort =
       parseInt(<string>process.env.APP_PORT) ||
       parseInt(configEnv.APP_PORT) ||

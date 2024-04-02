@@ -3,6 +3,7 @@ import pg from 'pg';
 
 import { FileWorker } from '@src/business/fileWorker';
 import { FileRepository, TagRepository } from '@src/data';
+import { SourceRepository } from '@src/data/sourceRepository';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -22,6 +23,7 @@ class FileController extends BaseController {
   private buildFileWorker = (): FileWorker => {
     return new FileWorker(
       new FileRepository(this.databasePool, this.sqlManager),
+      new SourceRepository(this.databasePool, this.sqlManager),
       new TagRepository(this.databasePool, this.sqlManager),
       this.pluginManager!.getFilePlugin(),
       this.pluginManager!.getTagPlugin()
@@ -46,44 +48,34 @@ class FileController extends BaseController {
 
   public getFilesByUser = async (
     request: Express.Request,
-    response: Express.Response
+    response: Express.Response,
+    next: Express.NextFunction
   ) => {
-    const { user } = request.body;
-    const fileWorker = this.buildFileWorker();
+    try {
+      const { user } = request.body;
+      const fileWorker = this.buildFileWorker();
 
-    const result = await fileWorker.getTaggedFilesByUser(user);
-    return response.status(200).json(result);
-  };
-
-  public getSources = async (
-    request: Express.Request,
-    response: Express.Response
-  ) => {
-    const fileWorker = this.buildFileWorker();
-
-    const result = await fileWorker.getSources();
-    return response.status(200).json(result);
-  };
-
-  public getSourceLogo = async (
-    request: Express.Request,
-    response: Express.Response
-  ) => {
-    const { sourceId } = request.params;
-    const fileWorker = this.buildFileWorker();
-    const result = await fileWorker.getSourceLogo(Number(sourceId));
-    return response.status(200).sendFile(result);
+      const result = await fileWorker.getTaggedFilesByUser(user);
+      return response.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
   };
 
   public getTaggedFile = async (
     request: Express.Request,
-    response: Express.Response
+    response: Express.Response,
+    next: Express.NextFunction
   ) => {
-    const { user } = request.body;
-    const { fileId } = request.params;
-    const fileWorker = this.buildFileWorker();
-    const result = await fileWorker.getTaggedFile(Number(fileId), user);
-    return response.status(200).json(result);
+    try {
+      const { user } = request.body;
+      const { fileId } = request.params;
+      const fileWorker = this.buildFileWorker();
+      const result = await fileWorker.getTaggedFile(Number(fileId), user);
+      return response.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
   };
 }
 

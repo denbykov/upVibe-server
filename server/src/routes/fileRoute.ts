@@ -31,45 +31,31 @@ export class FileRoute extends BaseRoute {
       this.pluginManager
     );
 
-    const apiURIFiles = `/${this.config.apiURI}/${this.config.apiVersion}/files`;
+    const filesURI = `/up-vibe/v1/files`;
     const userWorker = new UserWorker(
       new UserRepository(this.databasePool),
       new UserInfoAgent(this.config)
     );
 
     this.app.post(
-      `${apiURIFiles}`,
+      `${filesURI}`,
       auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),
       controller.downloadFileBySource
     );
 
     this.app.get(
-      `${apiURIFiles}`,
+      `${filesURI}`,
       auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),
       controller.getFilesByUser
     );
 
     this.app.get(
-      `${apiURIFiles}/:fileId`,
+      `${filesURI}/:fileId`,
       auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),
       controller.getTaggedFile
-    );
-
-    this.app.get(
-      `${apiURIFiles}/sources`,
-      auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
-      controller.getSources
-    );
-
-    this.app.get(
-      `${apiURIFiles}/sources/:sourceId/logo`,
-      auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
-      controller.getSourceLogo
     );
 
     return this.app;

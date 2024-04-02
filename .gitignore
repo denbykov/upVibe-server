@@ -12,3 +12,4 @@ plugins
 .env
 *.workers
 version.ts
+db.changelog-0.0.1.yaml
