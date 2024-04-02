@@ -29,7 +29,7 @@
 	"mounts": [
 		{
 			"source": "${localEnv:HOME}${localEnv:USERPROFILE}/workspace/upVibe-private-workers/storage",
-			"target": "/workspaces/upVibe-server/storage",
+			"target": "/opt/upVibe/storage",
 			"type": "bind"
 		}
   	]

@@ -1,4 +1,4 @@
-import { FileSource } from './source';
+import { Source } from './source';
 
 export class ShortTags {
   public title: string;
@@ -27,14 +27,14 @@ export class ShortTags {
 
 export class File {
   public id: number;
-  public source: FileSource;
+  public source: Source;
   public status: string;
   public sourceUrl: string;
   public tags: ShortTags | null;
 
   constructor(
     id: number,
-    source: FileSource,
+    source: Source,
     status: string,
     sourceUrl: string,
     tags: ShortTags | null

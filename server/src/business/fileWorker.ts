@@ -5,26 +5,29 @@ import { FileDTO } from '@src/dto/fileDTO';
 import { Status } from '@src/dto/statusDTO';
 import { TagMappingDTO } from '@src/dto/tagMappingDTO';
 import { File } from '@src/entities/file';
-import { FileSource } from '@src/entities/source';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
+import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 
 export class FileWorker {
   private db: iFileDatabase;
+  private sourceDb: iSourceDatabase;
   private tagDb: iTagDatabase;
   private filePlugin: iFilePlugin;
   private tagPlugin: iTagPlugin;
 
   constructor(
     db: iFileDatabase,
+    sourceDb: iSourceDatabase,
     tagDb: iTagDatabase,
     filePlugin: iFilePlugin,
     tagPlugin: iTagPlugin
   ) {
     this.db = db;
+    this.sourceDb = sourceDb;
     this.tagDb = tagDb;
     this.filePlugin = filePlugin;
     this.tagPlugin = tagPlugin;
@@ -62,9 +65,9 @@ export class FileWorker {
     file: FileDTO,
     userId: number
   ): Promise<void> => {
-    const source = await this.db.getFileSource(file.sourceId);
-    await this.filePlugin.downloadFile(file, source.description);
-    await this.tagPlugin.tagFile(file, userId, source.description);
+    const source = await this.sourceDb.getSource(file.sourceId);
+    await this.filePlugin.downloadFile(file, source!.description);
+    await this.tagPlugin.tagFile(file, userId, source!.description);
   };
 
   public getTaggedFilesByUser = async (user: User): Promise<Array<File>> => {
@@ -75,26 +78,6 @@ export class FileWorker {
     });
 
     return files;
-  };
-
-  public getSources = async (): Promise<Array<FileSource>> => {
-    const sources = await this.db.getFileSources();
-    return sources.map((source) => {
-      return source.toEntity();
-    });
-  };
-
-  public getSourceLogo = async (sourceId: number): Promise<string> => {
-    const source = await this.db.getFileSource(sourceId);
-    if (!source) {
-      throw new ProcessingError('Source not found');
-    }
-
-    if (source.logoPath === null) {
-      throw new ProcessingError('No picture for source');
-    }
-
-    return source.logoPath;
   };
 
   public getTaggedFile = async (id: number, user: User): Promise<File> => {

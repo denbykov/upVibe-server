@@ -34,7 +34,7 @@ export class APIRoute extends BaseRoute {
       this.databasePool,
       this.sqlManager
     );
-    const apiURI = `/${this.config.apiURI}/${this.config.apiVersion}`;
+    const apiURI = `/up-vibe/v1`;
     const userWorker = new UserWorker(
       new UserRepository(this.databasePool),
       new UserInfoAgent(this.config)
@@ -49,7 +49,7 @@ export class APIRoute extends BaseRoute {
     };
 
     this.app.use(
-      `${apiURI}/api-docs`,
+      `${apiURI}/api`,
       swaggerUi.serve,
       swaggerUi.setup(swaggerSpec, theme)
     );
