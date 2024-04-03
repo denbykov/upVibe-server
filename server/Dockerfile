@@ -1,9 +1,34 @@
-FROM node:20-alpine
-WORKDIR /opt/upVibe
+ARG BUILD_LOCATION=/build/server
+
+FROM node:20-alpine AS builder
+
+ARG BUILD_LOCATION
+
+WORKDIR ${BUILD_LOCATION}
+
 COPY . .
 COPY ["package.json", "package-lock.json*"]
+
 RUN npm install && mv node_modules ../
-EXPOSE 3000
-RUN chown -R node /opt/upVibe
-USER node
-CMD ["npm run prebuild", "&&", "npm run build"]
+RUN npm run prebuild && npm run build
+
+FROM node:20-alpine AS final
+
+ARG BUILD_LOCATION
+
+ENV APP_USER=node
+ENV APP_GROUP=node
+ENV APP_WORKDIR=/opt/upVibe/server
+
+USER ${APP_USER}
+WORKDIR ${APP_WORKDIR}
+
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/dist ./dist
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package.json .
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package-lock.json .
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/sql ./sql
+
+RUN npm install --omit=dev --no-optional
+
+ENTRYPOINT [ "sh" ]
+

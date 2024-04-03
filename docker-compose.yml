@@ -59,16 +59,15 @@ services:
       - 3000:3000
     expose:
       - 3000
-    command: npm run start
+    command: -c "npm run start"
     container_name: server
     restart: always
     volumes:
-      - ./server/logs:/opt/upVibe/logs
-      - ./server/config:/opt/upVibe/config
-      - ./storage:/opt/upVibe/storage
-      - ./server/src/sql:/opt/upVibe/buildDebug/sql
-      - ./server/src:/opt/upVibe/src
+      - ./server/config:/opt/upVibe/server/config
+      - ./server/logs:/opt/upVibe/server/logs
+      - ./server/plugins:/opt/upVibe/server/plugins
       - ./docs/api:/opt/upVibe/server/api
+      - ./storage:/opt/upVibe/storage
     depends_on:
       postgresql:
         condition: service_healthy
