@@ -1,22 +1,21 @@
-import type { JestConfigWithTsJest } from "ts-jest";
+import type { JestConfigWithTsJest } from 'ts-jest';
+import { pathsToModuleNameMapper } from 'ts-jest';
 
-const config: JestConfigWithTsJest = {
-  preset: "ts-jest",
-  testEnvironment: "node",
-  rootDir: "./",
-  moduleNameMapper: {
-    "^@src/(.*)$": "<rootDir>/src/$1",
-  },
-  extensionsToTreatAsEsm: [".ts"],
-  testMatch: ["**/tests/*.test.ts"],
-  clearMocks: true,
-  transformIgnorePatterns: ["node_modules/(?!(lodash-es|@src)/)"],
+import { compilerOptions } from './tests/tsconfig.json';
+
+const jestConfig: JestConfigWithTsJest = {
+  preset: 'ts-jest/presets/default-esm',
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
+    prefix: '<rootDir>/tests',
+  }),
   transform: {
-    "^.+\\.tsx?$": [
-      "ts-jest",
-      { tsconfig: "tsconfig.test.json", diagnostics: true, useESM: true },
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
     ],
   },
 };
 
-export default config;
+export default jestConfig;

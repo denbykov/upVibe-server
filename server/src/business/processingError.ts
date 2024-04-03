@@ -1,5 +1,6 @@
 export class ProcessingErrorCode {
   static readonly GENERIC_ERROR = -1;
+  static readonly UNAUTHORIZED = -2;
 }
 
 export class ProcessingError extends Error {

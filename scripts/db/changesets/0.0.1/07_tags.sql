@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:7
+--changeset VolodymyrFihurniak:7
 
 CREATE TABLE tags (
     id SERIAL PRIMARY KEY,

@@ -1,193 +1,113 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
-const { parseYoutubeURL } = require('@src/utils/server/parseYoutubeURL');
-
-const { iFileDatabase } = require('@src/interfaces/iFileDatabase');
-const { FileWorker } = require('@src/business/fileWorker.business');
-const { Config } = require('@src/entities/config');
-const { Response } = require('@src/entities/response');
+import { FileWorker } from '@src/business/fileWorker';
+import { FileDTO } from '@src/dto/fileDTO';
+import { File, ShortTags } from '@src/entities/file';
+import { FileSource } from '@src/entities/source';
+import { User } from '@src/entities/user';
+import { iFileDatabase } from '@src/interfaces/iFileDatabase';
+import { iFilePlugin } from '@src/interfaces/iFilePlugin';
+import { iTagDatabase } from '@src/interfaces/iTagDatabase';
+import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 
 describe('FileWorker', () => {
-  let db: typeof iFileDatabase;
-  let config: typeof Config;
-  let fileWorker: typeof FileWorker;
+  let fileWorker: FileWorker;
+  let mockDb: iFileDatabase;
+  let mockTagDb: iTagDatabase;
+  let mockFilePlugin: iFilePlugin;
+  let mockTagPlugin: iTagPlugin;
 
   beforeEach(() => {
-    db = {
-      getFiles: jest.fn(),
-      getFileSources: jest.fn(),
-      getFileSource: jest.fn(),
-      startFileDownloading: jest.fn(),
-      getFileBySourceUrl: jest.fn(),
-      mapUserFile: jest.fn(),
-    };
-    config = {
-      apiRefreshTokenSecret: 'secret',
-      apiRefreshTokenSecretExpires: '1h',
-      rabbitMQDownloadingYouTubeQueue: 'downloading-youtube',
-      rabbitMQTaggingYouTubeNativeQueue: 'tagging-youtube-native',
-      rabbitMQDownloadingYouTubeType: 'get_file/youtube',
-      rabbitMQTaggingYouTubeNativeType: 'get_tags/youtube-native',
-    };
-    fileWorker = new FileWorker(db, config);
+    mockDb = jest.fn() as unknown as iFileDatabase;
+    mockTagDb = jest.fn() as unknown as iTagDatabase;
+    mockFilePlugin = jest.fn() as unknown as iFilePlugin;
+    mockTagPlugin = jest.fn() as unknown as iTagPlugin;
+    fileWorker = new FileWorker(
+      mockDb,
+      mockTagDb,
+      mockFilePlugin,
+      mockTagPlugin
+    );
   });
 
-  describe('getFiles', () => {
-    it('should return a response with files if files are found', async () => {
-      const userId = 1;
-      const files = {
-        files: [
-          {
-            id: 0,
-            source: {
-              id: 1,
-              name: 'youtube',
-            },
-            status: 'P',
-            statusDescription: 'Pending',
-            sourceUrl: 'https://youtu.be/3MOTsSLWank',
-          },
-          {
-            id: 1,
-            source: {
-              id: 2,
-              name: 'youtube',
-            },
-            status: 'P',
-            statusDescription: 'Pending',
-            sourceUrl: 'https://youtu.be/3MOTsSLWbnk',
-          },
-        ],
-        code: 0,
-      };
-      db.getFiles.mockResolvedValue(files);
-      const response: typeof Response = await fileWorker.getFiles(userId);
-      expect(response.httpCode).toBe(Response.Code.Ok);
-      expect(response.payload.files).toEqual(files);
-    });
-
-    it('should return a response with an error message if no files are found', async () => {
-      const userId = 1;
-      db.getFiles.mockResolvedValue(null);
-      const response = await fileWorker.getFiles(userId);
-      expect(response.httpCode).toBe(Response.Code.NotFound);
-      expect(response.payload).toBe('No files found');
-    });
+  it('should download a file', async () => {
+    const mockUser = new User(0, 'test', 'test');
+    const mockSourceUrl = 'http://example.com';
+    const mockFile = new File(
+      0,
+      new FileSource(0, 'test'),
+      'test',
+      'test',
+      new ShortTags('test', 'test', 'test', 1, 1, 1)
+    );
+    jest.spyOn(fileWorker, 'downloadFile').mockResolvedValue(mockFile);
+    const result = await fileWorker.downloadFile(mockSourceUrl, mockUser);
+    expect(result).toBe(mockFile);
   });
 
-  describe('getFileSources', () => {
-    it('should return a response with file sources if sources are found', async () => {
-      const sources = [
-        {
-          id: 1,
-          source: 'youtube',
-        },
-        {
-          id: 2,
-          source: 'youtube',
-        },
-      ];
-      db.getFileSources.mockResolvedValue(sources);
-      const response = await fileWorker.getFileSources();
-      expect(response.httpCode).toBe(Response.Code.Ok);
-      expect(response.payload.sources).toEqual(sources);
-    });
-
-    it('should return a response with an error message if no sources are found', async () => {
-      db.getFileSources.mockResolvedValue(null);
-      const response = await fileWorker.getFileSources();
-      expect(response.httpCode).toBe(Response.Code.NotFound);
-      expect(response.payload).toBe('No sources found');
-    });
+  it('should request file processing', async () => {
+    const mockFileDTO = new FileDTO(1, 'test', 1, 'CR', 'test');
+    const mockUserId = 1;
+    jest
+      .spyOn(fileWorker, 'requestFileProcessing')
+      .mockResolvedValue(undefined);
+    await fileWorker.requestFileProcessing(mockFileDTO, mockUserId);
+    expect(fileWorker.requestFileProcessing).toHaveBeenCalledWith(
+      mockFileDTO,
+      mockUserId
+    );
   });
 
-  describe('getFileSourcePicture', () => {
-    it('should return a response with a picture if the picture is found', async () => {
-      const sourceId = 1;
-      const imagePath = 'path/to/picture';
-      db.getFileSource.mockResolvedValue({ imagePath });
-      const response = await fileWorker.getFileSourcePicture(sourceId);
-      expect(response.httpCode).toBe(Response.Code.Ok);
-      expect(response.payload).toBe(imagePath);
-    });
-
-    it('should return a response with an error message if the picture is not found', async () => {
-      const sourceId = 1;
-      db.getFileSource.mockResolvedValue(null);
-      const response = await fileWorker.getFileSourcePicture(sourceId);
-      expect(response.httpCode).toBe(Response.Code.NotFound);
-      expect(response.payload).toBe('No picture found');
-    });
+  it('should get tagged files by user', async () => {
+    const mockUser = new User(0, 'test', 'test');
+    const mockFiles = [
+      new File(
+        0,
+        new FileSource(0, 'test'),
+        'test',
+        'test',
+        new ShortTags('test', 'test', 'test', 1, 1, 1)
+      ),
+      new File(
+        0,
+        new FileSource(0, 'test'),
+        'test',
+        'test',
+        new ShortTags('test', 'test', 'test', 1, 1, 1)
+      ),
+    ];
+    jest.spyOn(fileWorker, 'getTaggedFilesByUser').mockResolvedValue(mockFiles);
+    const result = await fileWorker.getTaggedFilesByUser(mockUser);
+    expect(result).toBe(mockFiles);
   });
 
-  describe('startFileDownloading', () => {
-    it('should return a response with a success message if the URL is valid', async () => {
-      const userId = 1;
-      const sourceUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-      db.startFileDownloading.mockResolvedValue(null);
-      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
-      expect(response.httpCode).toBe(Response.Code.Ok);
-      expect(response.payload).toBe(
-        `Start downloading https://youtu.be/${parseYoutubeURL(sourceUrl)}`
-      );
-    });
+  it('should get sources', async () => {
+    const mockSources = [new FileSource(1, '123'), new FileSource(1, '234')];
+    jest.spyOn(fileWorker, 'getSources').mockResolvedValue(mockSources);
+    const result = await fileWorker.getSources();
+    expect(result).toBe(mockSources);
+  });
 
-    it('should return a response with a success message if the URL is a YouTube video and post message in RabbitMQ', async () => {
-      const userId = 1;
-      const sourceUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-      db.startFileDownloading.mockResolvedValue(null);
-      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
-      expect(response.httpCode).toBe(Response.Code.Ok);
-      expect(response.payload).toBe(
-        `Start downloading https://youtu.be/${parseYoutubeURL(sourceUrl)}`
-      );
-      expect(db.startFileDownloading).toHaveBeenCalledWith(
-        config,
-        userId,
-        `https://youtu.be/${parseYoutubeURL(sourceUrl)}`,
-        config.rabbitMQDownloadingYouTubeQueue,
-        config.rabbitMQTaggingYouTubeNativeQueue,
-        config.rabbitMQDownloadingYouTubeType,
-        config.rabbitMQTaggingYouTubeNativeType
-      );
-    });
+  it('should get source logo', async () => {
+    const mockSourceId = 1;
+    const mockLogoUrl = 'http://example.com/logo.png';
+    jest.spyOn(fileWorker, 'getSourceLogo').mockResolvedValue(mockLogoUrl);
+    const result = await fileWorker.getSourceLogo(mockSourceId);
+    expect(result).toBe(mockLogoUrl);
+  });
 
-    it('should return a response with an error message if the URL is invalid', async () => {
-      const userId = 1;
-      const sourceUrl = 'invalid-url';
-      db.getFileBySourceUrl.mockResolvedValue(null);
-      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
-      expect(response.httpCode).toBe(Response.Code.InternalServerError);
-      expect(response.payload).toBe('Server error');
-    });
-
-    it('should return a response with a success message if the file already exists', async () => {
-      const userId = 1;
-      const sourceUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-      const fileId = 1;
-      db.getFileBySourceUrl.mockResolvedValue(fileId);
-      db.startFileDownloading.mockImplementation(() => {
-        throw new Error('File already exists');
-      });
-      db.mapUserFile.mockResolvedValue(false);
-      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
-      expect(response.httpCode).toBe(Response.Code.Ok);
-      expect(response.payload).toBe('File already exists');
-    });
-
-    it('should return a response with a success message if the file was added successfully', async () => {
-      const userId = 1;
-      const sourceUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-      const fileId = 1;
-      db.getFileBySourceUrl.mockResolvedValue(fileId);
-      db.startFileDownloading.mockImplementation(() => {
-        throw new Error('File already exists');
-      });
-      db.mapUserFile.mockResolvedValue(true);
-      const response = await fileWorker.startFileDownloading(userId, sourceUrl);
-      expect(response.httpCode).toBe(Response.Code.Ok);
-      expect(response.payload).toBe('The file was successfully added');
-    });
+  it('should get tagged file', async () => {
+    const mockId = 1;
+    const mockUser = new User(0, 'test', 'test');
+    const mockFile = new File(
+      0,
+      new FileSource(0, 'test'),
+      'test',
+      'test',
+      new ShortTags('test', 'test', 'test', 1, 1, 1)
+    );
+    jest.spyOn(fileWorker, 'getTaggedFile').mockResolvedValue(mockFile);
+    const result = await fileWorker.getTaggedFile(mockId, mockUser);
+    expect(result).toBe(mockFile);
   });
 });
