@@ -28,7 +28,7 @@ COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package.j
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package-lock.json .
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/sql ./sql
 
-RUN npm install --omit=dev --no-optional
+RUN npm install --omit=dev --omit=optional
 
 ENTRYPOINT [ "sh" ]
 
