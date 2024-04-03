@@ -54,7 +54,7 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./Dockerfile
     ports:
       - 3000:3000
     expose:
