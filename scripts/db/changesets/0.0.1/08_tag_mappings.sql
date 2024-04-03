@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:8
+--changeset VolodymyrFihurniak:8
 
 CREATE TABLE tag_mappings (
     id SERIAL NOT NULL,

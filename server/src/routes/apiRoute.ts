@@ -55,6 +55,7 @@ export class APIRoute extends BaseRoute {
     );
 
     this.app.get(`${apiURI}/health`, controller.healthCheck);
+
     this.app.get(`${apiURI}/info`, controller.getInfo);
 
     this.app.get(
@@ -62,6 +63,12 @@ export class APIRoute extends BaseRoute {
       auth0Middleware(this.config),
       userManagementMiddleware([GENERAL], userWorker),
       controller.authTest
+    );
+
+    this.app.post(
+      `${apiURI}/register`,
+      auth0Middleware(this.config),
+      controller.register
     );
 
     return this.app;

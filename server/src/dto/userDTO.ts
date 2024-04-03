@@ -1,3 +1,5 @@
+import { User } from '@src/entities/user';
+
 class UserDTO {
   public id: number;
   public sub: string;
@@ -11,6 +13,10 @@ class UserDTO {
 
   public static fromJSON(json: JSON.JSONObject): UserDTO {
     return new UserDTO(json.id, json.sub, json.name);
+  }
+
+  public static toEntity(user: UserDTO): User {
+    return new User(user.id, user.sub, user.name);
   }
 }
 

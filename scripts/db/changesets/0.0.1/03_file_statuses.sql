@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:3
+--changeset VolodymyrFihurniak:3
 
 CREATE TABLE file_statuses (
     status VARCHAR(2) PRIMARY KEY,

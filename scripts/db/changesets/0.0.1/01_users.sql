@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset sowa:1
+--changeset VolodymyrFihurniak:1
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
