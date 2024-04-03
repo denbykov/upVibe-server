@@ -1,4 +1,6 @@
+import { TagDTO } from '@src/dto/tagDTO';
 import { Tag } from '@src/entities/tag';
+import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 import { dataLogger } from '@src/utils/server/logger';
@@ -8,9 +10,15 @@ import { ProcessingError } from './processingError';
 export class TagWorker {
   private db: iTagDatabase;
   private tagPlugin: iTagPlugin;
+  private sourceDb: iSourceDatabase;
 
-  constructor(db: iTagDatabase, tagPlugin: iTagPlugin) {
+  constructor(
+    db: iTagDatabase,
+    sourceDb: iSourceDatabase,
+    tagPlugin: iTagPlugin
+  ) {
     this.db = db;
+    this.sourceDb = sourceDb;
     this.tagPlugin = tagPlugin;
     dataLogger.trace('TagWorker initialized');
   }
@@ -35,16 +43,32 @@ export class TagWorker {
     return tag.picturePath;
   };
 
-  // FixMe: reimplement this function
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public parseTags = async (fileId: number): Promise<Array<Tag>> => {
-    // const tagSources = await this.getSources();
-    // tagSources.map((tagSource) => {
-    //   if (tagSource.source !== 'youtube') {
-    //     return this.tagPlugin.parseTags(fileId, tagSource.source);
-    //   }
-    // });
-    // return this.getFileTags(fileId);
-    return Array<Tag>();
+    await this.requestTagging(fileId);
+    return this.getFileTags(fileId);
+  };
+
+  public requestTagging = async (fileId: number): Promise<void> => {
+    const primaryTag = await this.db.getTagPrimary(fileId);
+
+    if (!primaryTag) {
+      throw new ProcessingError('Primary tag not found');
+    }
+
+    if (primaryTag.status !== 'C') {
+      throw new ProcessingError('Primary tag is not completed');
+    }
+
+    const sources = await this.sourceDb.getSourcesWithParsingPermission();
+    await Promise.all(
+      sources.map(async (source) => {
+        if (!(await this.db.doesTagExist(fileId, source.id))) {
+          await this.db.insertTag(
+            TagDTO.allFromOneSource(0, fileId, false, source.id, 'CR')
+          );
+          await this.tagPlugin.parseTags(fileId, source.description);
+        }
+      })
+    );
   };
 }

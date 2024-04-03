@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { ProcessingError } from '@src/business/processingError';
 import { FileDTO } from '@src/dto/fileDTO';
 import { Status } from '@src/dto/statusDTO';
+import { TagDTO } from '@src/dto/tagDTO';
 import { TagMappingDTO } from '@src/dto/tagMappingDTO';
 import { File } from '@src/entities/file';
 import { User } from '@src/entities/user';
@@ -45,6 +46,9 @@ export class FileWorker {
     if (!file) {
       file = await this.db.insertFile(
         new FileDTO(0, randomUUID(), sourceId, Status.Created, normalizedUrl)
+      );
+      await this.tagDb.insertTag(
+        TagDTO.allFromOneSource(0, file.id, true, sourceId, Status.Created)
       );
       await this.requestFileProcessing(file!, user.id);
     }
