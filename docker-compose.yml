@@ -52,7 +52,9 @@ services:
     container_name: rabbitmq
 
   server:
-    image: up-vibe-server:1.0.0
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile.dev
     ports:
       - 3000:3000
     expose:
