@@ -345,20 +345,13 @@ paths:
         - upvibe-auth:
             - user
         - BearerAuth: []
-  /up-vibe/v1/files/{fileId}/tags/{tagId}:
+  /up-vibe/v1/tags/{tagId}/picture:
     get:
       tags:
         - tags
-      summary: Get tag for given fileId
-      description: Get tag for given fileId
-      operationId: getTag
+      summary: Get picture for the given tag id
+      operationId: getTagPicture
       parameters:
-        - name: fileId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
         - name: tagId
           in: path
           required: true
@@ -369,13 +362,14 @@ paths:
         '200':
           description: successful operation
           content:
-            application/json:
+            application/octet-stream:
               schema:
-                $ref: '#/components/schemas/Tag'
+                type: string
+                format: binary
       security:
+        - BearerAuth: []
         - upvibe-auth:
             - user
-        - BearerAuth: []
   /up-vibe/v1/files/tag-mapping-priority:
     get:
       tags:

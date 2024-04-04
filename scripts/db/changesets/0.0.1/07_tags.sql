@@ -4,6 +4,7 @@
 CREATE TABLE tags (
     id SERIAL PRIMARY KEY,
     file_id INT NOT NULL,
+    is_primary BOOLEAN DEFAULT FALSE NOT NULL,
     title VARCHAR(255) NULL,
     artist VARCHAR(255) NULL,
     album VARCHAR(255) NULL,

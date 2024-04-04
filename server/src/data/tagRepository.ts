@@ -76,4 +76,65 @@ export class TagRepository implements iTagDatabase {
       client.release();
     }
   };
+
+  public insertTag = async (tag: TagDTO): Promise<TagDTO> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('insertTag');
+      const queryResult = await client.query(query, [
+        tag.fileId,
+        tag.isPrimary,
+        tag.source,
+        tag.status,
+        tag.title,
+        tag.artist,
+        tag.album,
+        tag.year,
+        tag.trackNumber,
+        tag.picturePath,
+      ]);
+      return TagDTO.fromJSON(queryResult.rows[0]);
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
+
+  public getTagPrimary = async (fileId: number): Promise<TagDTO | null> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getTagPrimary');
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [fileId]);
+      if (queryResult.rows.length > 0) {
+        return TagDTO.fromJSON(queryResult.rows[0]);
+      }
+      return null;
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
+
+  public doesTagExist = async (
+    fileId: number,
+    sourceId: number
+  ): Promise<boolean> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('doesTagExist');
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [fileId, sourceId]);
+      return queryResult.rows.length > 0;
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
 }
