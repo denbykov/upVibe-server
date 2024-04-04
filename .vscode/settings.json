@@ -1,6 +1,16 @@
 {
-  "editor.formatOnSave": true,
-  "editor.formatOnSaveMode": "file",
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
+
+  "[sql]": {
+    "editor.formatOnSave": true,
+  },
+
+  "[markdown]": {
+    "editor.formatOnSave": false,
+  },
+
   "files.eol": "\n",
   "files.autoSave": "onFocusChange",
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",

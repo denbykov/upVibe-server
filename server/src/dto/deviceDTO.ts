@@ -1,11 +1,11 @@
-import { Device } from '@src/entities/device';
+import { UUID } from 'crypto';
 
 class DeviceDTO {
-  public id: number;
-  public user_id: number;
+  public id: UUID;
+  public user_id: number | null;
   public name: string;
 
-  constructor(id: number, user_id: number, name: string) {
+  constructor(id: UUID, user_id: number | null, name: string) {
     this.id = id;
     this.user_id = user_id;
     this.name = name;
@@ -15,8 +15,8 @@ class DeviceDTO {
     return new DeviceDTO(json.id, json.user_id, json.name);
   }
 
-  public static toEntity(device: DeviceDTO): Device {
-    return new Device(device.id, device.user_id, device.name);
+  public static fromRequestJSON(json: JSON.JSONObject): DeviceDTO {
+    return new DeviceDTO(json.deviceId, null, json.deviceName);
   }
 }
 

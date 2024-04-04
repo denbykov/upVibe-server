@@ -1,9 +1,7 @@
-import { UserDTO } from '@src/dto/userDTO';
-import { Device } from '@src/entities/device';
+import { DeviceDTO } from '@src/dto/deviceDTO';
 import { User } from '@src/entities/user';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';
-import { dataLogger } from '@src/utils/server/logger';
 
 import { ProcessingError } from './processingError';
 
@@ -14,11 +12,9 @@ export class UserWorker {
   constructor(db: iUserDatabase, userInfoAgent: iUserInfoAgent) {
     this.db = db;
     this.userInfoAgent = userInfoAgent;
-    dataLogger.trace('UserWorker initialized');
   }
 
   public getUser = async (sub: string): Promise<User | null> => {
-    dataLogger.trace('UserWorker.getUser()');
     const user = await this.db.getUserBySub(sub);
     return user;
   };
@@ -27,8 +23,6 @@ export class UserWorker {
     payload: JSON.JSONObject,
     permissions: Array<string>
   ): Promise<User> => {
-    dataLogger.trace('UserWorker.handleAuthorization()');
-
     for (const permission of permissions) {
       if (!payload.permissions.includes(permission)) {
         throw new ProcessingError(
@@ -45,34 +39,29 @@ export class UserWorker {
   };
 
   public registerUser = async (rawToken: string): Promise<User> => {
-    dataLogger.trace('UserWorker.registerUser()');
     const user = await this.userInfoAgent.getUserInfoByToken(rawToken);
     return await this.db.insertUser(user!);
   };
 
-  public registerUserDevice = async (
-    user: UserDTO,
-    name: string
-  ): Promise<Device> => {
-    dataLogger.trace('UserWorker.registerUserDevice()');
-    return await this.db.insertUserDevice(user, name);
+  public registerDevice = async (device: DeviceDTO): Promise<DeviceDTO> => {
+    return await this.db.insertDevice(device);
   };
 
   public handleRegistration = async (
     rawToken: string,
-    payload: JSON.JSONObject,
-    deviceName: string
-  ): Promise<Device> => {
-    dataLogger.trace('UserWorker.handleRegistration()');
-    let dbUser = await this.getUser(payload.sub);
-    if (!dbUser) {
-      dbUser = await this.registerUser(rawToken);
-      return await this.registerUserDevice(dbUser, deviceName);
+    userSub: string,
+    device: DeviceDTO
+  ): Promise<void> => {
+    let user = await this.getUser(userSub);
+    if (!user) {
+      user = await this.registerUser(rawToken);
     }
-    const dbDevice = await this.db.getDeviceByUser(dbUser);
-    if (dbDevice) {
-      throw new ProcessingError('Device already registered');
+
+    if (await this.db.getDevice(device.id)) {
+      throw new ProcessingError('Device is already registered');
     }
-    return await this.registerUserDevice(dbUser, deviceName);
+
+    device.user_id = user.id;
+    await this.registerDevice(device);
   };
 }

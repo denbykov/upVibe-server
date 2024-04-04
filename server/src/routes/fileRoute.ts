@@ -33,7 +33,7 @@ export class FileRoute extends BaseRoute {
 
     const filesURI = `/up-vibe/v1/files`;
     const userWorker = new UserWorker(
-      new UserRepository(this.databasePool),
+      new UserRepository(this.databasePool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 
