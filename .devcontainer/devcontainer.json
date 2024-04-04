@@ -21,7 +21,8 @@
 				"ms-azuretools.vscode-docker",
 				"redhat.vscode-yaml",
 				"cweijan.vscode-postgresql-client2",
-				"YoavBls.pretty-ts-errors"
+				"YoavBls.pretty-ts-errors",
+				"42Crunch.vscode-openapi"
 			]
 		}
 	},

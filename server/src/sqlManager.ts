@@ -29,7 +29,7 @@ class SQLManager {
   };
 
   public getQuery = (queryName: string): string => {
-    this.dataLogger.info(`SQLManager.getQuery(${queryName})`);
+    this.dataLogger.trace(`SQLManager.getQuery(${queryName})`);
     const query = this.queries.get(queryName)!;
     if (query.length == 0) {
       throw new Error(`Query ${queryName} is empty`);

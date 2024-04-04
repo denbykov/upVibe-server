@@ -36,7 +36,7 @@ export class APIRoute extends BaseRoute {
     );
     const apiURI = `/up-vibe/v1`;
     const userWorker = new UserWorker(
-      new UserRepository(this.databasePool),
+      new UserRepository(this.databasePool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 
