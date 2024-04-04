@@ -56,7 +56,7 @@ export class TagWorker {
     }
 
     if (primaryTag.status !== 'C') {
-      throw new ProcessingError('Primary tag is not completed');
+      throw new ProcessingError('Primary tag is not parsed');
     }
 
     const sources = await this.sourceDb.getSourcesWithParsingPermission();

@@ -20,7 +20,7 @@
 
 - APP.https_cert: The path to the HTTPS certificate file.
 
-- APP.path_storage: The path to the storage directory used by the application.
+- APP.storage_path: The path to the storage directory used by the application.
 
 **API**: This object contains configuration options for the API, including its URI, version, access token secret, refresh token secret, and the expiration times for the access and refresh tokens.
 
@@ -81,7 +81,7 @@ Next, set the following variables in the `config.json` file:
     "use_https": your value -> boolean,
     "https_key": "your value" -> string,
     "https_cert": "your value" -> string,
-    "path_storage": "your value" -> string
+    "storage_path": "your value" -> string
   },
   "API": {
     "uri": "your value" -> string,
@@ -121,7 +121,7 @@ Config example:
     "use_https": true,
     "https_key": "config/ssl/privatekey.pem",
     "https_cert": "config/ssl/certificate.pem",
-    "path_storage": "/opt/app/storage"
+    "storage_path": "/opt/app/storage"
   },
   "API": {
     "uri": "up-vibe",

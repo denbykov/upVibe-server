@@ -23,7 +23,7 @@ class FileDTO {
     return new FileDTO(
       json.file_id,
       json.file_path,
-      json.file_source_id,
+      json.file_source,
       json.file_status,
       json.file_source_url
     );
