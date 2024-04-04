@@ -5,9 +5,9 @@ CREATE TABLE files (
     id SERIAL PRIMARY KEY,
     path VARCHAR(255) NULL UNIQUE,
     source_url VARCHAR(255) NOT NULL UNIQUE,
-    sources INT NOT NULL,
+    source INT NOT NULL,
     status VARCHAR(2) NOT NULL,
-    CONSTRAINT fk_sources_files_id FOREIGN KEY (sources) REFERENCES sources(id),
+    CONSTRAINT fk_source_files_id FOREIGN KEY (source) REFERENCES sources(id),
     CONSTRAINT fk_status_files FOREIGN KEY (status) REFERENCES file_statuses(status)
 );
 

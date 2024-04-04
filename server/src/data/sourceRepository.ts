@@ -46,4 +46,21 @@ export class SourceRepository implements iSourceDatabase {
       client.release();
     }
   };
+
+  public getSourcesWithParsingPermission = async (): Promise<
+    Array<SourceDTO>
+  > => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getSourcesWithParsingPermission');
+      const queryResult = await client.query(query);
+      return queryResult.rows.map((row) => SourceDTO.fromJSON(row));
+    } catch (err) {
+      throw new Error(
+        `FilesRepository.getSourcesWithParsingPermission: ${err}`
+      );
+    } finally {
+      client.release();
+    }
+  };
 }

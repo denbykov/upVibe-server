@@ -40,9 +40,9 @@ export class Config {
       configEnv.APP_HTTPS_CERT ||
       configJson.APP_HTTPS_CERT;
     this.appPathStorage =
-      process.env.APP_PATH_STORAGE ||
-      configEnv.APP_PATH_STORAGE ||
-      configJson.APP_PATH_STORAGE;
+      process.env.APP_STORAGE_PATH ||
+      configEnv.APP_STORAGE_PATH ||
+      configJson.APP_STORAGE_PATH;
     this.appPluginsLocation =
       process.env.APP_PLUGINS_LOCATION ||
       configEnv.APP_PLUGINS_LOCATION ||
