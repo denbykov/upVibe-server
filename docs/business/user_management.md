@@ -43,9 +43,9 @@ name = user_info.nickname
 #### AC 3
 
 Insert record in the [devices](../database/users/devices.md) table with the following values:  
-id = request.body.id  
+id = request.body.deviceId  
 user_id = (created_user/read_user).id  
-name = request.body.name  
+name = request.body.deviceName  
 
 #### AC 4
 

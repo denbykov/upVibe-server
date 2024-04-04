@@ -4,6 +4,7 @@ import pg from 'pg';
 import { UserWorker } from '@src/business/userWorker';
 import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
 import { UserRepository } from '@src/data/userRepository';
+import { DeviceDTO } from '@src/dto/deviceDTO';
 import { Config } from '@src/entities/config';
 import { SQLManager } from '@src/sqlManager';
 import { APP_VERSION } from '@src/version';
@@ -17,7 +18,7 @@ class APIController extends BaseController {
 
   private buildUserWorker = (): UserWorker => {
     return new UserWorker(
-      new UserRepository(this.databasePool),
+      new UserRepository(this.databasePool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
   };
@@ -66,20 +67,27 @@ class APIController extends BaseController {
 
   public register = async (
     request: Express.Request,
-    response: Express.Response
+    response: Express.Response,
+    next: Express.NextFunction
   ) => {
-    const rawToken = request.headers.authorization!.split(' ')[1];
-    const encodedTokenPayload = rawToken.split('.')[1];
-    const tokenPayload: JSON.JSONObject = JSON.parse(
-      Buffer.from(encodedTokenPayload!, 'base64').toString('ascii')
-    );
-    const userWorker = this.buildUserWorker();
-    const reg = await userWorker.handleRegistration(
-      rawToken,
-      tokenPayload,
-      request.body.deviceName
-    );
-    return response.status(200).json(reg);
+    try {
+      const rawToken = request.headers.authorization!.split(' ')[1];
+      const encodedTokenPayload = rawToken.split('.')[1];
+      const tokenPayload: JSON.JSONObject = JSON.parse(
+        Buffer.from(encodedTokenPayload!, 'base64').toString('ascii')
+      );
+      const userWorker = this.buildUserWorker();
+      await userWorker.handleRegistration(
+        rawToken,
+        tokenPayload.sub,
+        DeviceDTO.fromRequestJSON(request.body)
+      );
+      return response.status(200).json({
+        message: 'Device registered!',
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 }
 

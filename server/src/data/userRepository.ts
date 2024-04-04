@@ -1,79 +1,73 @@
+import { UUID } from 'crypto';
 import pg from 'pg';
 
 import { DeviceDTO } from '@src/dto/deviceDTO';
 import { UserDTO } from '@src/dto/userDTO';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
-import { dataLogger } from '@src/utils/server/logger';
+import { SQLManager } from '@src/sqlManager';
 
 export class UserRepository implements iUserDatabase {
   public pool: pg.Pool;
+  public sqlManager: SQLManager;
 
-  constructor(pool: pg.Pool) {
+  constructor(pool: pg.Pool, sqlManager: SQLManager) {
     this.pool = pool;
+    this.sqlManager = sqlManager;
   }
 
   public async getUserBySub(sub: string): Promise<UserDTO | null> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query(
-        `SELECT * FROM users WHERE sub = '${sub}'`
-      );
+      const query = this.sqlManager.getQuery('getUserBySub');
+      const result = await client.query(query, [sub]);
 
-      if (result.rows.length === 0) return null;
+      if (result.rows.length === 0) {
+        return null;
+      }
       return UserDTO.fromJSON(result.rows[0]);
-    } catch (err) {
-      dataLogger.error(`UserRepository.getUserBySub: ${err}`);
     } finally {
       client.release();
     }
-    return null;
-  }
-
-  public async getDeviceByUser(user: UserDTO): Promise<DeviceDTO | null> {
-    const client = await this.pool.connect();
-    try {
-      const result = await client.query(
-        `SELECT * FROM devices WHERE user_id = ${user.id}`
-      );
-
-      if (result.rows.length === 0) return null;
-      return DeviceDTO.fromJSON(result.rows[0]);
-    } catch (err) {
-      dataLogger.error(`UserRepository.getDeviceByUser: ${err}`);
-    } finally {
-      client.release();
-    }
-    return null;
   }
 
   public async insertUser(user: UserDTO): Promise<UserDTO> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query(
-        `INSERT INTO users (sub, name) VALUES ('${user.sub}', '${user.name}') RETURNING *`
-      );
+      const query = this.sqlManager.getQuery('insertUser');
+      const result = await client.query(query, [user.sub, user.name]);
       return UserDTO.fromJSON(result.rows[0]);
-    } catch (err) {
-      dataLogger.error(`UserRepository.insertUser: ${err}`);
-      throw err;
     } finally {
       client.release();
     }
   }
 
-  public async insertUserDevice(
-    user: UserDTO,
-    deviceName: string
-  ): Promise<DeviceDTO> {
+  public async getDevice(id: UUID): Promise<DeviceDTO | null> {
     const client = await this.pool.connect();
     try {
-      const result = await client.query(
-        `INSERT INTO devices (user_id, name) VALUES (${user.id}, '${deviceName}') RETURNING *`
-      );
+      const query = this.sqlManager.getQuery('getDevice');
+      const result = await client.query(query, [id]);
+
+      if (result.rows.length === 0) {
+        return null;
+      }
+
       return DeviceDTO.fromJSON(result.rows[0]);
-    } catch (err) {
-      dataLogger.error(`UserRepository.insertUserDevice: ${err}`);
-      throw err;
+    } finally {
+      client.release();
+    }
+  }
+
+  public async insertDevice(device: DeviceDTO): Promise<DeviceDTO> {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('insertDevice');
+      const result = await client.query(query, [
+        device.id,
+        device.user_id,
+        device.name,
+      ]);
+
+      return DeviceDTO.fromJSON(result.rows[0]);
     } finally {
       client.release();
     }

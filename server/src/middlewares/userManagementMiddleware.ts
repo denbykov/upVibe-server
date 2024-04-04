@@ -13,10 +13,14 @@ const userManagementMiddleware = (
       const tokenPayload: JSON.JSONObject = JSON.parse(
         Buffer.from(encodedTokenPayload!, 'base64').toString('ascii')
       );
-      
-      const dbUser = await worker.handleAuthorization(tokenPayload, permissions);
+
+      const dbUser = await worker.handleAuthorization(
+        tokenPayload,
+        permissions
+      );
       request.body.rawToken = rawToken;
       request.body.user = dbUser;
+      next();
     } catch (error) {
       next(error);
     }
