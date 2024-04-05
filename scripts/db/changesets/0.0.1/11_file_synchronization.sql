@@ -2,7 +2,7 @@
 --changeset VolodymyrFihurniak:11
 
 CREATE TABLE file_synchronization (
-    device_id INT NOT NULL,
+    device_id UUID NOT NULL,
     user_file_id INT NOT NULL,
     is_synchronized BOOLEAN NOT NULL,
     marked_for_deletion BOOLEAN NOT NULL,
