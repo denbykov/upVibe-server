@@ -69,7 +69,7 @@ export class FileWorker {
     file: FileDTO,
     userId: number
   ): Promise<void> => {
-    const source = await this.sourceDb.getSource(file.sourceId);
+    const source = await this.sourceDb.getSource(file.source);
     await this.filePlugin.downloadFile(file, source!.description);
     await this.tagPlugin.tagFile(file, userId, source!.description);
   };
