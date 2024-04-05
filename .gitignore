@@ -13,3 +13,4 @@ plugins
 *.workers
 version.ts
 db.changelog-0.0.1.yaml
+server/coverage
