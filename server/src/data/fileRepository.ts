@@ -85,7 +85,7 @@ export class FileRepository implements iFileDatabase {
       const queryResult = await client.query(query, [
         file.path,
         file.sourceUrl,
-        file.sourceId,
+        file.source,
         file.status,
       ]);
       return FileDTO.fromJSON(queryResult.rows[0]);

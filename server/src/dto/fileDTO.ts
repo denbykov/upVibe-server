@@ -1,20 +1,20 @@
 class FileDTO {
   public id: number;
   public path: string;
-  public sourceId: number;
+  public source: number;
   public status: string;
   public sourceUrl: string;
 
   constructor(
     id: number,
     path: string,
-    sourceId: number,
+    source: number,
     status: string,
     sourceUrl: string
   ) {
     this.id = id;
     this.path = path;
-    this.sourceId = sourceId;
+    this.source = source;
     this.status = status;
     this.sourceUrl = sourceUrl;
   }
