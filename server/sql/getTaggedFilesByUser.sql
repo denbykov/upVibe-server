@@ -13,7 +13,7 @@ f.source_url as file_source_url,
 (SELECT track_number FROM tags as t WHERE t.file_id = f.id AND t.source = tm.track_number) as tag_track_number,
 tm.picture as tag_picture_id
 FROM files as f
-JOIN sources as s ON f.source_id = s.id
+JOIN sources as s ON f.source = s.id
 LEFT JOIN tag_mappings as tm ON f.id = tm.file_id AND tm.user_id = $1
 INNER JOIN user_files as uf ON f.id = uf.file_id
 WHERE uf.user_id = $1
