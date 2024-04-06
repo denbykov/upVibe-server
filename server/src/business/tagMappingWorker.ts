@@ -1,5 +1,5 @@
-import { TagMappingPriorityDTO } from '@src/dto/tagMappingPriorityDTO';
 import { TagMapping } from '@src/entities/tagMapping';
+import { TagMappingPriority } from '@src/entities/tagMappingPriority';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
 
 class TagMappingWorker {
@@ -9,10 +9,12 @@ class TagMappingWorker {
     this.db = db;
   }
 
-  public getTagMappingPriority =
-    async (): Promise<TagMappingPriorityDTO | null> => {
-      return await this.db.getTagMappingPriority();
-    };
+  public getTagMappingPriority = async (
+    userId: number
+  ): Promise<TagMappingPriority> => {
+    const tagMappingDTO = await this.db.getTagMappingPriority(userId);
+    return tagMappingDTO.toEntity();
+  };
 
   public getTagMapping = async (fileId: number): Promise<TagMapping | null> => {
     const tagMappingDTO = await this.db.getTagMapping(fileId);

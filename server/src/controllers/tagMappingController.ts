@@ -2,7 +2,7 @@ import Express from 'express';
 import pg from 'pg';
 
 import { TagMappingWorker } from '@src/business/tagMappingWorker';
-import { TagMappingRepository } from '@src/data/tagMappingRepository';
+import { TagMappingRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -31,8 +31,11 @@ class TagMappingController extends BaseController {
     next: Express.NextFunction
   ): Promise<Express.Response> => {
     try {
+      const { user } = request.body;
       const tagMappingWorker = this.buildTagMappingWorker();
-      const tagMappingPriority = await tagMappingWorker.getTagMappingPriority();
+      const tagMappingPriority = await tagMappingWorker.getTagMappingPriority(
+        user.id
+      );
       return response.status(200).json(tagMappingPriority);
     } catch (error) {
       next(error);

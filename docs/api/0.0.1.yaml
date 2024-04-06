@@ -357,7 +357,7 @@ paths:
         - BearerAuth: []
         - upvibe-auth:
             - user
-  /up-vibe/v1/files/tag-mapping-priority:
+  /up-vibe/v1/tags/tag-mapping-priority:
     get:
       tags:
         - tag-mappings
@@ -394,7 +394,7 @@ paths:
         - upvibe-auth:
             - user
         - BearerAuth: []
-  /up-vibe/v1/files/{fileId}/tag-mapping:
+  /up-vibe/v1/tags/{fileId}/tag-mapping:
     get:
       tags:
         - tag-mappings

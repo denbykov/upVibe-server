@@ -2,8 +2,7 @@ import Express from 'express';
 import pg from 'pg';
 
 import { TagWorker } from '@src/business/tagWorker';
-import { TagRepository } from '@src/data';
-import { SourceRepository } from '@src/data/sourceRepository';
+import { SourceRepository, TagRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';

@@ -2,8 +2,7 @@ import Express from 'express';
 import pg from 'pg';
 
 import { UserWorker } from '@src/business/userWorker';
-import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
-import { UserRepository } from '@src/data/userRepository';
+import { UserInfoAgent, UserRepository } from '@src/data';
 import { DeviceDTO } from '@src/dto/deviceDTO';
 import { Config } from '@src/entities/config';
 import { SQLManager } from '@src/sqlManager';
