@@ -15,17 +15,12 @@ export class TagRepository implements iTagDatabase {
     this.sqlManager = sqlManager;
   }
 
-  public getFileTags = async (
-    fileId: number
-  ): Promise<Array<TagDTO> | null> => {
+  public getFileTags = async (fileId: number): Promise<Array<TagDTO>> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getFileTags');
       dataLogger.debug(query);
       const queryResult = await client.query(query, [fileId]);
-      if (queryResult.rows.length === 0) {
-        return null;
-      }
       return queryResult.rows.map((row) => {
         return TagDTO.fromJSON(row);
       });

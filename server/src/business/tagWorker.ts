@@ -24,10 +24,9 @@ export class TagWorker {
   }
   public getFileTags = async (fileId: number): Promise<Array<Tag>> => {
     const tags = await this.db.getFileTags(fileId);
-    if (!tags) {
-      throw new ProcessingError('Tags not found');
-    }
-    return tags.map((tag) => tag.toEntity());
+    return tags.map((tag) => {
+      return tag.toEntity();
+    });
   };
 
   public getPictureOfTag = async (tagId: number): Promise<string> => {
@@ -63,13 +62,12 @@ export class TagWorker {
     const sources = await this.sourceDb.getSourcesWithParsingPermission();
     await Promise.all(
       sources.map(async (source) => {
-        if (await this.db.doesTagExist(fileId, source.id)) {
-          throw new ProcessingError('Parsing already requested');
+        if (!(await this.db.doesTagExist(fileId, source.id))) {
+          await this.db.insertTag(
+            TagDTO.allFromOneSource(0, fileId, false, source.id, 'CR')
+          );
+          await this.tagPlugin.parseTags(fileId, source.description);
         }
-        await this.db.insertTag(
-          TagDTO.allFromOneSource(0, fileId, false, source.id, 'CR')
-        );
-        await this.tagPlugin.parseTags(fileId, source.description);
       })
     );
   };
