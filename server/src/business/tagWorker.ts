@@ -49,7 +49,7 @@ export class TagWorker {
   };
 
   public requestTagging = async (fileId: number): Promise<void> => {
-    const primaryTag = await this.db.getTagPrimary(fileId);
+    const primaryTag = await this.db.getPrimaryTag(fileId);
 
     if (!primaryTag) {
       throw new ProcessingError('Primary tag not found');
