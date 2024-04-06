@@ -2,7 +2,7 @@ import Express from 'express';
 import pg from 'pg';
 
 import { TagWorker } from '@src/business/tagWorker';
-import { SourceRepository, TagRepository } from '@src/data';
+import { FileRepository, SourceRepository, TagRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -22,6 +22,7 @@ class TagController extends BaseController {
   private buildTagWorker = (): TagWorker => {
     return new TagWorker(
       new TagRepository(this.databasePool, this.sqlManager),
+      new FileRepository(this.databasePool, this.sqlManager),
       new SourceRepository(this.databasePool, this.sqlManager),
       this.pluginManager!.getTagPlugin()
     );

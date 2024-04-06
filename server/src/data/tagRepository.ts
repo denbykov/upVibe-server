@@ -102,10 +102,10 @@ export class TagRepository implements iTagDatabase {
     }
   };
 
-  public getTagPrimary = async (fileId: number): Promise<TagDTO | null> => {
+  public getPrimaryTag = async (fileId: number): Promise<TagDTO | null> => {
     const client = await this.pool.connect();
     try {
-      const query = this.sqlManager.getQuery('getTagPrimary');
+      const query = this.sqlManager.getQuery('getPrimaryTag');
       dataLogger.debug(query);
       const queryResult = await client.query(query, [fileId]);
       if (queryResult.rows.length > 0) {
