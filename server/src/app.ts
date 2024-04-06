@@ -17,6 +17,7 @@ import {
   BaseRoute,
   FileRoute,
   SourceRoute,
+  TagMappingRoute,
   TagRoute,
 } from '@src/routes';
 import { SQLManager } from '@src/sqlManager';
@@ -101,6 +102,10 @@ export class App {
         this.sqlManager,
         this.pluginManager
       )
+    );
+
+    this.routes.push(
+      new TagMappingRoute(this.app, this.config, this.pool, this.sqlManager)
     );
 
     this.app.use(auth0ErrorHandlingMiddleware);

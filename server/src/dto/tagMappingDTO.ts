@@ -1,3 +1,5 @@
+import { TagMapping } from '@src/entities/tagMapping';
+
 class TagMappingDTO {
   public id: number;
   public user_id: number;
@@ -7,7 +9,7 @@ class TagMappingDTO {
   public album: number;
   public picture: number;
   public year: number;
-  public track_number: number;
+  public trackNumber: number;
 
   constructor(
     id: number,
@@ -18,7 +20,7 @@ class TagMappingDTO {
     album: number,
     picture: number,
     year: number,
-    track_number: number
+    trackNumber: number
   ) {
     this.id = id;
     this.user_id = user_id;
@@ -28,7 +30,7 @@ class TagMappingDTO {
     this.album = album;
     this.picture = picture;
     this.year = year;
-    this.track_number = track_number;
+    this.trackNumber = trackNumber;
   }
 
   public static allFromOneSource = (
@@ -62,6 +64,17 @@ class TagMappingDTO {
       json.tag_mapping_track_number
     );
   }
+
+  public toEntity = (): TagMapping => {
+    return new TagMapping(
+      this.title,
+      this.artist,
+      this.album,
+      this.picture,
+      this.year,
+      this.trackNumber
+    );
+  };
 }
 
 export { TagMappingDTO };

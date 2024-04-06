@@ -66,7 +66,7 @@ export class TagRepository implements iTagDatabase {
         tagMapping.album,
         tagMapping.picture,
         tagMapping.year,
-        tagMapping.track_number,
+        tagMapping.trackNumber,
       ]);
       return TagMappingDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
