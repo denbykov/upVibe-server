@@ -14,7 +14,7 @@ describe('TagWorker', () => {
 
   beforeEach(() => {
     mockDb = {
-      getTagPrimary: jest.fn(),
+      getPrimaryTag: jest.fn(),
       doesTagExist: jest.fn(),
       insertTag: jest.fn(),
     } as unknown as iTagDatabase;
@@ -28,14 +28,14 @@ describe('TagWorker', () => {
   });
 
   it('should throw an error if primary tag not found', async () => {
-    const spyGetTagPrimary = jest.spyOn(mockDb, 'getTagPrimary');
-    spyGetTagPrimary.mockResolvedValue(null);
+    const spyGetPrimaryTag = jest.spyOn(mockDb, 'getPrimaryTag');
+    spyGetPrimaryTag.mockResolvedValue(null);
     await expect(tagWorker.requestTagging(1)).rejects.toThrow(ProcessingError);
-    expect(spyGetTagPrimary).toHaveBeenCalledWith(1);
+    expect(spyGetPrimaryTag).toHaveBeenCalledWith(1);
   });
 
   it('should throw an error if primary tag is not parsed', async () => {
-    const spyGetTagPrimary = jest.spyOn(mockDb, 'getTagPrimary');
+    const spyGetPrimaryTag = jest.spyOn(mockDb, 'getPrimaryTag');
     const tag = new TagDTO(
       1,
       1,
@@ -49,10 +49,10 @@ describe('TagWorker', () => {
       1,
       'PATH'
     );
-    spyGetTagPrimary.mockResolvedValue(tag);
+    spyGetPrimaryTag.mockResolvedValue(tag);
 
     await expect(tagWorker.requestTagging(1)).rejects.toThrow(ProcessingError);
-    expect(spyGetTagPrimary).toHaveBeenCalledWith(1);
+    expect(spyGetPrimaryTag).toHaveBeenCalledWith(1);
     expect(mockSourceDb.getSourcesWithParsingPermission).not.toHaveBeenCalled();
   });
 
@@ -74,15 +74,15 @@ describe('TagWorker', () => {
       new SourceDTO(1, 'source1', true, 'path1'),
       new SourceDTO(2, 'source1', true, 'path2'),
     ];
-    const spyGetTagPrimary = jest.spyOn(mockDb, 'getTagPrimary');
-    spyGetTagPrimary.mockResolvedValue(tag);
+    const spyGetPrimaryTag = jest.spyOn(mockDb, 'getPrimaryTag');
+    spyGetPrimaryTag.mockResolvedValue(tag);
     const spyGetSources = jest.spyOn(
       mockSourceDb,
       'getSourcesWithParsingPermission'
     );
     spyGetSources.mockResolvedValue(sources);
     await expect(tagWorker.requestTagging(1)).rejects.toThrow(ProcessingError);
-    expect(spyGetTagPrimary).toHaveBeenCalledWith(1);
+    expect(spyGetPrimaryTag).toHaveBeenCalledWith(1);
   });
 
   it('should insert tags from all sources', async () => {
@@ -91,8 +91,8 @@ describe('TagWorker', () => {
       new SourceDTO(1, 'source1', true, 'path1'),
       new SourceDTO(2, 'source1', true, 'path2'),
     ];
-    const spyGetTagPrimary = jest.spyOn(mockDb, 'getTagPrimary');
-    spyGetTagPrimary.mockResolvedValue(tag);
+    const spyGetPrimaryTag = jest.spyOn(mockDb, 'getPrimaryTag');
+    spyGetPrimaryTag.mockResolvedValue(tag);
     const spyGetSources = jest.spyOn(
       mockSourceDb,
       'getSourcesWithParsingPermission'
@@ -101,6 +101,6 @@ describe('TagWorker', () => {
     const spyParseTags = jest.spyOn(mockTagPlugin, 'parseTags');
     spyParseTags.mockResolvedValue();
     await expect(tagWorker.requestTagging(1)).rejects.toThrow(ProcessingError);
-    expect(spyGetTagPrimary).toHaveBeenCalledWith(1);
+    expect(spyGetPrimaryTag).toHaveBeenCalledWith(1);
   });
 });
