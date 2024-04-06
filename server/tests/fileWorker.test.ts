@@ -3,16 +3,18 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { FileWorker } from '@src/business/fileWorker';
 import { FileDTO } from '@src/dto/fileDTO';
 import { File, ShortTags } from '@src/entities/file';
-import { FileSource } from '@src/entities/source';
+import { Source } from '@src/entities/source';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
+import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 
 describe('FileWorker', () => {
   let fileWorker: FileWorker;
   let mockDb: iFileDatabase;
+  let mockSourceDb: iSourceDatabase;
   let mockTagDb: iTagDatabase;
   let mockFilePlugin: iFilePlugin;
   let mockTagPlugin: iTagPlugin;
@@ -24,6 +26,7 @@ describe('FileWorker', () => {
     mockTagPlugin = jest.fn() as unknown as iTagPlugin;
     fileWorker = new FileWorker(
       mockDb,
+      mockSourceDb,
       mockTagDb,
       mockFilePlugin,
       mockTagPlugin
@@ -35,7 +38,7 @@ describe('FileWorker', () => {
     const mockSourceUrl = 'http://example.com';
     const mockFile = new File(
       0,
-      new FileSource(0, 'test'),
+      new Source(0, 'test'),
       'test',
       'test',
       new ShortTags('test', 'test', 'test', 1, 1, 1)
@@ -63,14 +66,14 @@ describe('FileWorker', () => {
     const mockFiles = [
       new File(
         0,
-        new FileSource(0, 'test'),
+        new Source(0, 'test'),
         'test',
         'test',
         new ShortTags('test', 'test', 'test', 1, 1, 1)
       ),
       new File(
         0,
-        new FileSource(0, 'test'),
+        new Source(0, 'test'),
         'test',
         'test',
         new ShortTags('test', 'test', 'test', 1, 1, 1)
@@ -81,27 +84,12 @@ describe('FileWorker', () => {
     expect(result).toBe(mockFiles);
   });
 
-  it('should get sources', async () => {
-    const mockSources = [new FileSource(1, '123'), new FileSource(1, '234')];
-    jest.spyOn(fileWorker, 'getSources').mockResolvedValue(mockSources);
-    const result = await fileWorker.getSources();
-    expect(result).toBe(mockSources);
-  });
-
-  it('should get source logo', async () => {
-    const mockSourceId = 1;
-    const mockLogoUrl = 'http://example.com/logo.png';
-    jest.spyOn(fileWorker, 'getSourceLogo').mockResolvedValue(mockLogoUrl);
-    const result = await fileWorker.getSourceLogo(mockSourceId);
-    expect(result).toBe(mockLogoUrl);
-  });
-
   it('should get tagged file', async () => {
     const mockId = 1;
     const mockUser = new User(0, 'test', 'test');
     const mockFile = new File(
       0,
-      new FileSource(0, 'test'),
+      new Source(0, 'test'),
       'test',
       'test',
       new ShortTags('test', 'test', 'test', 1, 1, 1)
