@@ -113,6 +113,19 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
+  public doesFileExist = async (fileId: number): Promise<boolean> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('doesFileExist');
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [fileId]);
+      return queryResult.rows.length > 0;
+    } catch (err) {
+      dataLogger.error(`FilesRepository.doesFileExist: ${err}`);
+      throw err;
+    }
+  };
+
   public doesUserFileExist = async (
     userId: number,
     fileId: number
