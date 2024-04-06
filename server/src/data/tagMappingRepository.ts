@@ -32,17 +32,13 @@ export class TagMappingRepository implements iTagMappingDatabase {
     }
   };
 
-  public getTagMapping = async (
-    fileId: number
-  ): Promise<TagMappingDTO | null> => {
+  public getTagMapping = async (fileId: number): Promise<TagMappingDTO> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagMapping');
       dataLogger.debug(query);
       const queryResult = await client.query(query, [fileId]);
-      return queryResult.rows.length === 0
-        ? null
-        : TagMappingDTO.fromJSON(queryResult.rows[0]);
+      return TagMappingDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       dataLogger.error(err);
       throw err;
@@ -82,6 +78,36 @@ export class TagMappingRepository implements iTagMappingDatabase {
       throw err;
     } finally {
       client.release();
+    }
+  };
+
+  public doesTagMappingPriorityExist = async (
+    userId: number
+  ): Promise<boolean> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('doesTagMappingPriorityExist');
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [userId]);
+      return queryResult.rows.length > 0;
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
+
+  public doesTagMappingExist = async (fileId: number): Promise<boolean> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('doesTagMappingsExist');
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [fileId]);
+      return queryResult.rows.length > 0;
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
     }
   };
 }

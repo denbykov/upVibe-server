@@ -4,6 +4,7 @@ import pg from 'pg';
 import { TagMappingWorker } from '@src/business/tagMappingWorker';
 import { TagMappingRepository } from '@src/data';
 import { Config } from '@src/entities/config';
+import { TagMappingPriority } from '@src/entities/tagMappingPriority';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
@@ -53,6 +54,29 @@ class TagMappingController extends BaseController {
       const fileId = Number(request.params.fileId);
       const tagMapping = await tagMappingWorker.getTagMapping(fileId);
       return response.status(200).json(tagMapping);
+    } catch (error) {
+      next(error);
+    }
+    return response.status(500).json({ error: 'Internal server error' });
+  };
+
+  public insertTagMappingPriority = async (
+    request: Express.Request,
+    response: Express.Response,
+    next: Express.NextFunction
+  ): Promise<Express.Response> => {
+    try {
+      const { user } = request.body;
+      const mapping = new TagMappingPriority(
+        request.body.title,
+        request.body.artist,
+        request.body.album,
+        request.body.picture,
+        request.body.year,
+        request.body.trackNumber
+      );
+      const tagMappingWorker = this.buildTagMappingWorker();
+      return response.status(200).json({ message: 'Success' });
     } catch (error) {
       next(error);
     }

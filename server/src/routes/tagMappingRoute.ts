@@ -56,7 +56,8 @@ export class TagMappingRoute extends BaseRoute {
     this.app.put(
       `${tagsURI}/tag-mapping-priority`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker)
+      userManagementMiddleware([GENERAL], userWorker),
+      controller.insertTagMappingPriority
     );
 
     this.app.get(
