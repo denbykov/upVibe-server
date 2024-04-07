@@ -223,7 +223,7 @@ paths:
         - files
       summary: Get file
       description: Return information about file
-      operationId: getTaggedFile
+      operationId: getTaggedFileAndMapping
       parameters:
         - name: fileId
           in: path
@@ -231,13 +231,21 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: expand
+          in: query
+          required: false
+          description: CSV list of possible expand options
+          example: 'mapping'
+          schema:
+            type: array
+            format: string
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/File'
+                $ref: '#/components/schemas/FileAndMapping'
       security:
         - upvibe-auth:
             - user
@@ -394,31 +402,7 @@ paths:
         - upvibe-auth:
             - user
         - BearerAuth: []
-  /up-vibe/v1/tags/{fileId}/tag-mapping:
-    get:
-      tags:
-        - tag-mappings
-      summary: Get tag mapping for given file
-      description: Get tag mapping for given file
-      operationId: getTagMapping
-      parameters:
-        - name: fileId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TagMapping'
-      security:
-        - upvibe-auth:
-            - user
-        - BearerAuth: []
+  /up-vibe/v1/files/{fileId}/tag-mapping:
     put:
       tags:
         - tag-mappings
@@ -517,6 +501,13 @@ components:
           type: string
         tags:
           $ref: '#/components/schemas/ShortTag'
+    FileAndMapping:
+      type: object
+      properties:
+        file:
+          $ref: '#/components/schemas/File'
+        mapping:
+          $ref: '#/components/schemas/TagMapping'
     TagMappingPriority:
       type: object
       properties:
