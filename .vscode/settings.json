@@ -5,7 +5,10 @@
 
   "[sql]": {
     "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ReneSaarsoo.sql-formatter-vsc",
   },
+
+  "SQL-Formatter-VSCode.dialect": "postgresql",
 
   "[markdown]": {
     "editor.formatOnSave": false,

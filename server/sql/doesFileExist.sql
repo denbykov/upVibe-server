@@ -1,2 +1,6 @@
-SELECT * FROM files
-WHERE id = $1
+SELECT
+  *
+FROM
+  files
+WHERE
+  id = $1

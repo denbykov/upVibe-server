@@ -47,14 +47,23 @@ export class TagMappingRepository implements iTagMappingDatabase {
     }
   };
 
-  public insertTagMappingPriority = async (
-    tagMappingPriority: TagMappingPriorityDTO
+  public updateTagMappingPriority = async (
+    tagMappingPriority: TagMappingPriorityDTO,
+    userId: number
   ): Promise<TagMappingPriorityDTO> => {
     const client = await this.pool.connect();
     try {
-      const query = this.sqlManager.getQuery('insertTagMappingPriority');
+      const query = this.sqlManager.getQuery('updateTagMappingPriority');
       dataLogger.debug(query);
-      await client.query(query);
+      await client.query(query, [
+        tagMappingPriority.title,
+        tagMappingPriority.artist,
+        tagMappingPriority.album,
+        tagMappingPriority.picture,
+        tagMappingPriority.year,
+        tagMappingPriority.trackNumber,
+        userId,
+      ]);
       return tagMappingPriority;
     } catch (err) {
       dataLogger.error(err);
@@ -64,15 +73,24 @@ export class TagMappingRepository implements iTagMappingDatabase {
     }
   };
 
-  public insertTagMapping = async (
-    tagMapping: TagMappingDTO
+  public updateTagMapping = async (
+    tagMapping: TagMappingDTO,
+    fileId: number
   ): Promise<TagMappingDTO> => {
     const client = await this.pool.connect();
     try {
-      const query = this.sqlManager.getQuery('insertTagMapping');
+      const query = this.sqlManager.getQuery('updateTagMapping');
       dataLogger.debug(query);
-      await client.query(query);
-      return tagMapping;
+      const queryResult = await client.query(query, [
+        tagMapping.title,
+        tagMapping.artist,
+        tagMapping.album,
+        tagMapping.picture,
+        tagMapping.year,
+        tagMapping.trackNumber,
+        fileId,
+      ]);
+      return TagMappingDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       dataLogger.error(err);
       throw err;

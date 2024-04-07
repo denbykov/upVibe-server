@@ -1,8 +1,8 @@
 import { TagMappingPriority } from '@src/entities/tagMappingPriority';
 
 class TagMappingPriorityDTO {
-  public userId: number;
-  public source: number[];
+  public userId: number | null;
+  public source: number[] | null;
   public title: number[];
   public artist: number[];
   public album: number[];
@@ -11,8 +11,8 @@ class TagMappingPriorityDTO {
   public trackNumber: number[];
 
   constructor(
-    userId: number,
-    source: number[],
+    userId: number | null,
+    source: number[] | null,
     title: number[],
     artist: number[],
     album: number[],
@@ -42,6 +42,21 @@ class TagMappingPriorityDTO {
       json.tag_mapping_priority_track_number
     );
   }
+
+  public static fromEntity = (
+    tagMappingPriority: TagMappingPriority
+  ): TagMappingPriorityDTO => {
+    return new TagMappingPriorityDTO(
+      null,
+      null,
+      tagMappingPriority.title,
+      tagMappingPriority.artist,
+      tagMappingPriority.album,
+      tagMappingPriority.picture,
+      tagMappingPriority.year,
+      tagMappingPriority.trackNumber
+    );
+  };
 
   public toEntity = (): TagMappingPriority => {
     return new TagMappingPriority(

@@ -1,3 +1,5 @@
+import { TagMappingDTO } from '@src/dto/tagMappingDTO';
+import { TagMappingPriorityDTO } from '@src/dto/tagMappingPriorityDTO';
 import { TagMapping } from '@src/entities/tagMapping';
 import { TagMappingPriority } from '@src/entities/tagMappingPriority';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
@@ -32,11 +34,23 @@ class TagMappingWorker {
     return tagMappingDTO.toEntity();
   };
 
-  public insertTagMappingPriority = async (
-    tagMappingPriority: TagMappingPriority
+  public updateTagMapping = async (
+    tagMapping: TagMapping,
+    fileId: number
+  ): Promise<TagMapping> => {
+    const tagMappingDTO = TagMappingDTO.fromEntity(tagMapping);
+    return (await this.db.updateTagMapping(tagMappingDTO, fileId)).toEntity();
+  };
+
+  public updateTagMappingPriority = async (
+    tagMappingPriority: TagMappingPriority,
+    userId: number
   ): Promise<TagMappingPriority> => {
-    // await this.db.insertTagMappingPriority(tagMappingPriorityDTO);
-    return tagMappingPriority;
+    const tagMappingPriorityDTO =
+      TagMappingPriorityDTO.fromEntity(tagMappingPriority);
+    return (
+      await this.db.updateTagMappingPriority(tagMappingPriorityDTO, userId)
+    ).toEntity();
   };
 }
 
