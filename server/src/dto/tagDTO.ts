@@ -41,8 +41,7 @@ class TagDTO {
       this.artist,
       this.album,
       this.year,
-      this.trackNumber,
-      this.picturePath
+      this.trackNumber
     );
   };
 
