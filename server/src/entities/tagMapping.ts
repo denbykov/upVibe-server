@@ -1,27 +1,18 @@
-class TagMappingSource {
-  public id: number;
-  public source: string;
-  constructor(id: number, source: string) {
-    this.id = id;
-    this.source = source;
-  }
-}
-
 class TagMapping {
-  public title: number | TagMappingSource | TagMappingSource[];
-  public artist: number | TagMappingSource | TagMappingSource[];
-  public album: number | TagMappingSource | TagMappingSource[];
-  public picture: number | TagMappingSource | TagMappingSource[];
-  public year: number | TagMappingSource | TagMappingSource[];
-  public trackNumber: number | TagMappingSource | TagMappingSource[];
+  public title: number;
+  public artist: number;
+  public album: number;
+  public picture: number;
+  public year: number;
+  public trackNumber: number;
 
   constructor(
-    title: number | TagMappingSource | TagMappingSource[],
-    artist: number | TagMappingSource | TagMappingSource[],
-    album: number | TagMappingSource | TagMappingSource[],
-    picture: number | TagMappingSource | TagMappingSource[],
-    year: number | TagMappingSource | TagMappingSource[],
-    trackNumber: number | TagMappingSource | TagMappingSource[]
+    title: number,
+    artist: number,
+    album: number,
+    picture: number,
+    year: number,
+    trackNumber: number
   ) {
     this.title = title;
     this.artist = artist;

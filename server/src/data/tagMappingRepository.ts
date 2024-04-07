@@ -119,13 +119,15 @@ export class TagMappingRepository implements iTagMappingDatabase {
   public doesTagMappingExist = async (fileId: number): Promise<boolean> => {
     const client = await this.pool.connect();
     try {
-      const query = this.sqlManager.getQuery('doesTagMappingsExist');
+      const query = this.sqlManager.getQuery('doesTagMappingExist');
       dataLogger.debug(query);
       const queryResult = await client.query(query, [fileId]);
       return queryResult.rows.length > 0;
     } catch (err) {
       dataLogger.error(err);
       throw err;
+    } finally {
+      client.release();
     }
   };
 }

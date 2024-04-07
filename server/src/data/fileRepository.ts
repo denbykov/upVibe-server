@@ -123,6 +123,8 @@ export class FileRepository implements iFileDatabase {
     } catch (err) {
       dataLogger.error(`FilesRepository.doesFileExist: ${err}`);
       throw err;
+    } finally {
+      client.release();
     }
   };
 

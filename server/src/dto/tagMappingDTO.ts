@@ -1,53 +1,26 @@
 import { TagMapping } from '@src/entities/tagMapping';
 
-class TagMappingSourceDTO {
-  public id: number;
-  public source: string;
-
-  constructor(id: number, source: string) {
-    this.id = id;
-    this.source = source;
-  }
-
-  public static fromJSON(
-    json: JSON.JSONObject
-  ): TagMappingSourceDTO | TagMappingSourceDTO[] {
-    if (json instanceof Array) {
-      return json.map((source: JSON.JSONObject) => {
-        return new TagMappingSourceDTO(
-          source.tag_mapping_source_id,
-          source.tag_mapping_source
-        );
-      });
-    }
-    return new TagMappingSourceDTO(
-      json.tag_mapping_source_id,
-      json.tag_mapping_source
-    );
-  }
-}
-
 class TagMappingDTO {
   public id: number | null;
   public user_id: number | null;
   public file_id: number | null;
-  public title: number | TagMappingSourceDTO | TagMappingSourceDTO[];
-  public artist: number | TagMappingSourceDTO | TagMappingSourceDTO[];
-  public album: number | TagMappingSourceDTO | TagMappingSourceDTO[];
-  public picture: number | TagMappingSourceDTO | TagMappingSourceDTO[];
-  public year: number | TagMappingSourceDTO | TagMappingSourceDTO[];
-  public trackNumber: number | TagMappingSourceDTO | TagMappingSourceDTO[];
+  public title: number;
+  public artist: number;
+  public album: number;
+  public picture: number;
+  public year: number;
+  public trackNumber: number;
 
   constructor(
     id: number | null,
     user_id: number | null,
     file_id: number | null,
-    title: number | TagMappingSourceDTO | TagMappingSourceDTO[],
-    artist: number | TagMappingSourceDTO | TagMappingSourceDTO[],
-    album: number | TagMappingSourceDTO | TagMappingSourceDTO[],
-    picture: number | TagMappingSourceDTO | TagMappingSourceDTO[],
-    year: number | TagMappingSourceDTO | TagMappingSourceDTO[],
-    trackNumber: number | TagMappingSourceDTO | TagMappingSourceDTO[]
+    title: number,
+    artist: number,
+    album: number,
+    picture: number,
+    year: number,
+    trackNumber: number
   ) {
     this.id = id;
     this.user_id = user_id;
@@ -83,12 +56,12 @@ class TagMappingDTO {
       json.tag_mapping_id,
       json.tag_mapping_user_id,
       json.tag_mapping_file_id,
-      TagMappingSourceDTO.fromJSON(json.tag_mapping_title),
-      TagMappingSourceDTO.fromJSON(json.tag_mapping_artist),
-      TagMappingSourceDTO.fromJSON(json.tag_mapping_album),
-      TagMappingSourceDTO.fromJSON(json.tag_mapping_picture),
-      TagMappingSourceDTO.fromJSON(json.tag_mapping_year),
-      TagMappingSourceDTO.fromJSON(json.tag_mapping_track_number)
+      json.tag_mapping_title,
+      json.tag_mapping_artist,
+      json.tag_mapping_album,
+      json.tag_mapping_picture,
+      json.tag_mapping_year,
+      json.tag_mapping_track_number
     );
   }
 

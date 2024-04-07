@@ -2,6 +2,7 @@ import { ProcessingError } from '@src/business/processingError';
 import { TagWorker } from '@src/business/tagWorker';
 import { SourceDTO } from '@src/dto/sourceDTO';
 import { TagDTO } from '@src/dto/tagDTO';
+import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
@@ -9,6 +10,7 @@ import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 describe('TagWorker', () => {
   let tagWorker: TagWorker;
   let mockDb: iTagDatabase;
+  let mockFileDb: iFileDatabase;
   let mockSourceDb: iSourceDatabase;
   let mockTagPlugin: iTagPlugin;
 
@@ -21,10 +23,13 @@ describe('TagWorker', () => {
     mockSourceDb = {
       getSourcesWithParsingPermission: jest.fn(),
     } as unknown as iSourceDatabase;
+    mockFileDb = {
+      doesFileExist: jest.fn(),
+    } as unknown as iFileDatabase;
     mockTagPlugin = {
       parseTags: jest.fn(),
     } as unknown as iTagPlugin;
-    tagWorker = new TagWorker(mockDb, mockSourceDb, mockTagPlugin);
+    tagWorker = new TagWorker(mockDb, mockFileDb, mockSourceDb, mockTagPlugin);
   });
 
   it('should throw an error if primary tag not found', async () => {
