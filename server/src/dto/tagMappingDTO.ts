@@ -2,8 +2,8 @@ import { TagMapping } from '@src/entities/tagMapping';
 
 class TagMappingDTO {
   public id: number | null;
-  public user_id: number | null;
-  public file_id: number | null;
+  public userId: number | null;
+  public fileId: number | null;
   public title: number;
   public artist: number;
   public album: number;
@@ -13,8 +13,8 @@ class TagMappingDTO {
 
   constructor(
     id: number | null,
-    user_id: number | null,
-    file_id: number | null,
+    userId: number | null,
+    fileId: number | null,
     title: number,
     artist: number,
     album: number,
@@ -23,8 +23,8 @@ class TagMappingDTO {
     trackNumber: number
   ) {
     this.id = id;
-    this.user_id = user_id;
-    this.file_id = file_id;
+    this.userId = userId;
+    this.fileId = fileId;
     this.title = title;
     this.artist = artist;
     this.album = album;

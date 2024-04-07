@@ -2,6 +2,7 @@ import pg from 'pg';
 
 import { FileDTO } from '@src/dto/fileDTO';
 import { TaggedFileDTO } from '@src/dto/taggedFileDTO';
+import { TaggedMappingDTO } from '@src/dto/taggedMappingDTO';
 import { UserDTO } from '@src/dto/userDTO';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { SQLManager } from '@src/sqlManager';
@@ -154,10 +155,12 @@ export class FileRepository implements iFileDatabase {
     const client = await this.pool.connect();
     try {
       const query = isMapping
-        ? this.sqlManager.getQuery('getTaggedAndMappingFile')
+        ? this.sqlManager.getQuery('getTaggedMapping')
         : this.sqlManager.getQuery('getTaggedFile');
       const queryResult = await client.query(query, [id, userId]);
-      return TaggedFileDTO.fromJSON(queryResult.rows[0]);
+      return isMapping
+        ? TaggedMappingDTO.fromJSON(queryResult.rows[0])
+        : TaggedFileDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       throw new Error(`FilesRepository.getTaggedFile: ${err}`);
     } finally {

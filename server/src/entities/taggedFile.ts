@@ -1,5 +1,3 @@
-import { Source } from './source';
-
 class ShortTags {
   public title: string;
   public artist: string;
@@ -25,26 +23,4 @@ class ShortTags {
   }
 }
 
-class File {
-  public id: number;
-  public source: Source;
-  public status: string;
-  public sourceUrl: string;
-  public tags: ShortTags | null;
-
-  constructor(
-    id: number,
-    source: Source,
-    status: string,
-    sourceUrl: string,
-    tags: ShortTags | null
-  ) {
-    this.id = id;
-    this.source = source;
-    this.status = status;
-    this.sourceUrl = sourceUrl;
-    this.tags = tags;
-  }
-}
-
-export { File, ShortTags };
+export { ShortTags };

@@ -46,12 +46,12 @@ SELECT
     WHERE
       t.id = tm.track_number
   ) as tag_track_number,
-  tm.title as file_mapping_title,
-  tm.artist as file_mapping_artist,
-  tm.album as file_mapping_album,
-  tm.picture as file_mapping_picture,
-  tm.year as file_mapping_year,
-  tm.track_number as file_mapping_track_number
+  tm.title as tag_mapping_title,
+  tm.artist as tag_mapping_artist,
+  tm.album as tag_mapping_album,
+  tm.picture as tag_mapping_picture,
+  tm.year as tag_mapping_year,
+  tm.track_number as tag_mapping_track_number
 FROM
   files as f
   JOIN sources as s ON f.source = s.id

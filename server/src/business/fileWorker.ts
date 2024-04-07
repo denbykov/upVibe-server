@@ -6,6 +6,7 @@ import { Status } from '@src/dto/statusDTO';
 import { TagDTO } from '@src/dto/tagDTO';
 import { TagMappingDTO } from '@src/dto/tagMappingDTO';
 import { File } from '@src/entities/file';
+import { TaggedMapping } from '@src/entities/taggedMapping';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
@@ -88,7 +89,7 @@ export class FileWorker {
     id: number,
     user: User,
     variations: string[]
-  ): Promise<File> => {
+  ): Promise<File | TaggedMapping> => {
     const file = await this.db.getTaggedFile(
       id,
       user.id,

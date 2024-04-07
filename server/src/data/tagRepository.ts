@@ -59,8 +59,8 @@ export class TagRepository implements iTagDatabase {
     try {
       const query = this.sqlManager.getQuery('insertTagMapping');
       const queryResult = await client.query(query, [
-        tagMapping.user_id,
-        tagMapping.file_id,
+        tagMapping.userId,
+        tagMapping.fileId,
         tagMapping.title,
         tagMapping.artist,
         tagMapping.album,
