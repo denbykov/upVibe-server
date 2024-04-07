@@ -95,7 +95,9 @@ describe('FileWorker', () => {
       new ShortTags('test', 'test', 'test', 1, 1, 1)
     );
     jest.spyOn(fileWorker, 'getTaggedFile').mockResolvedValue(mockFile);
-    const result = await fileWorker.getTaggedFile(mockId, mockUser);
+    const result = await fileWorker.getTaggedFile(mockId, mockUser, [
+      'mapping',
+    ]);
     expect(result).toBe(mockFile);
   });
 });
