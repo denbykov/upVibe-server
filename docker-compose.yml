@@ -67,7 +67,7 @@ services:
       - ./server/logs:/opt/upVibe/server/logs
       - ./server/plugins:/opt/upVibe/server/plugins
       - ./docs/api:/opt/upVibe/server/api
-      - /tmp/upVibe/storage:/opt/upVibe/storage
+      - /opt/upVibe/storage:/opt/upVibe/storage
     depends_on:
       postgresql:
         condition: service_healthy
