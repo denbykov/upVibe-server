@@ -84,8 +84,16 @@ export class FileWorker {
     return files;
   };
 
-  public getTaggedFile = async (id: number, user: User): Promise<File> => {
-    const file = await this.db.getTaggedFile(id, user.id);
+  public getTaggedFile = async (
+    id: number,
+    user: User,
+    variations: string[]
+  ): Promise<File> => {
+    const file = await this.db.getTaggedFile(
+      id,
+      user.id,
+      variations.includes('mapping')
+    );
     if (!file) {
       throw new ProcessingError('File not found');
     }
