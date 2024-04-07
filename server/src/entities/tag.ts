@@ -8,7 +8,6 @@ export class Tag {
     public artist: string | null,
     public album: string | null,
     public year: number | null,
-    public trackNumber: number | null,
-    public pictureId: string | null
+    public trackNumber: number | null
   ) {}
 }

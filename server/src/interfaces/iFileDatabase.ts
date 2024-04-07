@@ -20,6 +20,7 @@ export abstract class iFileDatabase {
     id: number,
     userId: number
   ) => Promise<TaggedFileDTO>;
+  public abstract doesFileExist(fileId: number): Promise<boolean>;
   public abstract doesUserFileExist: (
     userId: number,
     fileId: number
