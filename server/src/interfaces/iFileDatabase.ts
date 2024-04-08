@@ -1,6 +1,6 @@
 import { FileDTO } from '@src/dto/fileDTO';
+import { MappingDTO } from '@src/dto/mappingDTO';
 import { TaggedFileDTO } from '@src/dto/taggedFileDTO';
-import { TaggedMappingDTO } from '@src/dto/taggedMappingDTO';
 import { UserDTO } from '@src/dto/userDTO';
 
 export abstract class iFileDatabase {
@@ -19,9 +19,12 @@ export abstract class iFileDatabase {
   ) => Promise<void>;
   public abstract getTaggedFile: (
     id: number,
-    userId: number,
-    isMapping: boolean
-  ) => Promise<TaggedFileDTO | TaggedMappingDTO>;
+    userId: number
+  ) => Promise<TaggedFileDTO>;
+  public abstract getTaggedFileAndMapping: (
+    id: number,
+    userId: number
+  ) => Promise<MappingDTO>;
   public abstract doesFileExist(fileId: number): Promise<boolean>;
   public abstract doesUserFileExist: (
     userId: number,

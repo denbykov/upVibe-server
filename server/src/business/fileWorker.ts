@@ -6,7 +6,7 @@ import { Status } from '@src/dto/statusDTO';
 import { TagDTO } from '@src/dto/tagDTO';
 import { TagMappingDTO } from '@src/dto/tagMappingDTO';
 import { File } from '@src/entities/file';
-import { TaggedMapping } from '@src/entities/taggedMapping';
+import { Mapping } from '@src/entities/mapping';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
@@ -89,12 +89,10 @@ export class FileWorker {
     id: number,
     user: User,
     variations: string[]
-  ): Promise<File | TaggedMapping> => {
-    const file = await this.db.getTaggedFile(
-      id,
-      user.id,
-      variations.includes('mapping')
-    );
+  ): Promise<File | Mapping> => {
+    const file = variations.includes('mapping')
+      ? await this.db.getTaggedFileAndMapping(id, user.id)
+      : await this.db.getTaggedFile(id, user.id);
     if (!file) {
       throw new ProcessingError('File not found');
     }

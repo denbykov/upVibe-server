@@ -1,8 +1,8 @@
 import pg from 'pg';
 
 import { FileDTO } from '@src/dto/fileDTO';
+import { MappingDTO } from '@src/dto/mappingDTO';
 import { TaggedFileDTO } from '@src/dto/taggedFileDTO';
-import { TaggedMappingDTO } from '@src/dto/taggedMappingDTO';
 import { UserDTO } from '@src/dto/userDTO';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { SQLManager } from '@src/sqlManager';
@@ -149,20 +149,31 @@ export class FileRepository implements iFileDatabase {
 
   public getTaggedFile = async (
     id: number,
-    userId: number,
-    isMapping: boolean
+    userId: number
   ): Promise<TaggedFileDTO> => {
     const client = await this.pool.connect();
     try {
-      const query = isMapping
-        ? this.sqlManager.getQuery('getTaggedMapping')
-        : this.sqlManager.getQuery('getTaggedFile');
+      const query = this.sqlManager.getQuery('getTaggedFile');
       const queryResult = await client.query(query, [id, userId]);
-      return isMapping
-        ? TaggedMappingDTO.fromJSON(queryResult.rows[0])
-        : TaggedFileDTO.fromJSON(queryResult.rows[0]);
+      return TaggedFileDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       throw new Error(`FilesRepository.getTaggedFile: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
+
+  public getTaggedFileAndMapping = async (
+    id: number,
+    userId: number
+  ): Promise<MappingDTO> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getTaggedFileAndMapping');
+      const queryResult = await client.query(query, [id, userId]);
+      return MappingDTO.fromJSON(queryResult.rows[0]);
+    } catch (err) {
+      throw new Error(`FilesRepository.getTaggedFileAndMapping: ${err}`);
     } finally {
       client.release();
     }
