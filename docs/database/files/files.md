@@ -8,7 +8,7 @@ This page describes the public.files table
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
-| id | SERIAL | PK |
+| id | BIGINT | PK, GENERATED ALWAYS AS IDENTITY |
 | path | VARCHAR(255) | UNIQUE |
 | uuid | UUID | NOT NULL, DEFAULT gen_random_uuid() |
 | source_url | VARCHAR(255) | NOT NULL, UNIQUE, IDX |

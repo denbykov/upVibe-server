@@ -2,7 +2,7 @@
 --changeset VolodymyrFihurniak:5
 
 CREATE TABLE user_files (
-    id SERIAL UNIQUE,
+    id BIGINT UNIQUE GENERATED ALWAYS AS IDENTITY,
     user_id INT NOT NULL,
     file_id INT NOT NULL,
     added_ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

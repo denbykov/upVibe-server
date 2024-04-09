@@ -2,7 +2,7 @@
 --changeset VolodymyrFihurniak:1
 
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     sub VARCHAR NOT NULL,
     name VARCHAR(255) NOT NULL
 );
