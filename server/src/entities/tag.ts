@@ -1,8 +1,8 @@
 export class Tag {
   constructor(
-    public id: number,
-    public fileId: number,
-    public source: number,
+    public id: string,
+    public fileId: string,
+    public source: string,
     public status: string,
     public title: string | null,
     public artist: string | null,

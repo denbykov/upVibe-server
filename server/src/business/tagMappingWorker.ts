@@ -18,7 +18,7 @@ class TagMappingWorker {
   // FIXME: This is not implemented yet
 
   // public getTagMappingPriority = async (
-  //   userId: number
+  //   userId: string
   // ): Promise<TagMappingPriority> => {
   //   const doesTagMappingPriorityExist =
   //     await this.db.doesTagMappingPriorityExist(userId);
@@ -29,7 +29,7 @@ class TagMappingWorker {
   //   return tagMappingDTO.toEntity();
   // };
 
-  // public getTagMapping = async (fileId: number): Promise<TagMapping> => {
+  // public getTagMapping = async (fileId: string): Promise<TagMapping> => {
   //   const doesTagMappingExist = await this.db.doesTagMappingExist(fileId);
   //   if (!doesTagMappingExist) {
   //     throw new ProcessingError('Tag mapping does not exist');
@@ -40,7 +40,7 @@ class TagMappingWorker {
 
   public updateTagMapping = async (
     tagMapping: TagMapping,
-    fileId: number
+    fileId: string
   ): Promise<TagMapping> => {
     try {
       const tagMappingDTO = TagMappingDTO.fromEntity(tagMapping);
@@ -52,7 +52,7 @@ class TagMappingWorker {
 
   // public updateTagMappingPriority = async (
   //   tagMappingPriority: TagMappingPriority,
-  //   userId: number
+  //   userId: string
   // ): Promise<TagMappingPriority> => {
   //   const tagMappingPriorityDTO =
   //     TagMappingPriorityDTO.fromEntity(tagMappingPriority);

@@ -6,34 +6,31 @@ class ShortTags {
   public album: string;
   public year: number;
   public trackNumber: number;
-  public pictureId: number;
 
   constructor(
     title: string,
     artist: string,
     album: string,
     year: number,
-    trackNumber: number,
-    pictureId: number
+    trackNumber: number
   ) {
     this.title = title;
     this.artist = artist;
     this.album = album;
     this.year = year;
     this.trackNumber = trackNumber;
-    this.pictureId = pictureId;
   }
 }
 
 class File {
-  public id: number;
+  public id: string;
   public source: Source;
   public status: string;
   public sourceUrl: string;
   public tags: ShortTags | null;
 
   constructor(
-    id: number,
+    id: string,
     source: Source,
     status: string,
     sourceUrl: string,

@@ -15,7 +15,7 @@ export class TagRepository implements iTagDatabase {
     this.sqlManager = sqlManager;
   }
 
-  public getFileTags = async (fileId: number): Promise<Array<TagDTO>> => {
+  public getFileTags = async (fileId: string): Promise<Array<TagDTO>> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getFileTags');
@@ -32,12 +32,35 @@ export class TagRepository implements iTagDatabase {
     }
   };
 
-  public getTag = async (tagId: number): Promise<TagDTO | null> => {
+  public getTag = async (id: string): Promise<TagDTO | null> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getTag');
       dataLogger.debug(query);
-      const queryResult = await client.query(query, [tagId]);
+      const queryResult = await client.query(query, [id]);
+      if (queryResult.rows.length > 0) {
+        const result = TagDTO.fromJSON(queryResult.rows[0]);
+        return result;
+      } else {
+        return null;
+      }
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
+
+  public getTagByFile = async (
+    fileId: string,
+    sourceId: string
+  ): Promise<TagDTO | null> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getTagByFile');
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [fileId, sourceId]);
       if (queryResult.rows.length > 0) {
         const result = TagDTO.fromJSON(queryResult.rows[0]);
         return result;
@@ -102,7 +125,7 @@ export class TagRepository implements iTagDatabase {
     }
   };
 
-  public getPrimaryTag = async (fileId: number): Promise<TagDTO | null> => {
+  public getPrimaryTag = async (fileId: string): Promise<TagDTO | null> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getPrimaryTag');
@@ -120,16 +143,19 @@ export class TagRepository implements iTagDatabase {
     }
   };
 
-  public doesTagExist = async (
-    fileId: number,
-    sourceId: number
-  ): Promise<boolean> => {
+  public getTagMapping = async (
+    userId: string,
+    fileId: string
+  ): Promise<TagMappingDTO | null> => {
     const client = await this.pool.connect();
     try {
-      const query = this.sqlManager.getQuery('doesTagExist');
+      const query = this.sqlManager.getQuery('getTagMapping');
       dataLogger.debug(query);
-      const queryResult = await client.query(query, [fileId, sourceId]);
-      return queryResult.rows.length > 0;
+      const queryResult = await client.query(query, [userId, fileId]);
+      if (queryResult.rows.length > 0) {
+        return TagMappingDTO.fromJSON(queryResult.rows[0]);
+      }
+      return null;
     } catch (err) {
       dataLogger.error(err);
       throw err;

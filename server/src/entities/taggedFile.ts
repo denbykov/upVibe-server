@@ -4,7 +4,7 @@ class ShortTags {
   public album: string;
   public year: number;
   public trackNumber: number;
-  public pictureId: number;
+  public pictureId: string;
 
   constructor(
     title: string,
@@ -12,7 +12,7 @@ class ShortTags {
     album: string,
     year: number,
     trackNumber: number,
-    pictureId: number
+    pictureId: string
   ) {
     this.title = title;
     this.artist = artist;

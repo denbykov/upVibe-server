@@ -1,7 +1,6 @@
 import pg from 'pg';
 
 import { FileDTO } from '@src/dto/fileDTO';
-import { MappingDTO } from '@src/dto/mappingDTO';
 import { TaggedFileDTO } from '@src/dto/taggedFileDTO';
 import { UserDTO } from '@src/dto/userDTO';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
@@ -99,8 +98,8 @@ export class FileRepository implements iFileDatabase {
   };
 
   public insertUserFile = async (
-    userId: number,
-    fileId: number
+    userId: string,
+    fileId: string
   ): Promise<void> => {
     const client = await this.pool.connect();
     try {
@@ -114,7 +113,7 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public doesFileExist = async (fileId: number): Promise<boolean> => {
+  public doesFileExist = async (fileId: string): Promise<boolean> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('doesFileExist');
@@ -130,8 +129,8 @@ export class FileRepository implements iFileDatabase {
   };
 
   public doesUserFileExist = async (
-    userId: number,
-    fileId: number
+    userId: string,
+    fileId: string
   ): Promise<boolean> => {
     const client = await this.pool.connect();
     try {
@@ -148,32 +147,19 @@ export class FileRepository implements iFileDatabase {
   };
 
   public getTaggedFile = async (
-    id: number,
-    userId: number
-  ): Promise<TaggedFileDTO> => {
+    id: string,
+    userId: string
+  ): Promise<TaggedFileDTO | null> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getTaggedFile');
       const queryResult = await client.query(query, [id, userId]);
+      if (queryResult.rows.length === 0) {
+        return null;
+      }
       return TaggedFileDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       throw new Error(`FilesRepository.getTaggedFile: ${err}`);
-    } finally {
-      client.release();
-    }
-  };
-
-  public getTaggedFileAndMapping = async (
-    id: number,
-    userId: number
-  ): Promise<MappingDTO> => {
-    const client = await this.pool.connect();
-    try {
-      const query = this.sqlManager.getQuery('getTaggedFileAndMapping');
-      const queryResult = await client.query(query, [id, userId]);
-      return MappingDTO.fromJSON(queryResult.rows[0]);
-    } catch (err) {
-      throw new Error(`FilesRepository.getTaggedFileAndMapping: ${err}`);
     } finally {
       client.release();
     }

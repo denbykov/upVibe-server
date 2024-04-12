@@ -8,22 +8,19 @@ class ShortTagsDTO {
   public album: string;
   public year: number;
   public trackNumber: number;
-  public pictureId: number;
 
   constructor(
     title: string,
     artist: string,
     album: string,
     year: number,
-    trackNumber: number,
-    pictureId: number
+    trackNumber: number
   ) {
     this.title = title;
     this.artist = artist;
     this.album = album;
     this.year = year;
     this.trackNumber = trackNumber;
-    this.pictureId = pictureId;
   }
 
   public empty = (): boolean => {
@@ -32,8 +29,7 @@ class ShortTagsDTO {
       this.artist === null &&
       this.album === null &&
       this.year === null &&
-      this.trackNumber === null &&
-      this.pictureId === null
+      this.trackNumber === null
     );
   };
 
@@ -43,8 +39,7 @@ class ShortTagsDTO {
       json.tag_artist,
       json.tag_album,
       json.tag_year,
-      json.tag_track_number,
-      json.tag_picture_id
+      json.tag_track_number
     );
   };
 
@@ -54,21 +49,20 @@ class ShortTagsDTO {
       this.artist,
       this.album,
       this.year,
-      this.trackNumber,
-      this.pictureId
+      this.trackNumber
     );
   };
 }
 
 class TaggedFileDTO {
-  public id: number;
+  public id: string;
   public source: SourceDTO;
   public status: string;
   public sourceUrl: string;
   public tags: ShortTagsDTO | null;
 
   constructor(
-    id: number,
+    id: string,
     source: SourceDTO,
     status: string,
     sourceUrl: string,
@@ -84,7 +78,7 @@ class TaggedFileDTO {
   public static fromJSON = (json: JSON.JSONObject): TaggedFileDTO => {
     const shortTags = ShortTagsDTO.fromJSON(json);
     return new TaggedFileDTO(
-      json.file_id,
+      `${json.file_id}`,
       SourceDTO.fromJSON(json),
       json.file_status,
       json.file_source_url,
@@ -94,7 +88,7 @@ class TaggedFileDTO {
 
   public toEntity = (): File => {
     return new File(
-      this.id,
+      `${this.id}`,
       this.source.toEntity(),
       this.status,
       this.sourceUrl,

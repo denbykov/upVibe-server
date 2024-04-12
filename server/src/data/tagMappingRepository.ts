@@ -1,7 +1,6 @@
 import pg from 'pg';
 
 import { TagMappingDTO } from '@src/dto/tagMappingDTO';
-import { TagMappingPriorityDTO } from '@src/dto/tagMappingPriorityDTO';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
@@ -15,24 +14,7 @@ export class TagMappingRepository implements iTagMappingDatabase {
     this.sqlManager = sqlManager;
   }
 
-  public getTagMappingPriority = async (
-    userId: number
-  ): Promise<TagMappingPriorityDTO> => {
-    const client = await this.pool.connect();
-    try {
-      const query = this.sqlManager.getQuery('getTagMappingPriority');
-      dataLogger.debug(query);
-      const queryResult = await client.query(query, [userId]);
-      return TagMappingPriorityDTO.fromJSON(queryResult.rows[0]);
-    } catch (err) {
-      dataLogger.error(err);
-      throw err;
-    } finally {
-      client.release();
-    }
-  };
-
-  public getTagMapping = async (fileId: number): Promise<TagMappingDTO> => {
+  public getTagMapping = async (fileId: string): Promise<TagMappingDTO> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagMapping');
@@ -47,35 +29,9 @@ export class TagMappingRepository implements iTagMappingDatabase {
     }
   };
 
-  public updateTagMappingPriority = async (
-    tagMappingPriority: TagMappingPriorityDTO,
-    userId: number
-  ): Promise<TagMappingPriorityDTO> => {
-    const client = await this.pool.connect();
-    try {
-      const query = this.sqlManager.getQuery('updateTagMappingPriority');
-      dataLogger.debug(query);
-      await client.query(query, [
-        tagMappingPriority.title,
-        tagMappingPriority.artist,
-        tagMappingPriority.album,
-        tagMappingPriority.picture,
-        tagMappingPriority.year,
-        tagMappingPriority.trackNumber,
-        userId,
-      ]);
-      return tagMappingPriority;
-    } catch (err) {
-      dataLogger.error(err);
-      throw err;
-    } finally {
-      client.release();
-    }
-  };
-
   public updateTagMapping = async (
     tagMapping: TagMappingDTO,
-    fileId: number
+    fileId: string
   ): Promise<TagMappingDTO> => {
     const client = await this.pool.connect();
     try {
@@ -91,38 +47,6 @@ export class TagMappingRepository implements iTagMappingDatabase {
         fileId,
       ]);
       return TagMappingDTO.fromJSON(queryResult.rows[0]);
-    } catch (err) {
-      dataLogger.error(err);
-      throw err;
-    } finally {
-      client.release();
-    }
-  };
-
-  public doesTagMappingPriorityExist = async (
-    userId: number
-  ): Promise<boolean> => {
-    const client = await this.pool.connect();
-    try {
-      const query = this.sqlManager.getQuery('doesTagMappingPriorityExist');
-      dataLogger.debug(query);
-      const queryResult = await client.query(query, [userId]);
-      return queryResult.rows.length > 0;
-    } catch (err) {
-      dataLogger.error(err);
-      throw err;
-    } finally {
-      client.release();
-    }
-  };
-
-  public doesTagMappingExist = async (fileId: number): Promise<boolean> => {
-    const client = await this.pool.connect();
-    try {
-      const query = this.sqlManager.getQuery('doesTagMappingExist');
-      dataLogger.debug(query);
-      const queryResult = await client.query(query, [fileId]);
-      return queryResult.rows.length > 0;
     } catch (err) {
       dataLogger.error(err);
       throw err;

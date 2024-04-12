@@ -30,7 +30,7 @@
 	"postCreateCommand": "bash .devcontainer/setup.sh",
 	"mounts": [
 		{
-			"source": "${localEnv:HOME}${localEnv:USERPROFILE}/workspace/upVibe-private-workers/storage",
+			"source": "/opt/upVibe/storage",
 			"target": "/opt/upVibe/storage",
 			"type": "bind"
 		}

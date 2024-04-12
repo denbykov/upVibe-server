@@ -1,18 +1,18 @@
 class TagMapping {
-  public title: number;
-  public artist: number;
-  public album: number;
-  public picture: number;
-  public year: number;
-  public trackNumber: number;
+  public title: string;
+  public artist: string;
+  public album: string;
+  public picture: string;
+  public year: string;
+  public trackNumber: string;
 
   constructor(
-    title: number,
-    artist: number,
-    album: number,
-    picture: number,
-    year: number,
-    trackNumber: number
+    title: string,
+    artist: string,
+    album: string,
+    picture: string,
+    year: string,
+    trackNumber: string
   ) {
     this.title = title;
     this.artist = artist;

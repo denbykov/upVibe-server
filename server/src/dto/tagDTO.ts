@@ -2,10 +2,10 @@ import { Tag } from '@src/entities/tag';
 
 class TagDTO {
   constructor(
-    public id: number,
-    public fileId: number,
+    public id: string,
+    public fileId: string,
     public isPrimary: boolean,
-    public source: number,
+    public source: string,
     public status: string,
     public title: string | null,
     public artist: string | null,
@@ -17,10 +17,10 @@ class TagDTO {
 
   public static fromJSON(json: JSON.JSONObject): TagDTO {
     return new TagDTO(
-      json.tag_id,
-      json.tag_file_id,
+      `${json.tag_id}`,
+      `${json.tag_file_id}`,
       json.tag_is_primary,
-      json.tag_source,
+      `${json.tag_source}`,
       json.tag_status,
       json.tag_title,
       json.tag_artist,
@@ -46,10 +46,10 @@ class TagDTO {
   };
 
   public static allFromOneSource = (
-    id: number,
-    fileId: number,
+    id: string,
+    fileId: string,
     isPrimary: boolean,
-    source: number,
+    source: string,
     status: string
   ): TagDTO => {
     return new TagDTO(

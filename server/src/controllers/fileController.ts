@@ -71,11 +71,11 @@ class FileController extends BaseController {
       const { fileId } = request.params;
       const { expand } = request.query;
       const fileWorker = this.buildFileWorker();
-      const variations = expand ? expand.toString().split(',') : [];
+      const expandOptions = expand ? expand.toString().split(',') : [];
       const result = await fileWorker.getTaggedFile(
-        Number(fileId),
+        fileId,
         user,
-        variations
+        expandOptions
       );
       return response.status(200).json(result);
     } catch (error) {

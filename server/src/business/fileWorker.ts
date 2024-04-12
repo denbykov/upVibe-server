@@ -6,7 +6,7 @@ import { Status } from '@src/dto/statusDTO';
 import { TagDTO } from '@src/dto/tagDTO';
 import { TagMappingDTO } from '@src/dto/tagMappingDTO';
 import { File } from '@src/entities/file';
-import { Mapping } from '@src/entities/mapping';
+import { GetFileResponse } from '@src/entities/getFileResponse';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
@@ -46,10 +46,10 @@ export class FileWorker {
 
     if (!file) {
       file = await this.db.insertFile(
-        new FileDTO(0, randomUUID(), sourceId, Status.Created, normalizedUrl)
+        new FileDTO('0', randomUUID(), sourceId, Status.Created, normalizedUrl)
       );
       await this.tagDb.insertTag(
-        TagDTO.allFromOneSource(0, file.id, true, sourceId, Status.Created)
+        TagDTO.allFromOneSource('0', file.id, true, sourceId, Status.Created)
       );
       await this.requestFileProcessing(file!, user.id);
     }
@@ -68,7 +68,7 @@ export class FileWorker {
 
   public requestFileProcessing = async (
     file: FileDTO,
-    userId: number
+    userId: string
   ): Promise<void> => {
     const source = await this.sourceDb.getSource(file.source);
     await this.filePlugin.downloadFile(file, source!.description);
@@ -86,17 +86,29 @@ export class FileWorker {
   };
 
   public getTaggedFile = async (
-    id: number,
+    id: string,
     user: User,
-    variations: string[]
-  ): Promise<File | Mapping> => {
-    const file = variations.includes('mapping')
-      ? await this.db.getTaggedFileAndMapping(id, user.id)
-      : await this.db.getTaggedFile(id, user.id);
+    expand: string[]
+  ): Promise<GetFileResponse> => {
+    let mapping = null;
+
+    const file = await this.db.getTaggedFile(id, user.id);
     if (!file) {
       throw new ProcessingError('File not found');
     }
 
-    return file.toEntity();
+    for (const variation of expand) {
+      if (variation === 'mapping') {
+        const mappingDto = await this.tagDb.getTagMapping(user.id, file.id);
+        if (!mappingDto) {
+          throw new ProcessingError('Mapping not found');
+        }
+        mapping = mappingDto.toEntity();
+      } else {
+        throw new ProcessingError(`${variation} is not a valid epxand option`);
+      }
+    }
+
+    return new GetFileResponse(file.toEntity(), mapping);
   };
 }

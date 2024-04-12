@@ -1,6 +1,9 @@
 {
   "[typescript]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
   },
 
   "[sql]": {
@@ -16,7 +19,6 @@
 
   "files.eol": "\n",
   "files.autoSave": "onFocusChange",
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnPaste": true,
   "json.schemaDownload.enable": true,
   "jest.runMode": {
@@ -28,9 +30,6 @@
   },
   "path-intellisense.extensionOnImport": true,
   "path-intellisense.showHiddenFiles": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
   "eslint.validate": [
     "javascript",
     "javascriptreact",

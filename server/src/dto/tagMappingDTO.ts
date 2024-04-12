@@ -1,26 +1,26 @@
 import { TagMapping } from '@src/entities/tagMapping';
 
 class TagMappingDTO {
-  public id: number | null;
-  public userId: number | null;
-  public fileId: number | null;
-  public title: number;
-  public artist: number;
-  public album: number;
-  public picture: number;
-  public year: number;
-  public trackNumber: number;
+  public id: string | null;
+  public userId: string | null;
+  public fileId: string | null;
+  public title: string;
+  public artist: string;
+  public album: string;
+  public picture: string;
+  public year: string;
+  public trackNumber: string;
 
   constructor(
-    id: number | null,
-    userId: number | null,
-    fileId: number | null,
-    title: number,
-    artist: number,
-    album: number,
-    picture: number,
-    year: number,
-    trackNumber: number
+    id: string | null,
+    userId: string | null,
+    fileId: string | null,
+    title: string,
+    artist: string,
+    album: string,
+    picture: string,
+    year: string,
+    trackNumber: string
   ) {
     this.id = id;
     this.userId = userId;
@@ -34,12 +34,12 @@ class TagMappingDTO {
   }
 
   public static allFromOneSource = (
-    user_id: number,
-    file_id: number,
-    source: number
+    user_id: string,
+    file_id: string,
+    source: string
   ): TagMappingDTO => {
     return new TagMappingDTO(
-      0,
+      '0',
       user_id,
       file_id,
       source,
@@ -53,15 +53,15 @@ class TagMappingDTO {
 
   public static fromJSON(json: JSON.JSONObject): TagMappingDTO {
     return new TagMappingDTO(
-      json.tag_mapping_id,
-      json.tag_mapping_user_id,
-      json.tag_mapping_file_id,
-      json.tag_mapping_title,
-      json.tag_mapping_artist,
-      json.tag_mapping_album,
-      json.tag_mapping_picture,
-      json.tag_mapping_year,
-      json.tag_mapping_track_number
+      `${json.tag_mapping_id}`,
+      `${json.tag_mapping_user_id}`,
+      `${json.tag_mapping_file_id}`,
+      `${json.tag_mapping_title}`,
+      `${json.tag_mapping_artist}`,
+      `${json.tag_mapping_album}`,
+      `${json.tag_mapping_picture}`,
+      `${json.tag_mapping_year}`,
+      `${json.tag_mapping_track_number}`
     );
   }
 

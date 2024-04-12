@@ -79,7 +79,30 @@ class TagMappingController extends BaseController {
     next: Express.NextFunction
   ): Promise<Express.Response | void> => {
     try {
-      const fileId = Number(request.params.fileId);
+      const fileId = request.params.fileId;
+
+      if (Object.keys(request.body).length == 0) {
+        return response.status(400).json({ error: 'Request body is empty' });
+      }
+      if (request.body.title === undefined) {
+        return response.status(400).json({ error: 'Title is required' });
+      }
+      if (request.body.artist === undefined) {
+        return response.status(400).json({ error: 'Artist is required' });
+      }
+      if (request.body.album === undefined) {
+        return response.status(400).json({ error: 'Album is required' });
+      }
+      if (request.body.picture === undefined) {
+        return response.status(400).json({ error: 'Picture is required' });
+      }
+      if (request.body.year === undefined) {
+        return response.status(400).json({ error: 'Year is required' });
+      }
+      if (request.body.trackNumber === undefined) {
+        return response.status(400).json({ error: 'Track number is required' });
+      }
+
       const tagMapping = new TagMapping(
         request.body.title,
         request.body.artist,

@@ -48,7 +48,7 @@ class SourceController extends BaseController {
     try {
       const tagWorker = this.buildWorker();
 
-      const sourceId = Number(request.params.sourceId);
+      const sourceId = request.params.sourceId;
       const result = await tagWorker.getSourceLogo(sourceId);
       return response.status(200).sendFile(result);
     } catch (error) {
