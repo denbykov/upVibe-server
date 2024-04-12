@@ -81,26 +81,21 @@ class TagMappingController extends BaseController {
     try {
       const fileId = request.params.fileId;
 
-      if (Object.keys(request.body).length == 0) {
-        return response.status(400).json({ error: 'Request body is empty' });
-      }
-      if (request.body.title === undefined) {
-        return response.status(400).json({ error: 'Title is required' });
-      }
-      if (request.body.artist === undefined) {
-        return response.status(400).json({ error: 'Artist is required' });
-      }
-      if (request.body.album === undefined) {
-        return response.status(400).json({ error: 'Album is required' });
-      }
-      if (request.body.picture === undefined) {
-        return response.status(400).json({ error: 'Picture is required' });
-      }
-      if (request.body.year === undefined) {
-        return response.status(400).json({ error: 'Year is required' });
-      }
-      if (request.body.trackNumber === undefined) {
-        return response.status(400).json({ error: 'Track number is required' });
+      const requiredFields = [
+        'title',
+        'artist',
+        'album',
+        'picture',
+        'year',
+        'trackNumber',
+      ];
+
+      for (const field of requiredFields) {
+        if (!request.body[field]) {
+          return response.status(400).json({
+            error: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`,
+          });
+        }
       }
 
       const tagMapping = new TagMapping(
