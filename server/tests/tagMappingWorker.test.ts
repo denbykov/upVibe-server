@@ -16,9 +16,19 @@ describe('TagMappingWorker', () => {
   });
 
   it('should update a tag mapping', async () => {
-    const tagMapping = new TagMapping(1, 1, 1, 1, 1, 1);
-    const tagMappingUpdateDTO = new TagMappingDTO(2, 2, 2, 2, 2, 2, 2, 2, 2);
-    const fileId = 1;
+    const tagMapping = new TagMapping('1', '1', '1', '1', '1', '1');
+    const tagMappingUpdateDTO = new TagMappingDTO(
+      '2',
+      '2',
+      '2',
+      '2',
+      '2',
+      '2',
+      '2',
+      '2',
+      '2'
+    );
+    const fileId = '1';
 
     jest
       .spyOn(mockDb, 'updateTagMapping')
@@ -30,8 +40,8 @@ describe('TagMappingWorker', () => {
   });
 
   it('should throw an error if updating a tag mapping fails', async () => {
-    const tagMapping = new TagMapping(1, 1, 1, 1, 1, 1);
-    const fileId = 1;
+    const tagMapping = new TagMapping('1', '1', '1', '1', '1', '1');
+    const fileId = '1';
 
     jest.spyOn(mockDb, 'updateTagMapping').mockRejectedValue(new Error());
 

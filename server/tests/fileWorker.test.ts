@@ -3,7 +3,9 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { FileWorker } from '@src/business/fileWorker';
 import { FileDTO } from '@src/dto/fileDTO';
 import { File, ShortTags } from '@src/entities/file';
+import { GetFileResponse } from '@src/entities/getFileResponse';
 import { Source } from '@src/entities/source';
+import { TagMapping } from '@src/entities/tagMapping';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
@@ -34,14 +36,14 @@ describe('FileWorker', () => {
   });
 
   it('should download a file', async () => {
-    const mockUser = new User(0, 'test', 'test');
+    const mockUser = new User('0', 'test', 'test');
     const mockSourceUrl = 'http://example.com';
     const mockFile = new File(
-      0,
-      new Source(0, 'test'),
+      '0',
+      new Source('0', 'test'),
       'test',
       'test',
-      new ShortTags('test', 'test', 'test', 1, 1, 1)
+      new ShortTags('test', 'test', 'test', 1, 1)
     );
     jest.spyOn(fileWorker, 'downloadFile').mockResolvedValue(mockFile);
     const result = await fileWorker.downloadFile(mockSourceUrl, mockUser);
@@ -49,8 +51,8 @@ describe('FileWorker', () => {
   });
 
   it('should request file processing', async () => {
-    const mockFileDTO = new FileDTO(1, 'test', 1, 'CR', 'test');
-    const mockUserId = 1;
+    const mockFileDTO = new FileDTO('1', 'test', '1', 'CR', 'test');
+    const mockUserId = '1';
     jest
       .spyOn(fileWorker, 'requestFileProcessing')
       .mockResolvedValue(undefined);
@@ -62,21 +64,21 @@ describe('FileWorker', () => {
   });
 
   it('should get tagged files by user', async () => {
-    const mockUser = new User(0, 'test', 'test');
+    const mockUser = new User('0', 'test', 'test');
     const mockFiles = [
       new File(
-        0,
-        new Source(0, 'test'),
+        '0',
+        new Source('0', 'test'),
         'test',
         'test',
-        new ShortTags('test', 'test', 'test', 1, 1, 1)
+        new ShortTags('test', 'test', 'test', 1, 1)
       ),
       new File(
-        0,
-        new Source(0, 'test'),
+        '0',
+        new Source('0', 'test'),
         'test',
         'test',
-        new ShortTags('test', 'test', 'test', 1, 1, 1)
+        new ShortTags('test', 'test', 'test', 1, 1)
       ),
     ];
     jest.spyOn(fileWorker, 'getTaggedFilesByUser').mockResolvedValue(mockFiles);
@@ -85,19 +87,24 @@ describe('FileWorker', () => {
   });
 
   it('should get tagged file', async () => {
-    const mockId = 1;
-    const mockUser = new User(0, 'test', 'test');
+    const mockId = '1';
+    const mockUser = new User('0', 'test', 'test');
     const mockFile = new File(
-      0,
-      new Source(0, 'test'),
+      '0',
+      new Source('0', 'test'),
       'test',
       'test',
-      new ShortTags('test', 'test', 'test', 1, 1, 1)
+      new ShortTags('test', 'test', 'test', 1, 1)
     );
-    jest.spyOn(fileWorker, 'getTaggedFile').mockResolvedValue(mockFile);
+    const mockMapping = new TagMapping('test', 'test', 'test', '1', '1', '1');
+    const mockResult = new GetFileResponse(mockFile, mockMapping);
+    const mockGetFileResponse = new GetFileResponse(mockFile, mockMapping);
+    jest
+      .spyOn(fileWorker, 'getTaggedFile')
+      .mockResolvedValue(mockGetFileResponse);
     const result = await fileWorker.getTaggedFile(mockId, mockUser, [
       'mapping',
     ]);
-    expect(result).toBe(mockFile);
+    expect(result).toStrictEqual(mockResult);
   });
 });

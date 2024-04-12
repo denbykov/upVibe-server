@@ -30,7 +30,7 @@ describe('UserWorker', () => {
 
   describe('getUser', () => {
     it('should return the user from the database', async () => {
-      const user = new UserDTO(1, 'test', 'test');
+      const user = new UserDTO('1', 'test', 'test');
       const spyGetUserBySub = jest
         .spyOn(mockUserDatabase, 'getUserBySub')
         .mockResolvedValue(user);
@@ -66,7 +66,7 @@ describe('UserWorker', () => {
         sub: 'test',
       };
       const permissions = ['test'];
-      const user = new UserDTO(1, 'test', 'test');
+      const user = new UserDTO('1', 'test', 'test');
       const spyGetUser = jest
         .spyOn(userWorker, 'getUser')
         .mockResolvedValue(user);
@@ -94,7 +94,7 @@ describe('UserWorker', () => {
     it('should return the registered user', async () => {
       const rawToken =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ';
-      const user = new UserDTO(1, 'test', 'test');
+      const user = new UserDTO('1', 'test', 'test');
       const spyGetUserInfoByToken = jest
         .spyOn(mockUserInfoAgent, 'getUserInfoByToken')
         .mockResolvedValue(user);
@@ -109,7 +109,7 @@ describe('UserWorker', () => {
   });
   describe('registerDevice', () => {
     it('should return the registered device', async () => {
-      const device = new DeviceDTO(randomUUID(), 1, 'test');
+      const device = new DeviceDTO(randomUUID(), '1', 'test');
       const spyInsertDevice = jest
         .spyOn(mockUserDatabase, 'insertDevice')
         .mockResolvedValue(device);
@@ -123,8 +123,8 @@ describe('UserWorker', () => {
       const rawToken =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ';
       const userSub = 'test';
-      const device = new DeviceDTO(randomUUID(), 1, 'test');
-      const user = new UserDTO(1, 'test', 'test');
+      const device = new DeviceDTO(randomUUID(), '1', 'test');
+      const user = new UserDTO('1', 'test', 'test');
       const spyGetUser = jest
         .spyOn(userWorker, 'getUser')
         .mockResolvedValue(null);
@@ -147,8 +147,8 @@ describe('UserWorker', () => {
       const rawToken =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNTE2MjM5MDIyfQ';
       const userSub = 'test';
-      const device = new DeviceDTO(randomUUID(), 1, 'test');
-      const user = new UserDTO(1, 'test', 'test');
+      const device = new DeviceDTO(randomUUID(), '1', 'test');
+      const user = new UserDTO('1', 'test', 'test');
       const spyGetUser = jest
         .spyOn(userWorker, 'getUser')
         .mockResolvedValue(user);
