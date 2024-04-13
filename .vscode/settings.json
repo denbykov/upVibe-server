@@ -40,4 +40,5 @@
     "enable": true
   },
   "editor.suggestSelection": "first",
+  "vsintellicode.typescript.completionsEnabled": true
 }
