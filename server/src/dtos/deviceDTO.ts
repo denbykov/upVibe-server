@@ -12,7 +12,7 @@ class DeviceDTO {
   }
 
   public static fromJSON(json: JSON.JSONObject): DeviceDTO {
-    return new DeviceDTO(json.id, `${json.user_id}`, json.name);
+    return new DeviceDTO(json.id, json.user_id.toString(), json.name);
   }
 
   public static fromRequestJSON(json: JSON.JSONObject): DeviceDTO {

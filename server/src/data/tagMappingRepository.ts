@@ -1,6 +1,6 @@
 import pg from 'pg';
 
-import { TagMappingDTO } from '@src/dto/tagMappingDTO';
+import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';

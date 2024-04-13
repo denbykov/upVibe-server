@@ -1,8 +1,8 @@
 import { UUID } from 'crypto';
 import pg from 'pg';
 
-import { DeviceDTO } from '@src/dto/deviceDTO';
-import { UserDTO } from '@src/dto/userDTO';
+import { DeviceDTO } from '@src/dtos/deviceDTO';
+import { UserDTO } from '@src/dtos/userDTO';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { SQLManager } from '@src/sqlManager';
 

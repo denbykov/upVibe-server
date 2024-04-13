@@ -1,5 +1,5 @@
-import { TagDTO } from '@src/dto/tagDTO';
-import { TagMappingDTO } from '@src/dto/tagMappingDTO';
+import { TagDTO } from '@src/dtos/tagDTO';
+import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 
 export abstract class iTagDatabase {
   public abstract getFileTags(fileId: string): Promise<Array<TagDTO>>;

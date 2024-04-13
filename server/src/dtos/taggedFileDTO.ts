@@ -1,5 +1,3 @@
-import { File, ShortTags } from '@src/entities/file';
-
 import { SourceDTO } from './sourceDTO';
 
 class ShortTagsDTO {
@@ -42,16 +40,6 @@ class ShortTagsDTO {
       json.tag_track_number
     );
   };
-
-  public toEntity = (): ShortTags => {
-    return new ShortTags(
-      this.title,
-      this.artist,
-      this.album,
-      this.year,
-      this.trackNumber
-    );
-  };
 }
 
 class TaggedFileDTO {
@@ -78,21 +66,11 @@ class TaggedFileDTO {
   public static fromJSON = (json: JSON.JSONObject): TaggedFileDTO => {
     const shortTags = ShortTagsDTO.fromJSON(json);
     return new TaggedFileDTO(
-      `${json.file_id}`,
+      json.file_id.toString(),
       SourceDTO.fromJSON(json),
       json.file_status,
       json.file_source_url,
       shortTags.empty() ? null : shortTags
-    );
-  };
-
-  public toEntity = (): File => {
-    return new File(
-      `${this.id}`,
-      this.source.toEntity(),
-      this.status,
-      this.sourceUrl,
-      this.tags ? this.tags.toEntity() : null
     );
   };
 }

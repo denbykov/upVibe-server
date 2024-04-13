@@ -1,10 +1,10 @@
 import { randomUUID } from 'crypto';
 
 import { ProcessingError } from '@src/business/processingError';
-import { FileDTO } from '@src/dto/fileDTO';
-import { Status } from '@src/dto/statusDTO';
-import { TagDTO } from '@src/dto/tagDTO';
-import { TagMappingDTO } from '@src/dto/tagMappingDTO';
+import { FileDTO } from '@src/dtos/fileDTO';
+import { Status } from '@src/dtos/statusDTO';
+import { TagDTO } from '@src/dtos/tagDTO';
+import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 import { File } from '@src/entities/file';
 import { GetFileResponse } from '@src/entities/getFileResponse';
 import { User } from '@src/entities/user';
@@ -13,6 +13,8 @@ import { iFilePlugin } from '@src/interfaces/iFilePlugin';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
+import { TagMappingMapper } from '@src/mappers/tagMappingMapper';
+import { TaggedFileMapper } from '@src/mappers/taggedFileMapper';
 
 export class FileWorker {
   private db: iFileDatabase;
@@ -63,7 +65,7 @@ export class FileWorker {
       TagMappingDTO.allFromOneSource(user.id, file!.id, sourceId)
     );
     const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
-    return taggedFile!.toEntity();
+    return new TaggedFileMapper().toEntity(taggedFile!);
   };
 
   public requestFileProcessing = async (
@@ -79,7 +81,7 @@ export class FileWorker {
     const userFiles = await this.db.getTaggedFilesByUser(user);
 
     const files: Array<File> = userFiles.map((file) => {
-      return file.toEntity();
+      return new TaggedFileMapper().toEntity(file);
     });
 
     return files;
@@ -103,12 +105,12 @@ export class FileWorker {
         if (!mappingDTO) {
           throw new ProcessingError('Mapping not found');
         }
-        mapping = mappingDTO.toEntity();
+        mapping = new TagMappingMapper().toEntity(mappingDTO);
       } else {
         throw new ProcessingError(`${variation} is not a valid epxand option`);
       }
     }
 
-    return new GetFileResponse(file.toEntity(), mapping);
+    return new GetFileResponse(new TaggedFileMapper().toEntity(file), mapping);
   };
 }

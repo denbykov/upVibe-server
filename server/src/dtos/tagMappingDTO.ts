@@ -1,5 +1,3 @@
-import { TagMapping } from '@src/entities/tagMapping';
-
 class TagMappingDTO {
   public id: string | null;
   public userId: string | null;
@@ -53,42 +51,17 @@ class TagMappingDTO {
 
   public static fromJSON(json: JSON.JSONObject): TagMappingDTO {
     return new TagMappingDTO(
-      `${json.tag_mapping_id}`,
-      `${json.tag_mapping_user_id}`,
-      `${json.tag_mapping_file_id}`,
-      `${json.tag_mapping_title}`,
-      `${json.tag_mapping_artist}`,
-      `${json.tag_mapping_album}`,
-      `${json.tag_mapping_picture}`,
-      `${json.tag_mapping_year}`,
-      `${json.tag_mapping_track_number}`
+      json.tag_mapping_id.toString(),
+      json.tag_mapping_user_id.toString(),
+      json.tag_mapping_file_id.toString(),
+      json.tag_mapping_title.toString(),
+      json.tag_mapping_artist.toString(),
+      json.tag_mapping_album.toString(),
+      json.tag_mapping_picture.toString(),
+      json.tag_mapping_year.toString(),
+      json.tag_mapping_track_number.toString()
     );
   }
-
-  public static fromEntity = (tagMapping: TagMapping): TagMappingDTO => {
-    return new TagMappingDTO(
-      null,
-      null,
-      null,
-      tagMapping.title,
-      tagMapping.artist,
-      tagMapping.album,
-      tagMapping.picture,
-      tagMapping.year,
-      tagMapping.trackNumber
-    );
-  };
-
-  public toEntity = (): TagMapping => {
-    return new TagMapping(
-      this.title,
-      this.artist,
-      this.album,
-      this.picture,
-      this.year,
-      this.trackNumber
-    );
-  };
 }
 
 export { TagMappingDTO };

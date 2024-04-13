@@ -1,8 +1,8 @@
-import { TagMappingDTO } from '@src/dto/tagMappingDTO';
 // import { TagMappingPriorityDTO } from '@src/dto/tagMappingPriorityDTO';
 import { TagMapping } from '@src/entities/tagMapping';
 // import { TagMappingPriority } from '@src/entities/tagMappingPriority';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
+import { TagMappingMapper } from '@src/mappers/tagMappingMapper';
 
 import { ProcessingError } from './processingError';
 
@@ -43,8 +43,10 @@ class TagMappingWorker {
     fileId: string
   ): Promise<TagMapping> => {
     try {
-      const tagMappingDTO = TagMappingDTO.fromEntity(tagMapping);
-      return (await this.db.updateTagMapping(tagMappingDTO, fileId)).toEntity();
+      const tagMappingDTO = new TagMappingMapper().toDTO(tagMapping);
+      return new TagMappingMapper().toEntity(
+        await this.db.updateTagMapping(tagMappingDTO, fileId)
+      );
     } catch (error) {
       throw new ProcessingError('Failed to update tag mapping');
     }
