@@ -1,7 +1,7 @@
 import pg from 'pg';
 
-import { TagDTO } from '@src/dto/tagDTO';
-import { TagMappingDTO } from '@src/dto/tagMappingDTO';
+import { TagDTO } from '@src/dtos/tagDTO';
+import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';

@@ -1,6 +1,6 @@
-import { FileDTO } from '@src/dto/fileDTO';
-import { TaggedFileDTO } from '@src/dto/taggedFileDTO';
-import { UserDTO } from '@src/dto/userDTO';
+import { FileDTO } from '@src/dtos/fileDTO';
+import { TaggedFileDTO } from '@src/dtos/taggedFileDTO';
+import { UserDTO } from '@src/dtos/userDTO';
 
 export abstract class iFileDatabase {
   public abstract getFileByUrl: (url: string) => Promise<FileDTO | null>;

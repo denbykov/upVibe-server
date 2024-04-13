@@ -1,4 +1,4 @@
-import { FileDTO } from '@src/dto/fileDTO';
+import { FileDTO } from '@src/dtos/fileDTO';
 
 export abstract class iFilePlugin {
   pluginName!: string;

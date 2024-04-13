@@ -1,5 +1,3 @@
-import { Tag } from '@src/entities/tag';
-
 class TagDTO {
   constructor(
     public id: string,
@@ -17,10 +15,10 @@ class TagDTO {
 
   public static fromJSON(json: JSON.JSONObject): TagDTO {
     return new TagDTO(
-      `${json.tag_id}`,
-      `${json.tag_file_id}`,
+      json.tag_id.toString(),
+      json.tag_file_id.toString(),
       json.tag_is_primary,
-      `${json.tag_source}`,
+      json.tag_source.toString(),
       json.tag_status,
       json.tag_title,
       json.tag_artist,
@@ -30,20 +28,6 @@ class TagDTO {
       json.tag_picture_path
     );
   }
-
-  public toEntity = (): Tag => {
-    return new Tag(
-      this.id,
-      this.fileId,
-      this.source,
-      this.status,
-      this.title,
-      this.artist,
-      this.album,
-      this.year,
-      this.trackNumber
-    );
-  };
 
   public static allFromOneSource = (
     id: string,

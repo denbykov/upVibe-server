@@ -1,9 +1,10 @@
 import Express from 'express';
 import pg from 'pg';
 
+import { ApiWorker } from '@src/business/apiWorker';
 import { UserWorker } from '@src/business/userWorker';
 import { UserInfoAgent, UserRepository } from '@src/data';
-import { DeviceDTO } from '@src/dto/deviceDTO';
+import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { Config } from '@src/entities/config';
 import { SQLManager } from '@src/sqlManager';
 import { APP_VERSION } from '@src/version';
@@ -20,6 +21,10 @@ class APIController extends BaseController {
       new UserRepository(this.databasePool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
+  };
+
+  private buildApiWorker = (): ApiWorker => {
+    return new ApiWorker();
   };
 
   public healthCheck = async (
@@ -84,6 +89,20 @@ class APIController extends BaseController {
       return response.status(200).json({
         message: 'Device registered!',
       });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getSwaggerSpec = async (
+    request: Express.Request,
+    response: Express.Response,
+    next: Express.NextFunction
+  ) => {
+    try {
+      const apiWorker = this.buildApiWorker();
+      const swaggerSpec = await apiWorker.getSwaggerSpec();
+      return response.status(200).json(swaggerSpec);
     } catch (error) {
       next(error);
     }

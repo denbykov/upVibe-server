@@ -1,4 +1,4 @@
-import { TagMappingDTO } from '@src/dto/tagMappingDTO';
+import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 
 abstract class iTagMappingDatabase {
   public abstract getTagMapping(fileId: string): Promise<TagMappingDTO>;

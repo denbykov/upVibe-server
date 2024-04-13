@@ -1,5 +1,3 @@
-import { Source } from '@src/entities/source';
-
 export class SourceDTO {
   public id: string;
   public description: string;
@@ -20,14 +18,10 @@ export class SourceDTO {
 
   public static fromJSON = (json: JSON.JSONObject): SourceDTO => {
     return new SourceDTO(
-      `${json.source_id}`,
+      json.source_id.toString(),
       json.source_description,
       json.source_allow_for_secondary_tag_parsing,
       json.source_logo_path
     );
-  };
-
-  public toEntity = (): Source => {
-    return new Source(this.id, this.description);
   };
 }

@@ -1,7 +1,7 @@
 import { UUID } from 'crypto';
 
-import { DeviceDTO } from '@src/dto/deviceDTO';
-import { UserDTO } from '@src/dto/userDTO';
+import { DeviceDTO } from '@src/dtos/deviceDTO';
+import { UserDTO } from '@src/dtos/userDTO';
 
 export abstract class iUserDatabase {
   public abstract getUserBySub(sub: string): Promise<UserDTO | null>;
