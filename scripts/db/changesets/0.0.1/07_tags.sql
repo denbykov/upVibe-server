@@ -2,7 +2,7 @@
 --changeset VolodymyrFihurniak:7
 
 CREATE TABLE tags (
-    id SERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     file_id INT NOT NULL,
     is_primary BOOLEAN DEFAULT FALSE NOT NULL,
     title VARCHAR(255) NULL,

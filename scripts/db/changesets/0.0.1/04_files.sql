@@ -2,7 +2,7 @@
 --changeset VolodymyrFihurniak:4
 
 CREATE TABLE files (
-    id SERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     path VARCHAR(255) NULL UNIQUE,
     source_url VARCHAR(255) NOT NULL UNIQUE,
     source INT NOT NULL,

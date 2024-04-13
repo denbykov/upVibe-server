@@ -13,4 +13,4 @@ FROM
   tags AS t
 WHERE
   t.file_id = $1
-  AND t.is_primary = TRUE
+  AND t.source = $2

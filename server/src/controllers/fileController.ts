@@ -2,8 +2,7 @@ import Express from 'express';
 import pg from 'pg';
 
 import { FileWorker } from '@src/business/fileWorker';
-import { FileRepository, TagRepository } from '@src/data';
-import { SourceRepository } from '@src/data/sourceRepository';
+import { FileRepository, SourceRepository, TagRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -70,8 +69,14 @@ class FileController extends BaseController {
     try {
       const { user } = request.body;
       const { fileId } = request.params;
+      const { expand } = request.query;
       const fileWorker = this.buildFileWorker();
-      const result = await fileWorker.getTaggedFile(Number(fileId), user);
+      const expandOptions = expand ? expand.toString().split(',') : [];
+      const result = await fileWorker.getTaggedFile(
+        fileId,
+        user,
+        expandOptions
+      );
       return response.status(200).json(result);
     } catch (error) {
       next(error);

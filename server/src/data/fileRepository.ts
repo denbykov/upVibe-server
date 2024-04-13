@@ -98,8 +98,8 @@ export class FileRepository implements iFileDatabase {
   };
 
   public insertUserFile = async (
-    userId: number,
-    fileId: number
+    userId: string,
+    fileId: string
   ): Promise<void> => {
     const client = await this.pool.connect();
     try {
@@ -113,7 +113,7 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public doesFileExist = async (fileId: number): Promise<boolean> => {
+  public doesFileExist = async (fileId: string): Promise<boolean> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('doesFileExist');
@@ -123,12 +123,14 @@ export class FileRepository implements iFileDatabase {
     } catch (err) {
       dataLogger.error(`FilesRepository.doesFileExist: ${err}`);
       throw err;
+    } finally {
+      client.release();
     }
   };
 
   public doesUserFileExist = async (
-    userId: number,
-    fileId: number
+    userId: string,
+    fileId: string
   ): Promise<boolean> => {
     const client = await this.pool.connect();
     try {
@@ -145,13 +147,16 @@ export class FileRepository implements iFileDatabase {
   };
 
   public getTaggedFile = async (
-    id: number,
-    userId: number
-  ): Promise<TaggedFileDTO> => {
+    id: string,
+    userId: string
+  ): Promise<TaggedFileDTO | null> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getTaggedFile');
       const queryResult = await client.query(query, [id, userId]);
+      if (queryResult.rows.length === 0) {
+        return null;
+      }
       return TaggedFileDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       throw new Error(`FilesRepository.getTaggedFile: ${err}`);

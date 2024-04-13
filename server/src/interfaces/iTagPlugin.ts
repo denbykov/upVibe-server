@@ -4,8 +4,8 @@ export abstract class iTagPlugin {
   pluginName!: string;
   public abstract tagFile: (
     file: FileDTO,
-    userId: number,
+    userId: string,
     source: string
   ) => Promise<void>;
-  public abstract parseTags: (fileId: number, source: string) => Promise<void>;
+  public abstract parseTags: (fileId: string, source: string) => Promise<void>;
 }

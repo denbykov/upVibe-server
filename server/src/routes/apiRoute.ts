@@ -7,8 +7,7 @@ import YAML from 'yaml';
 
 import { UserWorker } from '@src/business/userWorker';
 import { APIController } from '@src/controllers';
-import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
-import { UserRepository } from '@src/data/userRepository';
+import { UserInfoAgent, UserRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';

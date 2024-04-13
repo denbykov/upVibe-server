@@ -1,13 +1,13 @@
 import { Source } from '@src/entities/source';
 
 export class SourceDTO {
-  public id: number;
+  public id: string;
   public description: string;
   public allow_for_secondary_tag_parsing: boolean;
   public logoPath: string;
 
   constructor(
-    id: number,
+    id: string,
     description: string,
     allow_for_secondary_tag_parsing: boolean,
     logoPath: string
@@ -20,7 +20,7 @@ export class SourceDTO {
 
   public static fromJSON = (json: JSON.JSONObject): SourceDTO => {
     return new SourceDTO(
-      json.source_id,
+      `${json.source_id}`,
       json.source_description,
       json.source_allow_for_secondary_tag_parsing,
       json.source_logo_path

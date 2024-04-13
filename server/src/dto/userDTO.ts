@@ -1,18 +1,18 @@
 import { User } from '@src/entities/user';
 
 class UserDTO {
-  public id: number;
+  public id: string;
   public sub: string;
   public name: string;
 
-  constructor(id: number, sub: string, name: string) {
+  constructor(id: string, sub: string, name: string) {
     this.id = id;
     this.sub = sub;
     this.name = name;
   }
 
   public static fromJSON(json: JSON.JSONObject): UserDTO {
-    return new UserDTO(json.id, json.sub, json.name);
+    return new UserDTO(`${json.id}`, json.sub, json.name);
   }
 
   public static toEntity(user: UserDTO): User {

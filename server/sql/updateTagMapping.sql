@@ -1,16 +1,13 @@
-INSERT INTO
-  tag_mappings (
-    user_id,
-    file_id,
-    title,
-    artist,
-    album,
-    picture,
-    year,
-    track_number
-  )
-VALUES
-  ($1, $2, $3, $4, $5, $6, $7, $8)
+UPDATE tag_mappings
+SET
+  title = $1,
+  artist = $2,
+  album = $3,
+  picture = $4,
+  year = $5,
+  track_number = $6
+WHERE
+  file_id = $7
 RETURNING
   id as tag_mapping_id,
   user_id as tag_mapping_user_id,
