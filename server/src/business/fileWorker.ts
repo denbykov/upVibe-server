@@ -99,11 +99,11 @@ export class FileWorker {
 
     for (const variation of expand) {
       if (variation === 'mapping') {
-        const mappingDto = await this.tagDb.getTagMapping(user.id, file.id);
-        if (!mappingDto) {
+        const mappingDTO = await this.tagDb.getTagMapping(user.id, file.id);
+        if (!mappingDTO) {
           throw new ProcessingError('Mapping not found');
         }
-        mapping = mappingDto.toEntity();
+        mapping = mappingDTO.toEntity();
       } else {
         throw new ProcessingError(`${variation} is not a valid epxand option`);
       }
