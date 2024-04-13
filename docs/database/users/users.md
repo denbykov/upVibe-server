@@ -8,6 +8,6 @@ This page describes the public.users table
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
-| id | SERIAL | PK |
+| id | BIGINT | PK, GENERATED ALWAYS AS IDENTITY |
 | sub | VARCHAR | PK, IDX |
 | name | VARCHAR(255) | NOT NULL |

@@ -27,7 +27,7 @@ export class TagWorker {
     dataLogger.trace('TagWorker initialized');
   }
 
-  public getFileTags = async (fileId: number): Promise<Array<Tag>> => {
+  public getFileTags = async (fileId: string): Promise<Array<Tag>> => {
     const doesFileExist = await this.fileDb.doesFileExist(fileId);
     if (!doesFileExist) {
       throw new ProcessingError('File not found');
@@ -38,7 +38,7 @@ export class TagWorker {
     });
   };
 
-  public getPictureOfTag = async (tagId: number): Promise<string> => {
+  public getPictureOfTag = async (tagId: string): Promise<string> => {
     const tag = await this.db.getTag(tagId);
 
     if (!tag) {
@@ -52,12 +52,12 @@ export class TagWorker {
     return tag.picturePath;
   };
 
-  public parseTags = async (fileId: number): Promise<Array<Tag>> => {
+  public parseTags = async (fileId: string): Promise<Array<Tag>> => {
     await this.requestTagging(fileId);
     return this.getFileTags(fileId);
   };
 
-  public requestTagging = async (fileId: number): Promise<void> => {
+  public requestTagging = async (fileId: string): Promise<void> => {
     const primaryTag = await this.db.getPrimaryTag(fileId);
 
     if (!primaryTag) {
@@ -71,11 +71,11 @@ export class TagWorker {
     const sources = await this.sourceDb.getSourcesWithParsingPermission();
     await Promise.all(
       sources.map(async (source) => {
-        if (await this.db.doesTagExist(fileId, source.id)) {
+        if (await this.db.getTagByFile(fileId, source.id)) {
           throw new ProcessingError('Parsing already requested');
         }
         await this.db.insertTag(
-          TagDTO.allFromOneSource(0, fileId, false, source.id, 'CR')
+          TagDTO.allFromOneSource('0', fileId, false, source.id, 'CR')
         );
         await this.tagPlugin.parseTags(fileId, source.description);
       })

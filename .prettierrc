@@ -12,6 +12,14 @@
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
-  "plugins": ["@trivago/prettier-plugin-sort-imports"],
-  "importOrderParserPlugins": ["typescript"]
+  "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-sql"],
+  "importOrderParserPlugins": ["typescript"],
+  "overrides": [
+    {
+      "files": "*.sql",
+      "options": {
+        "language": "postgresql"
+      }
+    }
+  ]
 }

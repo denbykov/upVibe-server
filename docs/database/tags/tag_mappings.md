@@ -8,7 +8,7 @@ This page describes the public.tag_mappings table
 
 | Column | Type | Constraints | Description |
 | - | - | - | - |
-| id | SERIAL | PK |
+| id | BIGINT | PK |
 | user_id | INT | FK to public.users(id) |
 | file_id | INT | NOT NULL,<br/> FK to public.files(id) |
 | title | INT | NOT NULL,<br/> FK to public.sources(id) |

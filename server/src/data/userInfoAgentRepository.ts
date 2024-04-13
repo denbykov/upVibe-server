@@ -19,6 +19,6 @@ export class UserInfoAgent implements iUserInfoAgent {
     if (!reqData) {
       return null;
     }
-    return new User(0, reqData.sub, reqData.nickname);
+    return new User('0', reqData.sub, reqData.nickname);
   };
 }

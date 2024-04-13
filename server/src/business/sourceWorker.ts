@@ -19,7 +19,7 @@ export class SourceWorker {
     });
   };
 
-  public getSourceLogo = async (sourceId: number): Promise<string> => {
+  public getSourceLogo = async (sourceId: string): Promise<string> => {
     const source = await this.db.getSource(sourceId);
 
     if (!source) {

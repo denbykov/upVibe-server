@@ -2,7 +2,7 @@
 --changeset VolodymyrFihurniak:8
 
 CREATE TABLE tag_mappings (
-    id SERIAL NOT NULL,
+    id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
     user_id INT NOT NULL,
     file_id INT NOT NULL,
     title INT NOT NULL,

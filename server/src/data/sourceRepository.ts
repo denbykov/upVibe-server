@@ -29,7 +29,7 @@ export class SourceRepository implements iSourceDatabase {
     }
   };
 
-  public getSource = async (id: number): Promise<SourceDTO | null> => {
+  public getSource = async (id: string): Promise<SourceDTO | null> => {
     const client = await this.pool.connect();
     try {
       const query = this.sqlManager.getQuery('getSource');

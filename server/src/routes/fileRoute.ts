@@ -3,8 +3,7 @@ import pg from 'pg';
 
 import { UserWorker } from '@src/business/userWorker';
 import { FileController } from '@src/controllers';
-import { UserInfoAgent } from '@src/data/userInfoAgentRepository';
-import { UserRepository } from '@src/data/userRepository';
+import { UserInfoAgent, UserRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';

@@ -2,8 +2,7 @@ import Express from 'express';
 import pg from 'pg';
 
 import { TagWorker } from '@src/business/tagWorker';
-import { FileRepository, TagRepository } from '@src/data';
-import { SourceRepository } from '@src/data/sourceRepository';
+import { FileRepository, SourceRepository, TagRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -37,7 +36,7 @@ class TagController extends BaseController {
     try {
       const tagWorker = this.buildTagWorker();
 
-      const fileId = Number(request.params.fileId);
+      const fileId = request.params.fileId;
       const result = await tagWorker.getFileTags(fileId);
       return response.status(200).json(result);
     } catch (error) {
@@ -53,7 +52,7 @@ class TagController extends BaseController {
     try {
       const tagWorker = this.buildTagWorker();
 
-      const tagId = Number(request.params.tagId);
+      const tagId = request.params.tagId;
       const result = await tagWorker.getPictureOfTag(tagId);
       return response.status(200).sendFile(result);
     } catch (error) {
@@ -69,7 +68,7 @@ class TagController extends BaseController {
     try {
       const tagWorker = this.buildTagWorker();
 
-      const fileId = Number(request.params.fileId);
+      const fileId = request.params.fileId;
       const result = await tagWorker.parseTags(fileId);
       return response.status(200).json(result);
     } catch (error) {

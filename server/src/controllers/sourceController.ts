@@ -2,7 +2,7 @@ import Express from 'express';
 import pg from 'pg';
 
 import { SourceWorker } from '@src/business/sourceWorker';
-import { SourceRepository } from '@src/data/sourceRepository';
+import { SourceRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -48,7 +48,7 @@ class SourceController extends BaseController {
     try {
       const tagWorker = this.buildWorker();
 
-      const sourceId = Number(request.params.sourceId);
+      const sourceId = request.params.sourceId;
       const result = await tagWorker.getSourceLogo(sourceId);
       return response.status(200).sendFile(result);
     } catch (error) {

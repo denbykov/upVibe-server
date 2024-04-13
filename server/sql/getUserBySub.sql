@@ -1,1 +1,6 @@
-SELECT * FROM users WHERE sub = $1
+SELECT
+  *
+FROM
+  users
+WHERE
+  sub = $1

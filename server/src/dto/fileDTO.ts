@@ -1,14 +1,14 @@
 class FileDTO {
-  public id: number;
+  public id: string;
   public path: string;
-  public source: number;
+  public source: string;
   public status: string;
   public sourceUrl: string;
 
   constructor(
-    id: number,
+    id: string,
     path: string,
-    source: number,
+    source: string,
     status: string,
     sourceUrl: string
   ) {
@@ -21,9 +21,9 @@ class FileDTO {
 
   public static fromJSON = (json: JSON.JSONObject): FileDTO => {
     return new FileDTO(
-      json.file_id,
+      `${json.file_id}`,
       json.file_path,
-      json.file_source,
+      `${json.file_source}`,
       json.file_status,
       json.file_source_url
     );
