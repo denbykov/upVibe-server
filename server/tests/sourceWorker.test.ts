@@ -32,6 +32,8 @@ describe('sourceWorker', () => {
   it('should call getSourceLogo', async () => {
     const sourceId = '1';
     const source = new SourceDTO('1', 'testSourceId', true, 'testSourceName');
+    const sourceId = '1';
+    const source = new SourceDTO('1', 'testSourceId', true, 'testSourceName');
     const spyGetSource = jest
       .spyOn(dbMock, 'getSource')
       .mockResolvedValue(source);
