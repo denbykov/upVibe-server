@@ -7,7 +7,6 @@ import { TagDTO } from '@src/dtos/tagDTO';
 import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 import { File } from '@src/entities/file';
 import { GetFileResponse } from '@src/entities/getFileResponse';
-import { GetFileResponse } from '@src/entities/getFileResponse';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
@@ -50,10 +49,8 @@ export class FileWorker {
     if (!file) {
       file = await this.db.insertFile(
         new FileDTO('0', randomUUID(), sourceId, Status.Created, normalizedUrl)
-        new FileDTO('0', randomUUID(), sourceId, Status.Created, normalizedUrl)
       );
       await this.tagDb.insertTag(
-        TagDTO.allFromOneSource('0', file.id, true, sourceId, Status.Created)
         TagDTO.allFromOneSource('0', file.id, true, sourceId, Status.Created)
       );
       await this.requestFileProcessing(file!, user.id);
@@ -74,7 +71,6 @@ export class FileWorker {
   public requestFileProcessing = async (
     file: FileDTO,
     userId: string
-    userId: string
   ): Promise<void> => {
     const source = await this.sourceDb.getSource(file.source);
     await this.filePlugin.downloadFile(file, source!.description);
@@ -90,13 +86,6 @@ export class FileWorker {
 
     return files;
   };
-
-  public getTaggedFile = async (
-    id: string,
-    user: User,
-    expand: string[]
-  ): Promise<GetFileResponse> => {
-    let mapping = null;
 
   public getTaggedFile = async (
     id: string,
