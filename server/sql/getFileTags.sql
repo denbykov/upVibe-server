@@ -14,3 +14,4 @@ FROM
   JOIN files as f ON f.id = file_id
 WHERE
   f.id = $1
+ORDER BY t.source

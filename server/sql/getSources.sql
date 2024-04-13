@@ -5,3 +5,4 @@ SELECT
   logo_path as source_logo_path
 FROM
   sources
+ORDER BY id
