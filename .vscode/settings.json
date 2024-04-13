@@ -3,7 +3,8 @@
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
-    }
+    },
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
 
   "[sql]": {
@@ -31,12 +32,14 @@
   "path-intellisense.extensionOnImport": true,
   "path-intellisense.showHiddenFiles": true,
   "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
+    "typescript"
   ],
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "eslint.format.enable": true,
-  "eslint.lintTask.enable": true
+  "eslint.lintTask.enable": true,
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "editor.suggestSelection": "first",
+  "vsintellicode.typescript.completionsEnabled": true
 }

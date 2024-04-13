@@ -1,6 +1,11 @@
 {
 	"name": "Alpine-3.19",
-	"image": "mcr.microsoft.com/devcontainers/base:alpine-3.19",
+	"build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+			"USERNAME": "${localEnv:USER}"
+		}
+  },
 	"features": {
 		"ghcr.io/cirolosapio/devcontainers-features/alpine-node:0": {}
 	},
@@ -23,7 +28,8 @@
 				"cweijan.vscode-postgresql-client2",
 				"YoavBls.pretty-ts-errors",
 				"42Crunch.vscode-openapi",
-				"ReneSaarsoo.sql-formatter-vsc"
+				"ReneSaarsoo.sql-formatter-vsc",
+				"eamodio.gitlens"
 			]
 		}
 	},
@@ -34,5 +40,5 @@
 			"target": "/opt/upVibe/storage",
 			"type": "bind"
 		}
-  	]
+  ]
 }
