@@ -1,8 +1,8 @@
 import pg from 'pg';
 
-import { FileDTO } from '@src/dto/fileDTO';
-import { TaggedFileDTO } from '@src/dto/taggedFileDTO';
-import { UserDTO } from '@src/dto/userDTO';
+import { FileDTO } from '@src/dtos/fileDTO';
+import { TaggedFileDTO } from '@src/dtos/taggedFileDTO';
+import { UserDTO } from '@src/dtos/userDTO';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';

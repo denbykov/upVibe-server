@@ -1,9 +1,10 @@
-import { TagDTO } from '@src/dto/tagDTO';
+import { TagDTO } from '@src/dtos/tagDTO';
 import { Tag } from '@src/entities/tag';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
+import { TagMapper } from '@src/mappers/tagMapper';
 import { dataLogger } from '@src/utils/server/logger';
 
 import { ProcessingError } from './processingError';
@@ -34,7 +35,7 @@ export class TagWorker {
     }
     const tags = await this.db.getFileTags(fileId);
     return tags.map((tag) => {
-      return tag.toEntity();
+      return new TagMapper().toEntity(tag);
     });
   };
 

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 import { FileWorker } from '@src/business/fileWorker';
-import { FileDTO } from '@src/dto/fileDTO';
+import { FileDTO } from '@src/dtos/fileDTO';
 import { File, ShortTags } from '@src/entities/file';
 import { GetFileResponse } from '@src/entities/getFileResponse';
 import { Source } from '@src/entities/source';

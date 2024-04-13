@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import pg from 'pg';
+import redoc from 'redoc-express';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
@@ -51,6 +52,38 @@ export class APIRoute extends BaseRoute {
       `${apiURI}/api`,
       swaggerUi.serve,
       swaggerUi.setup(swaggerSpec, theme)
+    );
+
+    this.app.get(`${apiURI}/docs/swagger.json`, controller.getSwaggerSpec);
+
+    this.app.get(
+      `${apiURI}/docs`,
+      redoc({
+        title: 'API Docs',
+        specUrl: `${apiURI}/docs/swagger.json`,
+        nonce: '',
+        redocOptions: {
+          theme: {
+            colors: {
+              primary: {
+                main: '#6EC5AB',
+              },
+            },
+            typography: {
+              fontFamily: `"museo-sans", 'Helvetica Neue', Helvetica, Arial, sans-serif`,
+              fontSize: '15px',
+              lineHeight: '1.5',
+              code: {
+                code: '#87E8C7',
+                backgroundColor: '#4D4D4E',
+              },
+            },
+            menu: {
+              backgroundColor: '#ffffff',
+            },
+          },
+        },
+      })
     );
 
     this.app.get(`${apiURI}/health`, controller.healthCheck);

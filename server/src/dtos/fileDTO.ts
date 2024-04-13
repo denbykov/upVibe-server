@@ -21,9 +21,9 @@ class FileDTO {
 
   public static fromJSON = (json: JSON.JSONObject): FileDTO => {
     return new FileDTO(
-      `${json.file_id}`,
+      json.file_id.toString(),
       json.file_path,
-      `${json.file_source}`,
+      json.file_source.toString(),
       json.file_status,
       json.file_source_url
     );

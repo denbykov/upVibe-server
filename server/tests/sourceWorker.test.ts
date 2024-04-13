@@ -1,6 +1,7 @@
 import { SourceWorker } from '@src/business/sourceWorker';
-import { SourceDTO } from '@src/dto/sourceDTO';
+import { SourceDTO } from '@src/dtos/sourceDTO';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
+import { SourceMapper } from '@src/mappers/sourceMapper';
 
 describe('sourceWorker', () => {
   let dbMock: iSourceDatabase;
@@ -19,9 +20,7 @@ describe('sourceWorker', () => {
     const sources = [
       new SourceDTO('1', 'testSourceId', true, 'testSourceName'),
     ];
-    const expectedSources = [
-      new SourceDTO('1', 'testSourceId', true, 'testSourceName').toEntity(),
-    ];
+    const expectedSources = [new SourceMapper().toEntity(sources[0])];
     const spyGetSources = jest
       .spyOn(dbMock, 'getSources')
       .mockResolvedValue(sources);

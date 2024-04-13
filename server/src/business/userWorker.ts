@@ -1,4 +1,4 @@
-import { DeviceDTO } from '@src/dto/deviceDTO';
+import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { User } from '@src/entities/user';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';

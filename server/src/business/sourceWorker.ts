@@ -1,5 +1,6 @@
 import { Source } from '@src/entities/source';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
+import { SourceMapper } from '@src/mappers/sourceMapper';
 import { dataLogger } from '@src/utils/server/logger';
 
 import { ProcessingError } from './processingError';
@@ -15,7 +16,7 @@ export class SourceWorker {
   public getSources = async (): Promise<Array<Source>> => {
     const sources = await this.db.getSources();
     return sources.map((source) => {
-      return source.toEntity();
+      return new SourceMapper().toEntity(source);
     });
   };
 

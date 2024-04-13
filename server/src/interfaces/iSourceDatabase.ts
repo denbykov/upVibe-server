@@ -1,4 +1,4 @@
-import { SourceDTO } from '@src/dto/sourceDTO';
+import { SourceDTO } from '@src/dtos/sourceDTO';
 
 export abstract class iSourceDatabase {
   public abstract getSources(): Promise<Array<SourceDTO>>;

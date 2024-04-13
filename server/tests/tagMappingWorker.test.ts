@@ -1,8 +1,9 @@
 import { ProcessingError } from '@src/business/processingError';
 import { TagMappingWorker } from '@src/business/tagMappingWorker';
-import { TagMappingDTO } from '@src/dto/tagMappingDTO';
+import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 import { TagMapping } from '@src/entities/tagMapping';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
+import { TagMappingMapper } from '@src/mappers/tagMappingMapper';
 
 describe('TagMappingWorker', () => {
   let tagMappingWorker: TagMappingWorker;
@@ -29,14 +30,13 @@ describe('TagMappingWorker', () => {
       '2'
     );
     const fileId = '1';
-
     jest
       .spyOn(mockDb, 'updateTagMapping')
       .mockResolvedValue(tagMappingUpdateDTO);
-
     const result = await tagMappingWorker.updateTagMapping(tagMapping, fileId);
-
-    expect(result).toEqual(tagMappingUpdateDTO.toEntity());
+    expect(result).toEqual(
+      new TagMappingMapper().toEntity(tagMappingUpdateDTO)
+    );
   });
 
   it('should throw an error if updating a tag mapping fails', async () => {
