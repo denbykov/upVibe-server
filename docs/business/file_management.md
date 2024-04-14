@@ -10,6 +10,74 @@ This document describes file management details, such as file downloading, synch
 - [Tag mappings](#tag-mappings)
 - [File receiving](#file-receiving)
 
+# File status coordinator worker
+
+The file status coordinator worker is a separate program from the server, that is responsible for setting completed status for the file. It is accessible to other services via following API:
+```json
+routing-key: checking/file
+body:
+{
+    "file_id": 1,
+}
+``` 
+
+On message it should:
+
+#### AC 1
+
+Find the file by given id, and check whether its status is 'D'?  
+- yes - continue  
+- no - finish message processing  
+
+#### AC 2
+
+Fetch all <b>tags</b> for current file. There is more than one tag?  
+- yes - continue  
+- no - finish message processing  
+
+#### AC 2.1
+
+Check statuses of fetched tags. All statuses are 'C' or 'E'?  
+- yes - continue  
+- no - finish message processing  
+
+#### AC 3
+
+Fetch all records (<b>mappings</b> later) from [tam_mappings](../database/tags/tag_mappings.md) where:  
+file_id = request.file_id  
+fixed = FALSE  
+
+#### AC 4
+
+For each record in <b>mappings</b> perform AC 5
+
+#### AC 5
+
+Get <b>pirorities</b> from the [tag_mapping_priorities](../database/tags/tag_mapping_priorities.md) table where:  
+user_id = <b>mapping</b>.user_id  
+
+#### AC 5.1
+
+Form tag_mapping using <b>tags</b> and <b>pirorities</b>, set fixed to TRUE and update it in the database.
+
+#### AC 5.2
+
+Get <b>user_file</b> records from [user_files](../database/files/user_files.md) table where:  
+user_id = <b>mapping</b>.user_id  
+file_id = request.file_id  
+
+#### AC 5.3
+
+For each <b>user_file</b> record perform AC 5.4
+
+#### AC 5.4.1
+
+Update the [file_synchronization](../database/files/file_synchronization.md) table with:  
+is_synchronized = FALSE  
+server_ts = current timestamp    
+where:  
+user_file_id = <b>user_file</b>.id  
+
 # Plugins  
 
 The server relies on plugins to perform such actions as file downloading, parsing, etc. The current version requires the following plugins:
@@ -168,9 +236,60 @@ Does the plugin report an error?
 
 # Tag mappings  
 
-This section describes only an idea around tag mappings, as the business logic of the API is just a set of CRUD operations.  
-So, the idea is to create a tag mapping for each file, which will tell what tags to apply to the file before sending it to the user. It should be created when the user requests file downloading(#downloading). Each priority item could be modified via the API.
-Mapping priority is an object unique for each user and is used to create a default tag_mapping for the file.
+Tag mappings contain information about which exact tags should be applied to the file. They are unique for each user.  
+
+On tag mapping update server should:  
+
+#### AC 1
+
+Set tag_mapping fixed to TRUE together with rest of the fields.
+
+#### AC 2
+
+Get <b>user_file</b> records from [user_files](../database/files/user_files.md) table where:  
+user_id = tag_mapping.user_id  
+file_id = tag_mapping.file_id  
+
+#### AC 3
+
+For each <b>user_file</b> record perform AC 4  
+
+#### AC 4
+
+Update the [file_synchronization](../database/files/file_synchronization.md) table with:  
+is_synchronized = FALSE  
+server_ts = current timestamp  
+where:  
+user_file_id = <b>user_file</b>.id  
+
+## Tag mapping priorities
+
+As all sources provide tags of different quality, it is natural to choose tags from the finest sources first, then from less formidable ones, and so on. Tag mapping priorities are a simple way to automate this.  
+
+Default priority for each user is configurable, using following format:  
+```json
+{
+  "title": [
+    0
+  ],
+  "artist": [
+    0
+  ],
+  "album": [
+    0
+  ],
+  "year": [
+    0
+  ],
+  "trackNumber": [
+    0
+  ],
+  "picture": [
+    0
+  ]
+}
+```  
+Each item in the arrays is a source id. Its priority is defined by the position in the array; for example, the item on index 0 has the highest priority, and so on.
 
 # File receiving  
 
@@ -194,7 +313,7 @@ Check the status of the found file.
 If a status is:
 - "С" - go to AC 3
 - "E" - abort the operation and send the "File preparation failed" (errorCode 2) error response to the user   
-- otherwise - abort the operation and send the "File is not prepared yet" (errorCode 3) error response to the user
+- otherwise - abort the operation and send the "File is not ready yet" (errorCode 3) error response to the user
 
 #### AC 3
 Try to find a record in the [tag_mappings](../database/tags/tag_mappings.md) table by the following filter:  
@@ -213,7 +332,7 @@ source = [all sources that required by the mapping]
 
 #### AC 5
 
-Create a tag object by combining all the tag data from the previous step and request tag file tagging via its file tagger plugin.  
+Create a tag object by combining all the tag data from the previous step and tag file. 
 Value mapping for the request:  
 tag = [created_tag]
 file = [file.uuid]  
@@ -221,3 +340,24 @@ file = [file.uuid]
 Does the plugin report an error?  
 - yes - abort the operation and send the error response to the user (errorCode -1)  
 - no - send a file to the user
+
+# File confirmation  
+
+The client must confirm file downloading using POST /up-vibe/v1/files/{fileId}/confirm request
+
+The server should:
+
+#### AC 1
+
+Get <b>user_file</b> record from [user_files](../database/files/user_files.md) table where:  
+user_id = request.body.user_id  
+file_id = request.url.file_id  
+
+#### AC 2
+
+Update the [file_synchronization](../database/files/file_synchronization.md) table with:  
+is_synchronized = TRUE  
+device_ts = current timestamp  
+where:  
+device_id = request.body.deviceId  
+user_file_id = <b>user_file</b>.id  

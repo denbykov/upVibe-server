@@ -2,7 +2,7 @@
 
 This page describes the public.tag_mappings table
 
-![Alt text](tag_mappings.png)
+![alt text](tag_mappings.png)
 
 ## Structure definition
 
@@ -17,3 +17,4 @@ This page describes the public.tag_mappings table
 | picture | INT | NOT NULL,<br/> FK to public.sources(id) |
 | year | INT | NOT NULL,<br/> FK to public.sources(id) |
 | track_number | INT | NOT NULL,<br/> FK to public.sources(id) |
+| fixed | BOOLEAN | NOT NULL DEFAULT FALSE |
