@@ -40,6 +40,10 @@ Request the user's nickname from the auth0 /userinfo endpoint. Then, insert the 
 sub = access_token.sub  
 name = user_info.nickname  
 
+#### AC 2.1
+
+Create a record in the [tag_mapping_priorities](../database/tags/tag_mapping_priorities.md) table according to the configuration(for more details see [file management](./file_management.md) Tag mapping priorities)  
+
 #### AC 3
 
 Insert record in the [devices](../database/users/devices.md) table with the following values:  

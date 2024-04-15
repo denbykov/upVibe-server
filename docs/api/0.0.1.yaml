@@ -276,6 +276,41 @@ paths:
         - upvibe-auth:
             - user
         - BearerAuth: []
+  /up-vibe/v1/files/{fileId}/confirm:
+    post:
+      tags:
+        - files
+      summary: Confirm file downloading
+      description: Confirm file downloading
+      operationId: confirmFileDownloading
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+                  example: "dd938aa5-6520-492a-bf61-8927aa58872c"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
   /up-vibe/v1/files/{fileId}/parse-tags:
     post:
       tags:
