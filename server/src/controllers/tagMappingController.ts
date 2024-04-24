@@ -32,14 +32,12 @@ class TagMappingController extends BaseController {
     next: Express.NextFunction
   ): Promise<Express.Response | void> => {
     try {
-      // FIXME: This is not implemented yet
-      // const { user } = request.body;
-      // const tagMappingWorker = this.buildTagMappingWorker();
-      // const tagMappingPriority = await tagMappingWorker.getTagMappingPriority(
-      //   user.id
-      // );
-      // return response.status(200).json(tagMappingPriority);
-      return response.status(500).json({ error: 'Not implemented yet' });
+      const { user } = request.body;
+      const tagMappingWorker = this.buildTagMappingWorker();
+      const tagMappingPriority = await tagMappingWorker.getTagMappingPriority(
+        user.id
+      );
+      return response.status(200).json(tagMappingPriority);
     } catch (error) {
       next(error);
     }

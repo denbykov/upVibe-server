@@ -1,8 +1,8 @@
-// import { TagMappingPriorityDTO } from '@src/dto/tagMappingPriorityDTO';
 import { TagMapping } from '@src/entities/tagMapping';
-// import { TagMappingPriority } from '@src/entities/tagMappingPriority';
+import { TagMappingPriority } from '@src/entities/tagMappingPriority';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
 import { TagMappingMapper } from '@src/mappers/tagMappingMapper';
+import { TagMappingPriorityMapper } from '@src/mappers/tagMappingPriorityMapper';
 
 import { ProcessingError } from './processingError';
 
@@ -15,10 +15,8 @@ class TagMappingWorker {
     this.db = db;
   }
 
-  // FIXME: This is not implemented yet
-
   // public getTagMappingPriority = async (
-  //   userId: string
+  // userId: string
   // ): Promise<TagMappingPriority> => {
   //   const doesTagMappingPriorityExist =
   //     await this.db.doesTagMappingPriorityExist(userId);
@@ -37,6 +35,20 @@ class TagMappingWorker {
   //   const tagMappingDTO = await this.db.getTagMapping(fileId);
   //   return tagMappingDTO.toEntity();
   // };
+
+  public getTagMappingPriority = async (
+    userId: string
+  ): Promise<TagMappingPriority> => {
+    try {
+      const tagMappingPriorityDTO = await this.db.getTagMappingPriority(userId);
+      if (!tagMappingPriorityDTO) {
+        throw new ProcessingError('Tag mapping priority does not exist');
+      }
+      return new TagMappingPriorityMapper().toEntity(tagMappingPriorityDTO);
+    } catch (error) {
+      throw new ProcessingError('Failed to get tag mapping priority');
+    }
+  };
 
   public updateTagMapping = async (
     tagMapping: TagMapping,
