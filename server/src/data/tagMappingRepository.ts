@@ -75,4 +75,34 @@ export class TagMappingRepository implements iTagMappingDatabase {
       client.release();
     }
   };
+
+  public updateTagMappingPriority = async (
+    tagMappingPriority: TagMappingPriorityDTO
+  ): Promise<TagMappingPriorityDTO> => {
+    const client = await this.pool.connect();
+    try {
+      const query = this.sqlManager.getQuery('updateTagMappingPriority');
+      dataLogger.debug(query);
+      const queryResults: JSON.JSONObject[] = [];
+      for (let index = 0; index < tagMappingPriority.title.length; index++) {
+        const queryResult = await client.query(query, [
+          tagMappingPriority.title[index],
+          tagMappingPriority.artist[index],
+          tagMappingPriority.album[index],
+          tagMappingPriority.picture[index],
+          tagMappingPriority.year[index],
+          tagMappingPriority.trackNumber[index],
+          tagMappingPriority.userId,
+          index + 1,
+        ]);
+        queryResults.push(queryResult.rows[0]);
+      }
+      return TagMappingPriorityDTO.fromJSON(queryResults);
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
 }

@@ -5,6 +5,7 @@ import { TagMappingWorker } from '@src/business/tagMappingWorker';
 import { TagMappingRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { TagMapping } from '@src/entities/tagMapping';
+import { TagMappingPriority } from '@src/entities/tagMappingPriority';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
@@ -49,23 +50,21 @@ class TagMappingController extends BaseController {
     next: Express.NextFunction
   ): Promise<Express.Response | void> => {
     try {
-      // FIXME: This is not implemented yet
-      // const { user } = request.body;
-      // const mapping = new TagMappingPriority(
-      //   request.body.title,
-      //   request.body.artist,
-      //   request.body.album,
-      //   request.body.picture,
-      //   request.body.year,
-      //   request.body.trackNumber
-      // );
-      // const tagMappingWorker = this.buildTagMappingWorker();
-      // const result = await tagMappingWorker.updateTagMappingPriority(
-      //   mapping,
-      //   user.id
-      // );
-      // return response.status(200).json(result);
-      return response.status(500).json({ error: 'Not implemented yet' });
+      const { user } = request.body;
+      const mapping = new TagMappingPriority(
+        request.body.title,
+        request.body.artist,
+        request.body.album,
+        request.body.picture,
+        request.body.year,
+        request.body.trackNumber
+      );
+      const tagMappingWorker = this.buildTagMappingWorker();
+      const result = await tagMappingWorker.updateTagMappingPriority(
+        mapping,
+        user.id
+      );
+      return response.status(200).json(result);
     } catch (error) {
       next(error);
     }
