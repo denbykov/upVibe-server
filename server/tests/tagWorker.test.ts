@@ -1,7 +1,7 @@
 import { ProcessingError } from '@src/business/processingError';
 import { TagWorker } from '@src/business/tagWorker';
-import { SourceDTO } from '@src/dto/sourceDTO';
-import { TagDTO } from '@src/dto/tagDTO';
+import { SourceDTO } from '@src/dtos/sourceDTO';
+import { TagDTO } from '@src/dtos/tagDTO';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
