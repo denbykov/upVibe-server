@@ -46,7 +46,7 @@ SELECT
     WHERE
       t.id = tm.track_number
   ) as tag_track_number,
-  tm.picture as tag_picture_id
+  tm.picture as tag_picture
 FROM
   files as f
   LEFT JOIN sources as s ON f.source = s.id
