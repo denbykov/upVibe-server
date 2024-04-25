@@ -1,7 +1,7 @@
 import express from 'express';
-import pg from 'pg';
 
 import { SourceController } from '@src/controllers';
+import { DBManager } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import auth0Middleware from '@src/middlewares/auth0Middleware';
 import { PluginManager } from '@src/pluginManager';
@@ -13,17 +13,17 @@ export class SourceRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    databasePool: pg.Pool,
+    dbManager: DBManager,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'SourceRoute', config, databasePool, sqlManager, pluginManager);
+    super(app, 'SourceRoute', config, dbManager, sqlManager, pluginManager);
   }
 
   configureRoutes() {
     const controller: SourceController = new SourceController(
       this.config,
-      this.databasePool,
+      this.dbManager,
       this.sqlManager,
       this.pluginManager
     );

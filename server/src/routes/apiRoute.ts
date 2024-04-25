@@ -1,6 +1,5 @@
 import express from 'express';
 import fs from 'fs';
-import pg from 'pg';
 import redoc from 'redoc-express';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
 import swaggerUi from 'swagger-ui-express';
@@ -9,6 +8,7 @@ import YAML from 'yaml';
 import { UserWorker } from '@src/business/userWorker';
 import { APIController } from '@src/controllers';
 import { UserInfoAgent, UserRepository } from '@src/data';
+import { DBManager } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
@@ -21,22 +21,22 @@ export class APIRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    databasePool: pg.Pool,
+    dbManager: DBManager,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'APIRoute', config, databasePool, sqlManager, pluginManager);
+    super(app, 'APIRoute', config, dbManager, sqlManager, pluginManager);
   }
 
   configureRoutes() {
     const controller: APIController = new APIController(
       this.config,
-      this.databasePool,
+      this.dbManager,
       this.sqlManager
     );
     const apiURI = `/up-vibe/v1`;
     const userWorker = new UserWorker(
-      new UserRepository(this.databasePool, this.sqlManager),
+      new UserRepository(this.dbManager, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 
