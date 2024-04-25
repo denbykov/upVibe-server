@@ -1,8 +1,8 @@
 import Express from 'express';
-import pg from 'pg';
 
 import { SourceWorker } from '@src/business/sourceWorker';
 import { SourceRepository } from '@src/data';
+import { DBManager } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -12,16 +12,16 @@ import { BaseController } from './baseController';
 class SourceController extends BaseController {
   constructor(
     config: Config,
-    databasePool: pg.Pool,
+    dbManager: DBManager,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(config, databasePool, sqlManager, pluginManager);
+    super(config, dbManager, sqlManager, pluginManager);
   }
 
   private buildWorker = (): SourceWorker => {
     return new SourceWorker(
-      new SourceRepository(this.databasePool, this.sqlManager)
+      new SourceRepository(this.dbManager, this.sqlManager)
     );
   };
 

@@ -1,21 +1,26 @@
 import pg from 'pg';
 
+import { DBManager } from '@src/dbManager';
 import { SourceDTO } from '@src/dtos/sourceDTO';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class SourceRepository implements iSourceDatabase {
-  public pool: pg.Pool;
+  public dbManager: DBManager;
   public sqlManager: SQLManager;
 
-  constructor(pool: pg.Pool, sqlManager: SQLManager) {
-    this.pool = pool;
+  constructor(dbManager: DBManager, sqlManager: SQLManager) {
+    this.dbManager = dbManager;
     this.sqlManager = sqlManager;
   }
 
+  private buildPGPool = (): pg.Pool => {
+    return this.dbManager.getPGPool();
+  };
+
   public getSources = async (): Promise<Array<SourceDTO>> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('getSources');
       dataLogger.debug(query);
@@ -30,7 +35,7 @@ export class SourceRepository implements iSourceDatabase {
   };
 
   public getSource = async (id: string): Promise<SourceDTO | null> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('getSource');
       const queryResult = await client.query(query, [id]);
@@ -50,7 +55,7 @@ export class SourceRepository implements iSourceDatabase {
   public getSourcesWithParsingPermission = async (): Promise<
     Array<SourceDTO>
   > => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('getSourcesWithParsingPermission');
       const queryResult = await client.query(query);

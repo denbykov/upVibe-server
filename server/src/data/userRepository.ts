@@ -1,22 +1,27 @@
 import { UUID } from 'crypto';
 import pg from 'pg';
 
+import { DBManager } from '@src/dbManager';
 import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { UserDTO } from '@src/dtos/userDTO';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { SQLManager } from '@src/sqlManager';
 
 export class UserRepository implements iUserDatabase {
-  public pool: pg.Pool;
+  public dbManager: DBManager;
   public sqlManager: SQLManager;
 
-  constructor(pool: pg.Pool, sqlManager: SQLManager) {
-    this.pool = pool;
+  constructor(dbManager: DBManager, sqlManager: SQLManager) {
+    this.dbManager = dbManager;
     this.sqlManager = sqlManager;
   }
 
+  private buildPGPool = (): pg.Pool => {
+    return this.dbManager.getPGPool();
+  };
+
   public async getUserBySub(sub: string): Promise<UserDTO | null> {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('getUserBySub');
       const result = await client.query(query, [sub]);
@@ -31,7 +36,7 @@ export class UserRepository implements iUserDatabase {
   }
 
   public async insertUser(user: UserDTO): Promise<UserDTO> {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('insertUser');
       const result = await client.query(query, [user.sub, user.name]);
@@ -42,7 +47,7 @@ export class UserRepository implements iUserDatabase {
   }
 
   public async getDevice(id: UUID): Promise<DeviceDTO | null> {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('getDevice');
       const result = await client.query(query, [id]);
@@ -58,7 +63,7 @@ export class UserRepository implements iUserDatabase {
   }
 
   public async insertDevice(device: DeviceDTO): Promise<DeviceDTO> {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('insertDevice');
       const result = await client.query(query, [

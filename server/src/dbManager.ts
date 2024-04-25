@@ -13,6 +13,7 @@ class DBManager {
     }
     this.config = config;
     this.serverLogger = serverLogger;
+    this.serverLogger.info('DBManager instance created');
     DBManager.instance = this;
   }
 

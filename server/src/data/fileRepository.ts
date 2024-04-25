@@ -1,5 +1,6 @@
 import pg from 'pg';
 
+import { DBManager } from '@src/dbManager';
 import { FileDTO } from '@src/dtos/fileDTO';
 import { TaggedFileDTO } from '@src/dtos/taggedFileDTO';
 import { UserDTO } from '@src/dtos/userDTO';
@@ -8,16 +9,20 @@ import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class FileRepository implements iFileDatabase {
-  public pool: pg.Pool;
+  public dbManager: DBManager;
   public sqlManager: SQLManager;
 
-  constructor(pool: pg.Pool, sqlManager: SQLManager) {
-    this.pool = pool;
+  constructor(dbManager: DBManager, sqlManager: SQLManager) {
+    this.dbManager = dbManager;
     this.sqlManager = sqlManager;
   }
 
+  private buildPGPool = (): pg.Pool => {
+    return this.dbManager.getPGPool();
+  };
+
   public getFileByUrl = async (url: string): Promise<FileDTO | null> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('getFileByUrl');
       dataLogger.debug(query);
@@ -40,7 +45,7 @@ export class FileRepository implements iFileDatabase {
     url: string,
     user: UserDTO
   ): Promise<TaggedFileDTO | null> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('getTaggedFileByUrl');
       dataLogger.debug(query);
@@ -62,7 +67,7 @@ export class FileRepository implements iFileDatabase {
   public getTaggedFilesByUser = async (
     user: UserDTO
   ): Promise<Array<TaggedFileDTO>> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('getTaggedFilesByUser');
       dataLogger.debug(query);
@@ -79,7 +84,7 @@ export class FileRepository implements iFileDatabase {
   };
 
   public insertFile = async (file: FileDTO): Promise<FileDTO> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('insertFile');
       const queryResult = await client.query(query, [
@@ -101,7 +106,7 @@ export class FileRepository implements iFileDatabase {
     userId: string,
     fileId: string
   ): Promise<void> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = 'INSERT INTO user_files (user_id, file_id) VALUES ($1, $2)';
       await client.query(query, [userId, fileId]);
@@ -114,7 +119,7 @@ export class FileRepository implements iFileDatabase {
   };
 
   public doesFileExist = async (fileId: string): Promise<boolean> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('doesFileExist');
       dataLogger.debug(query);
@@ -132,7 +137,7 @@ export class FileRepository implements iFileDatabase {
     userId: string,
     fileId: string
   ): Promise<boolean> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('doesUserFileExist');
       dataLogger.debug(query);
@@ -150,7 +155,7 @@ export class FileRepository implements iFileDatabase {
     id: string,
     userId: string
   ): Promise<TaggedFileDTO | null> => {
-    const client = await this.pool.connect();
+    const client = await this.buildPGPool().connect();
     try {
       const query = this.sqlManager.getQuery('getTaggedFile');
       const queryResult = await client.query(query, [id, userId]);
