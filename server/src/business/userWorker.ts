@@ -1,4 +1,5 @@
 import { DeviceDTO } from '@src/dtos/deviceDTO';
+import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
 import { User } from '@src/entities/user';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';
@@ -55,6 +56,14 @@ export class UserWorker {
     let user = await this.getUser(userSub);
     if (!user) {
       user = await this.registerUser(rawToken);
+      try {
+        const priority = TagMappingPriorityDTO.defaultConfiguration(user.id);
+        await this.db.insertDefaultTagMappingPriority(priority);
+      } catch (error) {
+        throw new ProcessingError(
+          'Failed to insert default tag mapping priority'
+        );
+      }
     }
 
     if (await this.db.getDevice(device.id)) {

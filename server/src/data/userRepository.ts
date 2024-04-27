@@ -3,6 +3,7 @@ import pg from 'pg';
 
 import { DBManager } from '@src/dbManager';
 import { DeviceDTO } from '@src/dtos/deviceDTO';
+import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
 import { UserDTO } from '@src/dtos/userDTO';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { SQLManager } from '@src/sqlManager';
@@ -73,6 +74,27 @@ export class UserRepository implements iUserDatabase {
       ]);
 
       return DeviceDTO.fromJSON(result.rows[0]);
+    } finally {
+      client.release();
+    }
+  }
+
+  public async insertDefaultTagMappingPriority(
+    tagMappingPriorityDTO: TagMappingPriorityDTO
+  ): Promise<void> {
+    const client = await this.buildPGPool().connect();
+    try {
+      const query = this.sqlManager.getQuery('insertTagMappingPriority');
+      await client.query(query, [
+        tagMappingPriorityDTO.userId,
+        tagMappingPriorityDTO.source[0],
+        tagMappingPriorityDTO.title[0],
+        tagMappingPriorityDTO.artist[0],
+        tagMappingPriorityDTO.album[0],
+        tagMappingPriorityDTO.picture[0],
+        tagMappingPriorityDTO.year[0],
+        tagMappingPriorityDTO.trackNumber[0],
+      ]);
     } finally {
       client.release();
     }

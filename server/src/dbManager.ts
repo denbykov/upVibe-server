@@ -18,7 +18,6 @@ class DBManager {
   }
 
   public getPGPool = () => {
-    this.serverLogger.info('Creating a new PG pool');
     return new pg.Pool({
       user: this.config.dbUser,
       host: this.config.dbHost,

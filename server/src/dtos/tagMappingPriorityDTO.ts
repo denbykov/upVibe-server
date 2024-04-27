@@ -44,6 +44,21 @@ class TagMappingPriorityDTO {
       jsons.map((json) => json.tag_mapping_priority_track_number.toString())
     );
   }
+
+  public static defaultConfiguration = (
+    userId: string
+  ): TagMappingPriorityDTO => {
+    return new TagMappingPriorityDTO(
+      userId,
+      ['1'],
+      ['1'],
+      ['1'],
+      ['1'],
+      ['1'],
+      ['1'],
+      ['1']
+    );
+  };
 }
 
 export { TagMappingPriorityDTO };
