@@ -41,5 +41,6 @@
     "enable": true
   },
   "editor.suggestSelection": "first",
-  "vsintellicode.typescript.completionsEnabled": true
+  "vsintellicode.typescript.completionsEnabled": true,
+  "git.autofetch": "all"
 }
