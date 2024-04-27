@@ -15,7 +15,7 @@ import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
 import { BaseRoute } from './baseRoute';
-import { GENERAL } from './permissions';
+import { DEBUG, GENERAL } from './permissions';
 
 export class APIRoute extends BaseRoute {
   constructor(
@@ -93,7 +93,9 @@ export class APIRoute extends BaseRoute {
     this.app.get(
       `${apiURI}/auth-test`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.authTest
     );
 

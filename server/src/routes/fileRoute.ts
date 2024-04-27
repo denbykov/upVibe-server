@@ -10,7 +10,7 @@ import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
 import { BaseRoute } from './baseRoute';
-import { GENERAL } from './permissions';
+import { DEBUG, GENERAL } from './permissions';
 
 export class FileRoute extends BaseRoute {
   constructor(
@@ -39,21 +39,27 @@ export class FileRoute extends BaseRoute {
     this.app.post(
       `${filesURI}`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.downloadFileBySource
     );
 
     this.app.get(
       `${filesURI}`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.getFilesByUser
     );
 
     this.app.get(
       `${filesURI}/:fileId`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.getTaggedFile
     );
 

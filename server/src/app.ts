@@ -3,7 +3,7 @@ import express, { Express } from 'express';
 import fs from 'fs';
 import https from 'https';
 
-import { DBManager, DBPool } from '@src/dbManager';
+import { DBManager } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import {
   auth0ErrorHandlingMiddleware,
@@ -118,6 +118,10 @@ export class App {
       serverLogger.error('appPort and appHost are not defined');
       throw new Error('appPort and appHost are not defined');
     }
+    serverLogger.info(
+      'Mode of operation: %s',
+      this.config.appDebug ? 'DEBUG' : 'PRODUCTION'
+    );
     if (this.config.appUseHttps) {
       const httpsOptions = {
         key: fs.readFileSync(this.config.appHttpsKey),

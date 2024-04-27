@@ -6,6 +6,7 @@ import { UserInfoAgent, UserRepository } from '@src/data';
 import { DBPool } from '@src/dbManager';
 import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { Config } from '@src/entities/config';
+import { DEBUG } from '@src/routes/permissions';
 import { SQLManager } from '@src/sqlManager';
 import { APP_VERSION } from '@src/version';
 
@@ -75,6 +76,13 @@ class APIController extends BaseController {
     next: Express.NextFunction
   ) => {
     try {
+      if (this.config.appDebug) {
+        const userWorker = this.buildUserWorker();
+        await userWorker.handleRegistrationDebug([DEBUG]);
+        return response.status(200).json({
+          message: 'Device registered!',
+        });
+      }
       const rawToken = request.headers.authorization!.split(' ')[1];
       const encodedTokenPayload = rawToken.split('.')[1];
       const tokenPayload: JSON.JSONObject = JSON.parse(

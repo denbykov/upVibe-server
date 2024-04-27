@@ -7,6 +7,7 @@ export class Config {
   public appPathStorage: string = '';
   public appPluginsLocation: string = '';
   public appPluginsConfigLocation: string = '';
+  public appDebug: boolean = false;
   public auth0Audience: string = '';
   public auth0Domain: string = '';
   public rabbitMQHost: string = '';
@@ -51,6 +52,10 @@ export class Config {
       process.env.APP_PLUGINS_CONFIG_LOCATION ||
       configEnv.APP_PLUGINS_CONFIG_LOCATION ||
       configJson.APP_PLUGINS_CONFIG_LOCATION;
+    this.appDebug =
+      process.env.APP_DEBUG === 'true' ||
+      configEnv.APP_DEBUG === 'true' ||
+      configJson.APP_DEBUG;
     this.auth0Audience =
       process.env.AUTH0_AUDIENCE ||
       configEnv.AUTH0_AUDIENCE ||

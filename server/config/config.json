@@ -8,7 +8,8 @@
     "https_cert": "config/ssl/certificate.pem",
     "storage_path": "/opt/upVibe/storage",
     "plugins_location": "plugins",
-    "plugins_config_location": "config/plugins.json"
+    "plugins_config_location": "config/plugins.json",
+    "debug": false
   },
   "API": {
     "uri": "up-vibe",

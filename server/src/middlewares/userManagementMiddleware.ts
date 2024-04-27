@@ -1,13 +1,28 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { UserWorker } from '@src/business/userWorker';
+import { Config } from '@src/entities/config';
 
 const userManagementMiddleware = (
   permissions: Array<string>,
-  worker: UserWorker
+  worker: UserWorker,
+  config: Config
 ) => {
   return async (request: Request, response: Response, next: NextFunction) => {
     try {
+      if (config.appDebug) {
+        const debugToken = {
+          sub: 'debug',
+          permissions: permissions,
+        };
+        const dbUser = await worker.handleAuthorization(
+          debugToken,
+          permissions
+        );
+        request.body.user = dbUser;
+        next();
+        return;
+      }
       const rawToken = request.headers.authorization!.split(' ')[1];
       const encodedTokenPayload = rawToken.split('.')[1];
       const tokenPayload: JSON.JSONObject = JSON.parse(

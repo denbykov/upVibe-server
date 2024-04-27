@@ -11,7 +11,7 @@ import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
 import { BaseRoute } from './baseRoute';
-import { GENERAL } from './permissions';
+import { DEBUG, GENERAL } from './permissions';
 
 export class TagMappingRoute extends BaseRoute {
   constructor(
@@ -43,14 +43,18 @@ export class TagMappingRoute extends BaseRoute {
     this.app.get(
       `${tagsURI}/tag-mapping-priority`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.getTagMappingPriority
     );
 
     this.app.put(
       `${tagsURI}/tag-mapping-priority`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.updateTagMappingPriority
     );
 
