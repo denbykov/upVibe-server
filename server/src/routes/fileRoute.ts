@@ -3,7 +3,7 @@ import express from 'express';
 import { UserWorker } from '@src/business/userWorker';
 import { FileController } from '@src/controllers';
 import { UserInfoAgent, UserRepository } from '@src/data';
-import { DBManager } from '@src/dbManager';
+import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
@@ -16,23 +16,23 @@ export class FileRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    dbManager: DBManager,
+    dbPool: DBPool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'FileRoute', config, dbManager, sqlManager, pluginManager);
+    super(app, 'FileRoute', config, dbPool, sqlManager, pluginManager);
   }
   configureRoutes() {
     const controller: FileController = new FileController(
       this.config,
-      this.dbManager,
+      this.dbPool,
       this.sqlManager,
       this.pluginManager
     );
 
     const filesURI = `/up-vibe/v1/files`;
     const userWorker = new UserWorker(
-      new UserRepository(this.dbManager, this.sqlManager),
+      new UserRepository(this.dbPool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 

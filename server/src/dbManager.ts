@@ -3,6 +3,8 @@ import pg from 'pg';
 
 import { Config } from '@src/entities/config';
 
+type DBPool = pg.Pool;
+
 class DBManager {
   private static instance: DBManager;
   private config!: Config;
@@ -17,7 +19,7 @@ class DBManager {
     DBManager.instance = this;
   }
 
-  public getPGPool = () => {
+  public createPGPool = (): pg.Pool => {
     return new pg.Pool({
       user: this.config.dbUser,
       host: this.config.dbHost,
@@ -29,4 +31,4 @@ class DBManager {
   };
 }
 
-export { DBManager };
+export { DBManager, DBPool };

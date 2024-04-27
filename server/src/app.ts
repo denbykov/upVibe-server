@@ -3,7 +3,7 @@ import express, { Express } from 'express';
 import fs from 'fs';
 import https from 'https';
 
-import { DBManager } from '@src/dbManager';
+import { DBManager, DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import {
   auth0ErrorHandlingMiddleware,
@@ -62,16 +62,17 @@ export class App {
 
     this.app.use(requestLoggerMiddleware);
     this.app.use(express.json());
+    const dbPGPool = this.dbManager.createPGPool();
 
     this.routes.push(
-      new APIRoute(this.app, this.config, this.dbManager, this.sqlManager)
+      new APIRoute(this.app, this.config, dbPGPool, this.sqlManager)
     );
 
     this.routes.push(
       new FileRoute(
         this.app,
         this.config,
-        this.dbManager,
+        dbPGPool,
         this.sqlManager,
         this.pluginManager
       )
@@ -81,7 +82,7 @@ export class App {
       new TagRoute(
         this.app,
         this.config,
-        this.dbManager,
+        dbPGPool,
         this.sqlManager,
         this.pluginManager
       )
@@ -91,7 +92,7 @@ export class App {
       new SourceRoute(
         this.app,
         this.config,
-        this.dbManager,
+        dbPGPool,
         this.sqlManager,
         this.pluginManager
       )
@@ -101,7 +102,7 @@ export class App {
       new TagMappingRoute(
         this.app,
         this.config,
-        this.dbManager,
+        dbPGPool,
         this.sqlManager,
         this.pluginManager
       )

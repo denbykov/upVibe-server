@@ -2,7 +2,7 @@ import Express from 'express';
 
 import { TagMappingWorker } from '@src/business/tagMappingWorker';
 import { TagMappingRepository } from '@src/data';
-import { DBManager } from '@src/dbManager';
+import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { TagMapping } from '@src/entities/tagMapping';
 import { TagMappingPriority } from '@src/entities/tagMappingPriority';
@@ -14,16 +14,16 @@ import { BaseController } from './baseController';
 class TagMappingController extends BaseController {
   constructor(
     config: Config,
-    dbManager: DBManager,
+    dbPool: DBPool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(config, dbManager, sqlManager, pluginManager);
+    super(config, dbPool, sqlManager, pluginManager);
   }
 
   private buildTagMappingWorker = (): TagMappingWorker => {
     return new TagMappingWorker(
-      new TagMappingRepository(this.dbManager, this.sqlManager)
+      new TagMappingRepository(this.dbPool, this.sqlManager)
     );
   };
 

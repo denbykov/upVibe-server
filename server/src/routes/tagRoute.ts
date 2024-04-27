@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { TagController } from '@src/controllers';
-import { DBManager } from '@src/dbManager';
+import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import auth0Middleware from '@src/middlewares/auth0Middleware';
 import { PluginManager } from '@src/pluginManager';
@@ -13,17 +13,17 @@ export class TagRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    dbManager: DBManager,
+    dbPool: DBPool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'TagRoute', config, dbManager, sqlManager, pluginManager);
+    super(app, 'TagRoute', config, dbPool, sqlManager, pluginManager);
   }
 
   configureRoutes() {
     const controller: TagController = new TagController(
       this.config,
-      this.dbManager,
+      this.dbPool,
       this.sqlManager,
       this.pluginManager
     );

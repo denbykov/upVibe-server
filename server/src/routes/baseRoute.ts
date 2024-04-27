@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { DBManager } from '@src/dbManager';
+import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -9,7 +9,7 @@ export abstract class BaseRoute {
   app: express.Application;
   name: string;
   config: Config;
-  dbManager: DBManager;
+  dbPool: DBPool;
   sqlManager: SQLManager;
   pluginManager?: PluginManager;
 
@@ -17,14 +17,14 @@ export abstract class BaseRoute {
     app: express.Application,
     name: string,
     config: Config,
-    dbManager: DBManager,
+    dbPool: DBPool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
     this.app = app;
     this.name = name;
     this.config = config;
-    this.dbManager = dbManager;
+    this.dbPool = dbPool;
     this.sqlManager = sqlManager;
     this.pluginManager = pluginManager;
     this.configureRoutes();

@@ -1,6 +1,4 @@
-import pg from 'pg';
-
-import { DBManager } from '@src/dbManager';
+import { DBPool } from '@src/dbManager';
 import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
@@ -8,20 +6,16 @@ import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class TagMappingRepository implements iTagMappingDatabase {
-  public dbManager: DBManager;
+  public dbPool: DBPool;
   public sqlManager: SQLManager;
 
-  constructor(dbManager: DBManager, sqlManager: SQLManager) {
-    this.dbManager = dbManager;
+  constructor(dbPool: DBPool, sqlManager: SQLManager) {
+    this.dbPool = dbPool;
     this.sqlManager = sqlManager;
   }
 
-  private buildPGPool = (): pg.Pool => {
-    return this.dbManager.getPGPool();
-  };
-
   public getTagMapping = async (fileId: string): Promise<TagMappingDTO> => {
-    const client = await this.buildPGPool().connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagMapping');
       dataLogger.debug(query);
@@ -39,7 +33,7 @@ export class TagMappingRepository implements iTagMappingDatabase {
     tagMapping: TagMappingDTO,
     fileId: string
   ): Promise<TagMappingDTO> => {
-    const client = await this.buildPGPool().connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('updateTagMapping');
       dataLogger.debug(query);
@@ -64,7 +58,7 @@ export class TagMappingRepository implements iTagMappingDatabase {
   public getTagMappingPriority = async (
     userId: string
   ): Promise<TagMappingPriorityDTO | null> => {
-    const client = await this.buildPGPool().connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagMappingPriority');
       dataLogger.debug(query);
@@ -84,7 +78,7 @@ export class TagMappingRepository implements iTagMappingDatabase {
   public updateTagMappingPriority = async (
     tagMappingPriority: TagMappingPriorityDTO
   ): Promise<TagMappingPriorityDTO> => {
-    const client = await this.buildPGPool().connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('updateTagMappingPriority');
       dataLogger.debug(query);

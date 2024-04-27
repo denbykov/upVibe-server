@@ -8,7 +8,7 @@ import YAML from 'yaml';
 import { UserWorker } from '@src/business/userWorker';
 import { APIController } from '@src/controllers';
 import { UserInfoAgent, UserRepository } from '@src/data';
-import { DBManager } from '@src/dbManager';
+import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
@@ -21,22 +21,22 @@ export class APIRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    dbManager: DBManager,
+    dbPool: DBPool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'APIRoute', config, dbManager, sqlManager, pluginManager);
+    super(app, 'APIRoute', config, dbPool, sqlManager, pluginManager);
   }
 
   configureRoutes() {
     const controller: APIController = new APIController(
       this.config,
-      this.dbManager,
+      this.dbPool,
       this.sqlManager
     );
     const apiURI = `/up-vibe/v1`;
     const userWorker = new UserWorker(
-      new UserRepository(this.dbManager, this.sqlManager),
+      new UserRepository(this.dbPool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 

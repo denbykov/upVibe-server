@@ -3,7 +3,7 @@ import express from 'express';
 import { UserWorker } from '@src/business/userWorker';
 import { TagMappingController } from '@src/controllers';
 import { UserInfoAgent, UserRepository } from '@src/data';
-import { DBManager } from '@src/dbManager';
+import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { userManagementMiddleware } from '@src/middlewares';
 import auth0Middleware from '@src/middlewares/auth0Middleware';
@@ -17,17 +17,17 @@ export class TagMappingRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    dbManager: DBManager,
+    dbPool: DBPool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'TagMappingRoute', config, dbManager, sqlManager, pluginManager);
+    super(app, 'TagMappingRoute', config, dbPool, sqlManager, pluginManager);
   }
 
   configureRoutes() {
     const controller: TagMappingController = new TagMappingController(
       this.config,
-      this.dbManager,
+      this.dbPool,
       this.sqlManager,
       this.pluginManager
     );
@@ -36,7 +36,7 @@ export class TagMappingRoute extends BaseRoute {
     const tagsURI = `/up-vibe/v1/tags`;
 
     const userWorker = new UserWorker(
-      new UserRepository(this.dbManager, this.sqlManager),
+      new UserRepository(this.dbPool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 

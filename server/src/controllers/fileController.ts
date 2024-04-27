@@ -2,7 +2,7 @@ import Express from 'express';
 
 import { FileWorker } from '@src/business/fileWorker';
 import { FileRepository, SourceRepository, TagRepository } from '@src/data';
-import { DBManager } from '@src/dbManager';
+import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -12,18 +12,18 @@ import { BaseController } from './baseController';
 class FileController extends BaseController {
   constructor(
     config: Config,
-    dbManager: DBManager,
+    dbPool: DBPool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(config, dbManager, sqlManager, pluginManager);
+    super(config, dbPool, sqlManager, pluginManager);
   }
 
   private buildFileWorker = (): FileWorker => {
     return new FileWorker(
-      new FileRepository(this.dbManager, this.sqlManager),
-      new SourceRepository(this.dbManager, this.sqlManager),
-      new TagRepository(this.dbManager, this.sqlManager),
+      new FileRepository(this.dbPool, this.sqlManager),
+      new SourceRepository(this.dbPool, this.sqlManager),
+      new TagRepository(this.dbPool, this.sqlManager),
       this.pluginManager!.getFilePlugin(),
       this.pluginManager!.getTagPlugin()
     );
