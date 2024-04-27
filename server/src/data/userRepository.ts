@@ -80,16 +80,18 @@ export class UserRepository implements iUserDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('insertTagMappingPriority');
-      await client.query(query, [
-        tagMappingPriorityDTO.userId,
-        tagMappingPriorityDTO.source[0],
-        tagMappingPriorityDTO.title[0],
-        tagMappingPriorityDTO.artist[0],
-        tagMappingPriorityDTO.album[0],
-        tagMappingPriorityDTO.picture[0],
-        tagMappingPriorityDTO.year[0],
-        tagMappingPriorityDTO.trackNumber[0],
-      ]);
+      for (let i = 0; i < tagMappingPriorityDTO.source.length; i++) {
+        await client.query(query, [
+          tagMappingPriorityDTO.userId,
+          tagMappingPriorityDTO.source[i],
+          tagMappingPriorityDTO.title[i],
+          tagMappingPriorityDTO.artist[i],
+          tagMappingPriorityDTO.album[i],
+          tagMappingPriorityDTO.picture[i],
+          tagMappingPriorityDTO.year[i],
+          tagMappingPriorityDTO.trackNumber[i],
+        ]);
+      }
     } finally {
       client.release();
     }

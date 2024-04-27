@@ -15,6 +15,15 @@
     "uri": "up-vibe",
     "version": "v1"
   },
+  "TAG_MAPPING_PRIORITY": {
+    "source": ["1"],
+    "title": ["1"],
+    "artist": ["1"],
+    "album": ["1"],
+    "picture": ["1"],
+    "year": ["1"],
+    "track_number": ["1"]
+  },
   "AUTH0": {
     "audience": "volodymyr-test-null",
     "domain": "up-vibe.eu.auth0.com"

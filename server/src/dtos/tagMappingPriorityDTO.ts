@@ -1,3 +1,5 @@
+import { Config } from '@src/entities/config';
+
 class TagMappingPriorityDTO {
   public userId: string;
   public source: string[];
@@ -46,17 +48,18 @@ class TagMappingPriorityDTO {
   }
 
   public static defaultConfiguration = (
-    userId: string
+    userId: string,
+    config: Config
   ): TagMappingPriorityDTO => {
     return new TagMappingPriorityDTO(
       userId,
-      ['1'],
-      ['1'],
-      ['1'],
-      ['1'],
-      ['1'],
-      ['1'],
-      ['1']
+      config.tagMappingPriority.source,
+      config.tagMappingPriority.title,
+      config.tagMappingPriority.artist,
+      config.tagMappingPriority.album,
+      config.tagMappingPriority.picture,
+      config.tagMappingPriority.year,
+      config.tagMappingPriority.trackNumber
     );
   };
 }

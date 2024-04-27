@@ -1,6 +1,7 @@
 import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
 import { UserDTO } from '@src/dtos/userDTO';
+import { Config } from '@src/entities/config';
 import { User } from '@src/entities/user';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';
@@ -54,7 +55,8 @@ export class UserWorker {
   };
 
   public handleRegistrationDebug = async (
-    permissions: Array<string>
+    permissions: Array<string>,
+    config: Config
   ): Promise<void> => {
     const debugToken = {
       sub: 'debug',
@@ -67,7 +69,10 @@ export class UserWorker {
       const debugTokenDTO = new UserDTO('0', debugToken.sub, 'debug');
       user = await this.registerUserDebug(debugTokenDTO);
       try {
-        const priority = TagMappingPriorityDTO.defaultConfiguration(user.id);
+        const priority = TagMappingPriorityDTO.defaultConfiguration(
+          user.id,
+          config
+        );
         await this.db.insertDefaultTagMappingPriority(priority);
       } catch (error) {
         throw new ProcessingError(
@@ -87,13 +92,17 @@ export class UserWorker {
   public handleRegistration = async (
     rawToken: string,
     userSub: string,
-    device: DeviceDTO
+    device: DeviceDTO,
+    config: Config
   ): Promise<void> => {
     let user = await this.getUser(userSub);
     if (!user) {
       user = await this.registerUser(rawToken);
       try {
-        const priority = TagMappingPriorityDTO.defaultConfiguration(user.id);
+        const priority = TagMappingPriorityDTO.defaultConfiguration(
+          user.id,
+          config
+        );
         await this.db.insertDefaultTagMappingPriority(priority);
       } catch (error) {
         throw new ProcessingError(

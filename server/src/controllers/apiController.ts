@@ -78,7 +78,7 @@ class APIController extends BaseController {
     try {
       if (this.config.appDebug) {
         const userWorker = this.buildUserWorker();
-        await userWorker.handleRegistrationDebug([DEBUG]);
+        await userWorker.handleRegistrationDebug([DEBUG], this.config);
         return response.status(200).json({
           message: 'Device registered!',
         });
@@ -92,7 +92,8 @@ class APIController extends BaseController {
       await userWorker.handleRegistration(
         rawToken,
         tokenPayload.sub,
-        DeviceDTO.fromRequestJSON(request.body)
+        DeviceDTO.fromRequestJSON(request.body),
+        this.config
       );
       return response.status(200).json({
         message: 'Device registered!',
