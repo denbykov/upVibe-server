@@ -18,6 +18,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - /opt/upVibe/postgresql/data:/var/lib/postgresql/data
     networks:
       - up-vibe-network
     container_name: postgresql
