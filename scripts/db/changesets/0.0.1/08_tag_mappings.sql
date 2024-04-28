@@ -11,6 +11,7 @@ CREATE TABLE tag_mappings (
     picture INT NOT NULL,
     year INT NOT NULL,
     track_number INT NOT NULL,
+    fixed BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_tag_mappings PRIMARY KEY (id, user_id),
     CONSTRAINT fk_user_id_tag_mappings FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_file_id_tag_mappings FOREIGN KEY (file_id) REFERENCES files(id),

@@ -13,6 +13,6 @@ This page describes the public.tag_mapping_priorities table
 | title | SMALLINT | NOT NULL |
 | artist | SMALLINT | NOT NULL |
 | album | SMALLINT | NOT NULL |
-| picture_id | SMALLINT | NOT NULL |
+| picture | SMALLINT | NOT NULL |
 | year | SMALLINT | NOT NULL |
 | track_number | SMALLINT | NOT NULL |

@@ -6,18 +6,18 @@ import { SQLManager } from '@src/sqlManager';
 
 class BaseController {
   public config: Config;
-  public databasePool: pg.Pool;
+  public dbPool: pg.Pool;
   public sqlManager: SQLManager;
   public pluginManager?: PluginManager;
 
   constructor(
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
     this.config = config;
-    this.databasePool = databasePool;
+    this.dbPool = dbPool;
     this.sqlManager = sqlManager;
     this.pluginManager = pluginManager;
   }

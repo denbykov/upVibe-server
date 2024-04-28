@@ -1,0 +1,33 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../server"
+		},
+    {
+      "path": "../scripts"
+    }
+	],
+	"settings": {
+		"SQL-Formatter-VSCode.dialect": "postgresql",
+		"json.schemaDownload.enable": true,
+		"path-intellisense.mappings": {
+			"@src/*": "${workspaceRoot}/server/src/*"
+		},
+		"path-intellisense.extensionOnImport": true,
+		"path-intellisense.showHiddenFiles": true,
+		"vsintellicode.typescript.completionsEnabled": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "jest.rootPath": "../server",
+    "jest.runMode": {
+        "type": "on-demand",
+        "watch": false
+    },
+	}
+}

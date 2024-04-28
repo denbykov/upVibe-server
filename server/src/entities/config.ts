@@ -1,3 +1,13 @@
+interface TagMappingPriorityModel {
+  source: string[];
+  title: string[];
+  artist: string[];
+  album: string[];
+  picture: string[];
+  year: string[];
+  trackNumber: string[];
+}
+
 export class Config {
   public appPort: number = 0;
   public appHost: string = '';
@@ -7,6 +17,16 @@ export class Config {
   public appPathStorage: string = '';
   public appPluginsLocation: string = '';
   public appPluginsConfigLocation: string = '';
+  public appDebug: boolean = false;
+  public tagMappingPriority: TagMappingPriorityModel = {
+    source: ['1'],
+    title: ['1'],
+    artist: ['1'],
+    album: ['1'],
+    picture: ['1'],
+    year: ['1'],
+    trackNumber: ['1'],
+  };
   public auth0Audience: string = '';
   public auth0Domain: string = '';
   public rabbitMQHost: string = '';
@@ -51,6 +71,40 @@ export class Config {
       process.env.APP_PLUGINS_CONFIG_LOCATION ||
       configEnv.APP_PLUGINS_CONFIG_LOCATION ||
       configJson.APP_PLUGINS_CONFIG_LOCATION;
+    this.appDebug =
+      process.env.APP_DEBUG === 'true' ||
+      configEnv.APP_DEBUG === 'true' ||
+      configJson.APP_DEBUG;
+    this.tagMappingPriority = {
+      source:
+        process.env.TAG_MAPPING_PRIORITY_SOURCE ||
+        configEnv.TAG_MAPPING_PRIORITY_SOURCE ||
+        configJson.TAG_MAPPING_PRIORITY_SOURCE,
+      title:
+        process.env.TAG_MAPPING_PRIORITY_TITLE ||
+        configEnv.TAG_MAPPING_PRIORITY_TITLE ||
+        configJson.TAG_MAPPING_PRIORITY_TITLE,
+      artist:
+        process.env.TAG_MAPPING_PRIORITY_ARTIST ||
+        configEnv.TAG_MAPPING_PRIORITY_ARTIST ||
+        configJson.TAG_MAPPING_PRIORITY_ARTIST,
+      album:
+        process.env.TAG_MAPPING_PRIORITY_ALBUM ||
+        configEnv.TAG_MAPPING_PRIORITY_ALBUM ||
+        configJson.TAG_MAPPING_PRIORITY_ALBUM,
+      picture:
+        process.env.TAG_MAPPING_PRIORITY_PICTURE ||
+        configEnv.TAG_MAPPING_PRIORITY_PICTURE ||
+        configJson.TAG_MAPPING_PRIORITY_PICTURE,
+      year:
+        process.env.TAG_MAPPING_PRIORITY_YEAR ||
+        configEnv.TAG_MAPPING_PRIORITY_YEAR ||
+        configJson.TAG_MAPPING_PRIORITY_YEAR,
+      trackNumber:
+        process.env.TAG_MAPPING_PRIORITY_TRACK_NUMBER ||
+        configEnv.TAG_MAPPING_PRIORITY_TRACK_NUMBER ||
+        configJson.TAG_MAPPING_PRIORITY_TRACK_NUMBER,
+    };
     this.auth0Audience =
       process.env.AUTH0_AUDIENCE ||
       configEnv.AUTH0_AUDIENCE ||

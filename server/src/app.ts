@@ -27,8 +27,8 @@ import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
 export class App {
   private readonly app: Express;
   private routes: Array<BaseRoute> = [];
-  protected pool: pg.Pool;
   private config: Config;
+  private dbPool: pg.Pool;
   private sqlManager: SQLManager;
   private pluginManager: PluginManager;
 
@@ -39,14 +39,7 @@ export class App {
       JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
     );
     this.config = new Config(env, configJson);
-    this.pool = new pg.Pool({
-      user: this.config.dbUser,
-      host: this.config.dbHost,
-      database: this.config.dbName,
-      port: this.config.dbPort,
-      password: this.config.dbPassword,
-      max: this.config.dbMax,
-    });
+    this.dbPool = this.createPGPool(this.config);
     this.sqlManager = new SQLManager(dataLogger, serverLogger);
     this.pluginManager = new PluginManager(
       this.config,
@@ -63,6 +56,17 @@ export class App {
     return this.routes;
   }
 
+  private createPGPool = (config: Config): pg.Pool => {
+    return new pg.Pool({
+      user: config.dbUser,
+      host: config.dbHost,
+      database: config.dbName,
+      port: config.dbPort,
+      password: config.dbPassword,
+      max: config.dbMax,
+    });
+  };
+
   public init = async () => {
     await this.pluginManager.setUp();
     this.sqlManager.setUp();
@@ -71,14 +75,14 @@ export class App {
     this.app.use(express.json());
 
     this.routes.push(
-      new APIRoute(this.app, this.config, this.pool, this.sqlManager)
+      new APIRoute(this.app, this.config, this.dbPool, this.sqlManager)
     );
 
     this.routes.push(
       new FileRoute(
         this.app,
         this.config,
-        this.pool,
+        this.dbPool,
         this.sqlManager,
         this.pluginManager
       )
@@ -88,7 +92,7 @@ export class App {
       new TagRoute(
         this.app,
         this.config,
-        this.pool,
+        this.dbPool,
         this.sqlManager,
         this.pluginManager
       )
@@ -98,7 +102,7 @@ export class App {
       new SourceRoute(
         this.app,
         this.config,
-        this.pool,
+        this.dbPool,
         this.sqlManager,
         this.pluginManager
       )
@@ -108,7 +112,7 @@ export class App {
       new TagMappingRoute(
         this.app,
         this.config,
-        this.pool,
+        this.dbPool,
         this.sqlManager,
         this.pluginManager
       )
@@ -124,6 +128,10 @@ export class App {
       serverLogger.error('appPort and appHost are not defined');
       throw new Error('appPort and appHost are not defined');
     }
+    serverLogger.info(
+      'Mode of operation: %s',
+      this.config.appDebug ? 'DEBUG' : 'PRODUCTION'
+    );
     if (this.config.appUseHttps) {
       const httpsOptions = {
         key: fs.readFileSync(this.config.appHttpsKey),

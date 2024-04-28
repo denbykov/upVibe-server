@@ -12,18 +12,18 @@ import { BaseController } from './baseController';
 class FileController extends BaseController {
   constructor(
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(config, databasePool, sqlManager, pluginManager);
+    super(config, dbPool, sqlManager, pluginManager);
   }
 
   private buildFileWorker = (): FileWorker => {
     return new FileWorker(
-      new FileRepository(this.databasePool, this.sqlManager),
-      new SourceRepository(this.databasePool, this.sqlManager),
-      new TagRepository(this.databasePool, this.sqlManager),
+      new FileRepository(this.dbPool, this.sqlManager),
+      new SourceRepository(this.dbPool, this.sqlManager),
+      new TagRepository(this.dbPool, this.sqlManager),
       this.pluginManager!.getFilePlugin(),
       this.pluginManager!.getTagPlugin()
     );

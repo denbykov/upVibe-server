@@ -14,16 +14,16 @@ import { BaseController } from './baseController';
 class TagMappingController extends BaseController {
   constructor(
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(config, databasePool, sqlManager, pluginManager);
+    super(config, dbPool, sqlManager, pluginManager);
   }
 
   private buildTagMappingWorker = (): TagMappingWorker => {
     return new TagMappingWorker(
-      new TagMappingRepository(this.databasePool, this.sqlManager)
+      new TagMappingRepository(this.dbPool, this.sqlManager)
     );
   };
 
