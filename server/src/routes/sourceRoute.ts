@@ -13,17 +13,17 @@ export class SourceRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'SourceRoute', config, databasePool, sqlManager, pluginManager);
+    super(app, 'SourceRoute', config, dbPool, sqlManager, pluginManager);
   }
 
   configureRoutes() {
     const controller: SourceController = new SourceController(
       this.config,
-      this.databasePool,
+      this.dbPool,
       this.sqlManager,
       this.pluginManager
     );

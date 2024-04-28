@@ -12,17 +12,15 @@ import { BaseController } from './baseController';
 class SourceController extends BaseController {
   constructor(
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(config, databasePool, sqlManager, pluginManager);
+    super(config, dbPool, sqlManager, pluginManager);
   }
 
   private buildWorker = (): SourceWorker => {
-    return new SourceWorker(
-      new SourceRepository(this.databasePool, this.sqlManager)
-    );
+    return new SourceWorker(new SourceRepository(this.dbPool, this.sqlManager));
   };
 
   public getSources = async (

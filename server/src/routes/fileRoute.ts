@@ -10,50 +10,56 @@ import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
 import { BaseRoute } from './baseRoute';
-import { GENERAL } from './permissions';
+import { DEBUG, GENERAL } from './permissions';
 
 export class FileRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'FileRoute', config, databasePool, sqlManager, pluginManager);
+    super(app, 'FileRoute', config, dbPool, sqlManager, pluginManager);
   }
   configureRoutes() {
     const controller: FileController = new FileController(
       this.config,
-      this.databasePool,
+      this.dbPool,
       this.sqlManager,
       this.pluginManager
     );
 
     const filesURI = `/up-vibe/v1/files`;
     const userWorker = new UserWorker(
-      new UserRepository(this.databasePool, this.sqlManager),
+      new UserRepository(this.dbPool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 
     this.app.post(
       `${filesURI}`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.downloadFileBySource
     );
 
     this.app.get(
       `${filesURI}`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.getFilesByUser
     );
 
     this.app.get(
       `${filesURI}/:fileId`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.getTaggedFile
     );
 

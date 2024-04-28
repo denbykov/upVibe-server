@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 import { ProcessingError } from '@src/business/processingError';
 import { UserWorker } from '@src/business/userWorker';
 import { DeviceDTO } from '@src/dtos/deviceDTO';
+import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
 import { UserDTO } from '@src/dtos/userDTO';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';
@@ -19,6 +20,7 @@ describe('UserWorker', () => {
       insertUser: jest.fn(),
       insertDevice: jest.fn(),
       getDevice: jest.fn(),
+      insertDefaultTagMappingPriority: jest.fn(),
     } as unknown as iUserDatabase;
 
     mockUserInfoAgent = {
@@ -125,6 +127,9 @@ describe('UserWorker', () => {
       const userSub = 'test';
       const device = new DeviceDTO(randomUUID(), '1', 'test');
       const user = new UserDTO('1', 'test', 'test');
+      const mappingPriority = TagMappingPriorityDTO.defaultConfiguration(
+        user.id
+      );
       const spyGetUser = jest
         .spyOn(userWorker, 'getUser')
         .mockResolvedValue(null);
@@ -137,11 +142,15 @@ describe('UserWorker', () => {
       const spyRegisterDevice = jest
         .spyOn(userWorker, 'registerDevice')
         .mockResolvedValue(device);
+      const spyMappingPriority = jest
+        .spyOn(mockUserDatabase, 'insertDefaultTagMappingPriority')
+        .mockResolvedValue();
       await userWorker.handleRegistration(rawToken, userSub, device);
       expect(spyGetUser).toHaveBeenCalledWith(userSub);
       expect(spyRegisterUser).toHaveBeenCalledWith(rawToken);
       expect(spyGetDevice).toHaveBeenCalledWith(device.id);
       expect(spyRegisterDevice).toHaveBeenCalledWith(device);
+      expect(spyMappingPriority).toHaveBeenCalledWith(mappingPriority);
     });
     it('should throw an error if the device is already registered', async () => {
       const rawToken =

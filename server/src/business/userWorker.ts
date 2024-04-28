@@ -1,4 +1,7 @@
 import { DeviceDTO } from '@src/dtos/deviceDTO';
+import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
+import { UserDTO } from '@src/dtos/userDTO';
+import { Config } from '@src/entities/config';
 import { User } from '@src/entities/user';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';
@@ -43,18 +46,69 @@ export class UserWorker {
     return await this.db.insertUser(user!);
   };
 
+  public registerUserDebug = async (debugToken: UserDTO): Promise<User> => {
+    return await this.db.insertUser(debugToken);
+  };
+
   public registerDevice = async (device: DeviceDTO): Promise<DeviceDTO> => {
     return await this.db.insertDevice(device);
+  };
+
+  public handleRegistrationDebug = async (
+    permissions: Array<string>,
+    config: Config
+  ): Promise<void> => {
+    const debugToken = {
+      sub: 'debug',
+      permissions: permissions,
+    };
+    const deviceUUID = 'ee7db5b1-d569-40f1-bda0-76d970b3b348';
+    const device = new DeviceDTO(deviceUUID, 'debug', 'debug');
+    let user = await this.getUser(debugToken.sub);
+    if (!user) {
+      const debugTokenDTO = new UserDTO('0', debugToken.sub, 'debug');
+      user = await this.registerUserDebug(debugTokenDTO);
+      try {
+        const priority = TagMappingPriorityDTO.defaultConfiguration(
+          user.id,
+          config
+        );
+        await this.db.insertDefaultTagMappingPriority(priority);
+      } catch (error) {
+        throw new ProcessingError(
+          'Failed to insert default tag mapping priority'
+        );
+      }
+    }
+
+    if (await this.db.getDevice(device.id)) {
+      throw new ProcessingError('Device is already registered');
+    }
+
+    device.user_id = user.id;
+    await this.registerDevice(device);
   };
 
   public handleRegistration = async (
     rawToken: string,
     userSub: string,
-    device: DeviceDTO
+    device: DeviceDTO,
+    config: Config
   ): Promise<void> => {
     let user = await this.getUser(userSub);
     if (!user) {
       user = await this.registerUser(rawToken);
+      try {
+        const priority = TagMappingPriorityDTO.defaultConfiguration(
+          user.id,
+          config
+        );
+        await this.db.insertDefaultTagMappingPriority(priority);
+      } catch (error) {
+        throw new ProcessingError(
+          'Failed to insert default tag mapping priority'
+        );
+      }
     }
 
     if (await this.db.getDevice(device.id)) {

@@ -9,7 +9,7 @@ export abstract class BaseRoute {
   app: express.Application;
   name: string;
   config: Config;
-  databasePool: pg.Pool;
+  dbPool: pg.Pool;
   sqlManager: SQLManager;
   pluginManager?: PluginManager;
 
@@ -17,14 +17,14 @@ export abstract class BaseRoute {
     app: express.Application,
     name: string,
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
     this.app = app;
     this.name = name;
     this.config = config;
-    this.databasePool = databasePool;
+    this.dbPool = dbPool;
     this.sqlManager = sqlManager;
     this.pluginManager = pluginManager;
     this.configureRoutes();

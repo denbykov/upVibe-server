@@ -7,16 +7,16 @@ import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class TagRepository implements iTagDatabase {
-  public pool: pg.Pool;
+  public dbPool: pg.Pool;
   public sqlManager: SQLManager;
 
-  constructor(pool: pg.Pool, sqlManager: SQLManager) {
-    this.pool = pool;
+  constructor(dbPool: pg.Pool, sqlManager: SQLManager) {
+    this.dbPool = dbPool;
     this.sqlManager = sqlManager;
   }
 
   public getFileTags = async (fileId: string): Promise<Array<TagDTO>> => {
-    const client = await this.pool.connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getFileTags');
       dataLogger.debug(query);
@@ -33,7 +33,7 @@ export class TagRepository implements iTagDatabase {
   };
 
   public getTag = async (id: string): Promise<TagDTO | null> => {
-    const client = await this.pool.connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTag');
       dataLogger.debug(query);
@@ -56,7 +56,7 @@ export class TagRepository implements iTagDatabase {
     fileId: string,
     sourceId: string
   ): Promise<TagDTO | null> => {
-    const client = await this.pool.connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagByFile');
       dataLogger.debug(query);
@@ -78,7 +78,7 @@ export class TagRepository implements iTagDatabase {
   public insertTagMapping = async (
     tagMapping: TagMappingDTO
   ): Promise<TagMappingDTO> => {
-    const client = await this.pool.connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('insertTagMapping');
       const queryResult = await client.query(query, [
@@ -101,7 +101,7 @@ export class TagRepository implements iTagDatabase {
   };
 
   public insertTag = async (tag: TagDTO): Promise<TagDTO> => {
-    const client = await this.pool.connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('insertTag');
       const queryResult = await client.query(query, [
@@ -126,7 +126,7 @@ export class TagRepository implements iTagDatabase {
   };
 
   public getPrimaryTag = async (fileId: string): Promise<TagDTO | null> => {
-    const client = await this.pool.connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getPrimaryTag');
       dataLogger.debug(query);
@@ -147,7 +147,7 @@ export class TagRepository implements iTagDatabase {
     userId: string,
     fileId: string
   ): Promise<TagMappingDTO | null> => {
-    const client = await this.pool.connect();
+    const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagMapping');
       dataLogger.debug(query);

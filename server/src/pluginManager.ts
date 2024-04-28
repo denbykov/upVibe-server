@@ -23,10 +23,10 @@ class PluginManager {
     this.serverLogger = serverLogger;
     this.filePlugin = null;
     this.tagPlugin = null;
-    this.serverLogger.info('PluginManager instance created');
     if (PluginManager.instance) {
       return PluginManager.instance;
     }
+    this.serverLogger.info('PluginManager instance created');
     PluginManager.instance = this;
   }
 

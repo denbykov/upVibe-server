@@ -11,30 +11,23 @@ import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
 import { BaseRoute } from './baseRoute';
-import { GENERAL } from './permissions';
+import { DEBUG, GENERAL } from './permissions';
 
 export class TagMappingRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(
-      app,
-      'TagMappingRoute',
-      config,
-      databasePool,
-      sqlManager,
-      pluginManager
-    );
+    super(app, 'TagMappingRoute', config, dbPool, sqlManager, pluginManager);
   }
 
   configureRoutes() {
     const controller: TagMappingController = new TagMappingController(
       this.config,
-      this.databasePool,
+      this.dbPool,
       this.sqlManager,
       this.pluginManager
     );
@@ -43,21 +36,25 @@ export class TagMappingRoute extends BaseRoute {
     const tagsURI = `/up-vibe/v1/tags`;
 
     const userWorker = new UserWorker(
-      new UserRepository(this.databasePool, this.sqlManager),
+      new UserRepository(this.dbPool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 
     this.app.get(
       `${tagsURI}/tag-mapping-priority`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.getTagMappingPriority
     );
 
     this.app.put(
       `${tagsURI}/tag-mapping-priority`,
       auth0Middleware(this.config),
-      userManagementMiddleware([GENERAL], userWorker),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.updateTagMappingPriority
     );
 

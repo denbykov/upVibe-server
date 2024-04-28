@@ -6,19 +6,20 @@ import { UserWorker } from '@src/business/userWorker';
 import { UserInfoAgent, UserRepository } from '@src/data';
 import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { Config } from '@src/entities/config';
+import { DEBUG } from '@src/routes/permissions';
 import { SQLManager } from '@src/sqlManager';
 import { APP_VERSION } from '@src/version';
 
 import { BaseController } from './baseController';
 
 class APIController extends BaseController {
-  constructor(config: Config, databasePool: pg.Pool, sqlManager: SQLManager) {
-    super(config, databasePool, sqlManager);
+  constructor(config: Config, dbPool: pg.Pool, sqlManager: SQLManager) {
+    super(config, dbPool, sqlManager);
   }
 
   private buildUserWorker = (): UserWorker => {
     return new UserWorker(
-      new UserRepository(this.databasePool, this.sqlManager),
+      new UserRepository(this.dbPool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
   };
@@ -75,6 +76,13 @@ class APIController extends BaseController {
     next: Express.NextFunction
   ) => {
     try {
+      if (this.config.appDebug) {
+        const userWorker = this.buildUserWorker();
+        await userWorker.handleRegistrationDebug([DEBUG], this.config);
+        return response.status(200).json({
+          message: 'Device registered!',
+        });
+      }
       const rawToken = request.headers.authorization!.split(' ')[1];
       const encodedTokenPayload = rawToken.split('.')[1];
       const tokenPayload: JSON.JSONObject = JSON.parse(
@@ -84,7 +92,8 @@ class APIController extends BaseController {
       await userWorker.handleRegistration(
         rawToken,
         tokenPayload.sub,
-        DeviceDTO.fromRequestJSON(request.body)
+        DeviceDTO.fromRequestJSON(request.body),
+        this.config
       );
       return response.status(200).json({
         message: 'Device registered!',

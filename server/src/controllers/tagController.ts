@@ -12,18 +12,18 @@ import { BaseController } from './baseController';
 class TagController extends BaseController {
   constructor(
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(config, databasePool, sqlManager, pluginManager);
+    super(config, dbPool, sqlManager, pluginManager);
   }
 
   private buildTagWorker = (): TagWorker => {
     return new TagWorker(
-      new TagRepository(this.databasePool, this.sqlManager),
-      new FileRepository(this.databasePool, this.sqlManager),
-      new SourceRepository(this.databasePool, this.sqlManager),
+      new TagRepository(this.dbPool, this.sqlManager),
+      new FileRepository(this.dbPool, this.sqlManager),
+      new SourceRepository(this.dbPool, this.sqlManager),
       this.pluginManager!.getTagPlugin()
     );
   };

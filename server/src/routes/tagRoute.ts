@@ -13,17 +13,17 @@ export class TagRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    databasePool: pg.Pool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
-    super(app, 'TagRoute', config, databasePool, sqlManager, pluginManager);
+    super(app, 'TagRoute', config, dbPool, sqlManager, pluginManager);
   }
 
   configureRoutes() {
     const controller: TagController = new TagController(
       this.config,
-      this.databasePool,
+      this.dbPool,
       this.sqlManager,
       this.pluginManager
     );
