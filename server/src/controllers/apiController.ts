@@ -1,9 +1,9 @@
 import Express from 'express';
+import pg from 'pg';
 
 import { ApiWorker } from '@src/business/apiWorker';
 import { UserWorker } from '@src/business/userWorker';
 import { UserInfoAgent, UserRepository } from '@src/data';
-import { DBPool } from '@src/dbManager';
 import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { Config } from '@src/entities/config';
 import { DEBUG } from '@src/routes/permissions';
@@ -13,7 +13,7 @@ import { APP_VERSION } from '@src/version';
 import { BaseController } from './baseController';
 
 class APIController extends BaseController {
-  constructor(config: Config, dbPool: DBPool, sqlManager: SQLManager) {
+  constructor(config: Config, dbPool: pg.Pool, sqlManager: SQLManager) {
     super(config, dbPool, sqlManager);
   }
 

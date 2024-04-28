@@ -1,6 +1,6 @@
 import { UUID } from 'crypto';
+import pg from 'pg';
 
-import { DBPool } from '@src/dbManager';
 import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
 import { UserDTO } from '@src/dtos/userDTO';
@@ -8,10 +8,10 @@ import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { SQLManager } from '@src/sqlManager';
 
 export class UserRepository implements iUserDatabase {
-  public dbPool: DBPool;
+  public dbPool: pg.Pool;
   public sqlManager: SQLManager;
 
-  constructor(dbPool: DBPool, sqlManager: SQLManager) {
+  constructor(dbPool: pg.Pool, sqlManager: SQLManager) {
     this.dbPool = dbPool;
     this.sqlManager = sqlManager;
   }

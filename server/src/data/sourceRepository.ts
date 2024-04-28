@@ -1,14 +1,15 @@
-import { DBPool } from '@src/dbManager';
+import pg from 'pg';
+
 import { SourceDTO } from '@src/dtos/sourceDTO';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class SourceRepository implements iSourceDatabase {
-  public dbPool: DBPool;
+  public dbPool: pg.Pool;
   public sqlManager: SQLManager;
 
-  constructor(dbPool: DBPool, sqlManager: SQLManager) {
+  constructor(dbPool: pg.Pool, sqlManager: SQLManager) {
     this.dbPool = dbPool;
     this.sqlManager = sqlManager;
   }

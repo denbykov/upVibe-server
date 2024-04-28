@@ -1,8 +1,8 @@
 import Express from 'express';
+import pg from 'pg';
 
 import { FileWorker } from '@src/business/fileWorker';
 import { FileRepository, SourceRepository, TagRepository } from '@src/data';
-import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -12,7 +12,7 @@ import { BaseController } from './baseController';
 class FileController extends BaseController {
   constructor(
     config: Config,
-    dbPool: DBPool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {

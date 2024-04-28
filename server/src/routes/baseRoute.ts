@@ -1,6 +1,6 @@
 import express from 'express';
+import pg from 'pg';
 
-import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -9,7 +9,7 @@ export abstract class BaseRoute {
   app: express.Application;
   name: string;
   config: Config;
-  dbPool: DBPool;
+  dbPool: pg.Pool;
   sqlManager: SQLManager;
   pluginManager?: PluginManager;
 
@@ -17,7 +17,7 @@ export abstract class BaseRoute {
     app: express.Application,
     name: string,
     config: Config,
-    dbPool: DBPool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {

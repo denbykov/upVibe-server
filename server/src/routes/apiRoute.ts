@@ -1,5 +1,6 @@
 import express from 'express';
 import fs from 'fs';
+import pg from 'pg';
 import redoc from 'redoc-express';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
 import swaggerUi from 'swagger-ui-express';
@@ -8,7 +9,6 @@ import YAML from 'yaml';
 import { UserWorker } from '@src/business/userWorker';
 import { APIController } from '@src/controllers';
 import { UserInfoAgent, UserRepository } from '@src/data';
-import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
@@ -21,7 +21,7 @@ export class APIRoute extends BaseRoute {
   constructor(
     app: express.Application,
     config: Config,
-    dbPool: DBPool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {

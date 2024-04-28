@@ -1,4 +1,5 @@
-import { DBPool } from '@src/dbManager';
+import pg from 'pg';
+
 import { FileDTO } from '@src/dtos/fileDTO';
 import { TaggedFileDTO } from '@src/dtos/taggedFileDTO';
 import { UserDTO } from '@src/dtos/userDTO';
@@ -7,10 +8,10 @@ import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class FileRepository implements iFileDatabase {
-  public dbPool: DBPool;
+  public dbPool: pg.Pool;
   public sqlManager: SQLManager;
 
-  constructor(dbPool: DBPool, sqlManager: SQLManager) {
+  constructor(dbPool: pg.Pool, sqlManager: SQLManager) {
     this.dbPool = dbPool;
     this.sqlManager = sqlManager;
   }

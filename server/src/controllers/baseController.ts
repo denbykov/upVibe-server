@@ -1,17 +1,18 @@
-import { DBPool } from '@src/dbManager';
+import pg from 'pg';
+
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
 
 class BaseController {
   public config: Config;
-  public dbPool: DBPool;
+  public dbPool: pg.Pool;
   public sqlManager: SQLManager;
   public pluginManager?: PluginManager;
 
   constructor(
     config: Config,
-    dbPool: DBPool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {

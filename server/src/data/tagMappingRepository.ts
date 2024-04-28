@@ -1,4 +1,5 @@
-import { DBPool } from '@src/dbManager';
+import pg from 'pg';
+
 import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
@@ -6,10 +7,10 @@ import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
 
 export class TagMappingRepository implements iTagMappingDatabase {
-  public dbPool: DBPool;
+  public dbPool: pg.Pool;
   public sqlManager: SQLManager;
 
-  constructor(dbPool: DBPool, sqlManager: SQLManager) {
+  constructor(dbPool: pg.Pool, sqlManager: SQLManager) {
     this.dbPool = dbPool;
     this.sqlManager = sqlManager;
   }

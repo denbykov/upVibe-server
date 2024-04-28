@@ -1,8 +1,8 @@
 import Express from 'express';
+import pg from 'pg';
 
 import { TagMappingWorker } from '@src/business/tagMappingWorker';
 import { TagMappingRepository } from '@src/data';
-import { DBPool } from '@src/dbManager';
 import { Config } from '@src/entities/config';
 import { TagMapping } from '@src/entities/tagMapping';
 import { TagMappingPriority } from '@src/entities/tagMappingPriority';
@@ -14,7 +14,7 @@ import { BaseController } from './baseController';
 class TagMappingController extends BaseController {
   constructor(
     config: Config,
-    dbPool: DBPool,
+    dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager?: PluginManager
   ) {
