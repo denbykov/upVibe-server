@@ -10,8 +10,9 @@ COPY . .
 COPY ["package.json", "package-lock.json*"]
 
 RUN npm install && mv node_modules ../
+RUN npm run prebuild
 RUN npm run lint
-RUN npm run prebuild && npm run build
+RUN npm run build
 
 FROM node:20-alpine AS final
 
