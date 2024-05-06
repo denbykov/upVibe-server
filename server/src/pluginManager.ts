@@ -13,7 +13,8 @@ class PluginManager {
   private config: Config;
   private filePlugin: iFilePlugin | null;
   private tagPlugin: iTagPlugin | null;
-  private static instance: PluginManager;
+  private static instance: PluginManag
+  er;
   private dataLogger: Logger;
   private serverLogger: Logger;
 
