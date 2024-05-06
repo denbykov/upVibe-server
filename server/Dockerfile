@@ -10,7 +10,10 @@ COPY . .
 COPY ["package.json", "package-lock.json*"]
 
 RUN npm install && mv node_modules ../
-RUN npm run prebuild && npm run build
+RUN npm run prebuild
+RUN npm run lint
+RUN npm run build
+RUN npm run test-ci
 
 FROM node:20-alpine AS final
 
@@ -31,4 +34,3 @@ COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/sql ./sql
 RUN npm install --omit=dev --omit=optional
 
 ENTRYPOINT [ "sh" ]
-
