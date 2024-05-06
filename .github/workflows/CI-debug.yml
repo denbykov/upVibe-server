@@ -5,7 +5,7 @@ on:
     branches:
     - integration
   push:
-    branches: 
+    branches:
     - integration
 jobs:
   build:
@@ -16,3 +16,10 @@ jobs:
       - name: Build container
         run: docker build .
         working-directory: server
+  check-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - name: Run liquibase
+        run: docker-compose -f docker-compose.yml up liquibase
