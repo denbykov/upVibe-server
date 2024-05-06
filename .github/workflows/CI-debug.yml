@@ -22,7 +22,7 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
       - name: Update docker compose
-        run: sudo curl -L "https://github.com/docker/compose/releases/download/2.27.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        run: sudo wget "https://github.com/docker/compose/releases/download/2.27.0/docker-compose-$(uname -s)-$(uname -m)" -P /usr/local/bin/docker-compose
       - name: Change permissions
         run: sudo chmod +x /usr/local/bin/docker-compose
       - name: Print docker compose version
