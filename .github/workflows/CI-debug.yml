@@ -21,5 +21,7 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
+      - name: Print docker compose version
+        run: docker-compose --version
       - name: Run liquibase
         run: docker-compose -f docker-compose.yml up liquibase
