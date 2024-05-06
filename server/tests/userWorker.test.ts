@@ -6,6 +6,7 @@ import { UserWorker } from '@src/business/userWorker';
 import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
 import { UserDTO } from '@src/dtos/userDTO';
+import { Config } from '@src/entities/config';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';
 
@@ -13,6 +14,7 @@ describe('UserWorker', () => {
   let mockUserDatabase: iUserDatabase;
   let mockUserInfoAgent: iUserInfoAgent;
   let userWorker: UserWorker;
+  let mockConfig: Config;
 
   beforeEach(() => {
     mockUserDatabase = {
@@ -28,6 +30,7 @@ describe('UserWorker', () => {
     } as unknown as iUserInfoAgent;
 
     userWorker = new UserWorker(mockUserDatabase, mockUserInfoAgent);
+    mockConfig = new Config(jest.fn(), jest.fn());
   });
 
   describe('getUser', () => {
@@ -128,7 +131,8 @@ describe('UserWorker', () => {
       const device = new DeviceDTO(randomUUID(), '1', 'test');
       const user = new UserDTO('1', 'test', 'test');
       const mappingPriority = TagMappingPriorityDTO.defaultConfiguration(
-        user.id
+        user.id,
+        mockConfig
       );
       const spyGetUser = jest
         .spyOn(userWorker, 'getUser')
@@ -145,7 +149,12 @@ describe('UserWorker', () => {
       const spyMappingPriority = jest
         .spyOn(mockUserDatabase, 'insertDefaultTagMappingPriority')
         .mockResolvedValue();
-      await userWorker.handleRegistration(rawToken, userSub, device);
+      await userWorker.handleRegistration(
+        rawToken,
+        userSub,
+        device,
+        mockConfig
+      );
       expect(spyGetUser).toHaveBeenCalledWith(userSub);
       expect(spyRegisterUser).toHaveBeenCalledWith(rawToken);
       expect(spyGetDevice).toHaveBeenCalledWith(device.id);
@@ -165,7 +174,7 @@ describe('UserWorker', () => {
         .spyOn(mockUserDatabase, 'getDevice')
         .mockResolvedValue(device);
       await expect(
-        userWorker.handleRegistration(rawToken, userSub, device)
+        userWorker.handleRegistration(rawToken, userSub, device, mockConfig)
       ).rejects.toThrow(new ProcessingError('Device is already registered'));
       expect(spyGetUser).toHaveBeenCalledWith(userSub);
       expect(spyGetDevice).toHaveBeenCalledWith(device.id);
