@@ -29,10 +29,6 @@ export class Config {
   };
   public auth0Audience: string = '';
   public auth0Domain: string = '';
-  public rabbitMQHost: string = '';
-  public rabbitMQPort: number = 0;
-  public rabbitMQUser: string = '';
-  public rabbitMQPassword: string = '';
   public dbHost: string = '';
   public dbPort: number = 0;
   public dbUser: string = '';
