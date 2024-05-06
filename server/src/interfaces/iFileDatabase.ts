@@ -15,7 +15,7 @@ export abstract class iFileDatabase {
   public abstract insertUserFile: (
     userId: string,
     fileId: string
-  ) => Promise<void>;
+  ) => Promise<string>;
   public abstract getTaggedFile: (
     id: string,
     userId: string
@@ -25,4 +25,8 @@ export abstract class iFileDatabase {
     userId: string,
     fileId: string
   ) => Promise<boolean>;
+  public abstract insertSynchronizationRecords: (
+    userId: string,
+    userFileId: string
+  ) => Promise<void>;
 }

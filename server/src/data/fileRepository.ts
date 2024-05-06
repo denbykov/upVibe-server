@@ -100,11 +100,13 @@ export class FileRepository implements iFileDatabase {
   public insertUserFile = async (
     userId: string,
     fileId: string
-  ): Promise<void> => {
+  ): Promise<string> => {
     const client = await this.dbPool.connect();
     try {
-      const query = 'INSERT INTO user_files (user_id, file_id) VALUES ($1, $2)';
-      await client.query(query, [userId, fileId]);
+      const query =
+        'INSERT INTO user_files (user_id, file_id) VALUES ($1, $2) RETURNING id';
+      const queryResult = await client.query(query, [userId, fileId]);
+      return queryResult.rows[0].id;
     } catch (err) {
       dataLogger.error(err);
       throw err;
@@ -160,6 +162,21 @@ export class FileRepository implements iFileDatabase {
       return TaggedFileDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       throw new Error(`FilesRepository.getTaggedFile: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
+
+  public insertSynchronizationRecords = async (
+    userId: string,
+    userFileId: string
+  ): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('insertSynchronizationRecords');
+      await client.query(query, [userId, userFileId]);
+    } catch (err) {
+      throw new Error(`FilesRepository.insertSynchronizationRecords: ${err}`);
     } finally {
       client.release();
     }

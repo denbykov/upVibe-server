@@ -60,10 +60,11 @@ export class FileWorker {
       throw new ProcessingError('File already exists');
     }
 
-    await this.db.insertUserFile(user.id, file!.id);
+    const userFileId = await this.db.insertUserFile(user.id, file!.id);
     await this.tagDb.insertTagMapping(
       TagMappingDTO.allFromOneSource(user.id, file!.id, sourceId)
     );
+    await this.db.insertSynchronizationRecords(user.id, userFileId);
     const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
     return new TaggedFileMapper().toEntity(taggedFile!);
   };
