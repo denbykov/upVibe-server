@@ -4,8 +4,9 @@ import { configure, getLogger } from 'log4js';
 configure(JSON.parse(fs.readFileSync('configs/log4j.properties', 'utf8')));
 
 const appLogger = getLogger('[APP]');
+const amqpLogger = getLogger('[AMQP]');
 const dataLogger = getLogger('[DATA]');
-const businessLogger = getLogger('[Business]');
-const presentationLogger = getLogger('presentation');
+const businessLogger = getLogger('[BUSINESS]');
+const controllerLogger = getLogger('[CONTROLLER]');
 
-export { appLogger, dataLogger, businessLogger, presentationLogger };
+export { appLogger, dataLogger, businessLogger, controllerLogger, amqpLogger };

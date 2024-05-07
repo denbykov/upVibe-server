@@ -12,14 +12,11 @@ class ConnectionValidator {
     this.appLogger = appLogger;
   }
 
-  public validateRabbitMQ = async (): Promise<boolean> => {
+  public validateRabbitMQ = async (
+    amqpConfigConnection: string
+  ): Promise<boolean> => {
     try {
-      const connection = await amqp.connect({
-        hostname: this.config.rabbitMQHost,
-        port: this.config.rabbitMQPort,
-        username: this.config.rabbitMQUser,
-        password: this.config.rabbitMQPassword,
-      });
+      const connection = await amqp.connect(amqpConfigConnection);
 
       await connection.close();
       this.appLogger.info('RabbitMQ connection is successful');
@@ -31,18 +28,11 @@ class ConnectionValidator {
     }
   };
 
-  public validatePostgres = async (): Promise<boolean> => {
+  public validatePostgres = async (dbPool: pg.Pool): Promise<boolean> => {
     try {
-      const client = new pg.Client({
-        host: this.config.dbHost,
-        port: this.config.dbPort,
-        user: this.config.dbUser,
-        password: this.config.dbPassword,
-        database: this.config.dbName,
-      });
-
-      await client.connect();
-      await client.end();
+      const client = await dbPool.connect();
+      await client.query('SELECT NOW()');
+      client.release();
       this.appLogger.info('Postgres connection is successful');
 
       return true;
@@ -52,9 +42,13 @@ class ConnectionValidator {
     }
   };
 
-  public validateConnections = async (): Promise<void> => {
-    const rabbitMQConnection = await this.validateRabbitMQ();
-    const postgresConnection = await this.validatePostgres();
+  public validateConnections = async (
+    dbPool: pg.Pool,
+    amqpConfigConnection: string
+  ): Promise<void> => {
+    const postgresConnection = await this.validatePostgres(dbPool);
+    const rabbitMQConnection =
+      await this.validateRabbitMQ(amqpConfigConnection);
 
     if (!rabbitMQConnection || !postgresConnection) {
       throw new Error('Connection validation failed');

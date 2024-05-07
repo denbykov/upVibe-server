@@ -13,4 +13,4 @@ SELECT
 FROM
   tags AS t
 WHERE
-  t.id = $1
+  t.file_id = $1

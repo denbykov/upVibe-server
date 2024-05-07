@@ -15,7 +15,8 @@
     "test": "jest --watch --coverage --config jest.config.ts",
     "test-ci": "jest --coverage --config jest.config.ts",
     "lint": "eslint --fix \"src/**/*.ts\" && tsc --noEmit",
-    "lint:prettier": "prettier --write \"src/**/*.ts\""
+    "lint:prettier": "prettier --write \"src/**/*.ts\"",
+    "healthcheck": "node dist/utils/server/healthcheck.js"
   },
   "keywords": [],
   "dependencies": {
