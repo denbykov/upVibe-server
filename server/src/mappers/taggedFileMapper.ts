@@ -12,6 +12,7 @@ class TaggedFileMapper implements DataMapper<TaggedFileDTO, File> {
       new SourceMapper().toEntity(data.source),
       data.status,
       data.sourceUrl,
+      data.isSynchronized,
       data.tags ? new ShortTagsMapper().toEntity(data.tags) : null
     );
   };

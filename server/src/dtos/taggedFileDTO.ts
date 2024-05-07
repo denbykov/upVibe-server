@@ -47,6 +47,7 @@ class TaggedFileDTO {
   public source: SourceDTO;
   public status: string;
   public sourceUrl: string;
+  public isSynchronized: boolean;
   public tags: ShortTagsDTO | null;
 
   constructor(
@@ -54,12 +55,14 @@ class TaggedFileDTO {
     source: SourceDTO,
     status: string,
     sourceUrl: string,
+    isSynchronized: boolean,
     tags: ShortTagsDTO | null
   ) {
     this.id = id;
     this.source = source;
     this.status = status;
     this.sourceUrl = sourceUrl;
+    this.isSynchronized = isSynchronized;
     this.tags = tags;
   }
 
@@ -70,6 +73,7 @@ class TaggedFileDTO {
       SourceDTO.fromJSON(json),
       json.file_status,
       json.file_source_url,
+      json.is_synchronized,
       shortTags.empty() ? null : shortTags
     );
   };

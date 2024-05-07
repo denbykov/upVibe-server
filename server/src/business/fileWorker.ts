@@ -78,8 +78,18 @@ export class FileWorker {
     await this.tagPlugin.tagFile(file, userId, source!.description);
   };
 
-  public getTaggedFilesByUser = async (user: User): Promise<Array<File>> => {
-    const userFiles = await this.db.getTaggedFilesByUser(user);
+  public getTaggedFilesByUser = async (
+    user: User,
+    deviceId: string,
+    statuses: Array<string> | null,
+    synchronized: boolean | null
+  ): Promise<Array<File>> => {
+    const userFiles = await this.db.getTaggedFilesByUser(
+      user,
+      deviceId,
+      statuses,
+      synchronized
+    );
 
     const files: Array<File> = userFiles.map((file) => {
       return new TaggedFileMapper().toEntity(file);
@@ -90,12 +100,13 @@ export class FileWorker {
 
   public getTaggedFile = async (
     id: string,
+    deviceId: string,
     user: User,
     expand: string[]
   ): Promise<GetFileResponse> => {
     let mapping = null;
 
-    const file = await this.db.getTaggedFile(id, user.id);
+    const file = await this.db.getTaggedFile(id, deviceId, user.id);
     if (!file) {
       throw new ProcessingError('File not found');
     }
