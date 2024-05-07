@@ -2,8 +2,7 @@
 
 echo "Establishing dependencies"
 cd /workspaces/upVibe-server/server
-npm install
-npm run prebuild
+yarn install && yarn prebuild
 echo "Completing the installation of dependencies"
 echo "Linking docs api"
 rm -r /workspaces/upVibe-server/server/api

@@ -5,9 +5,9 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 RUN apk update && \
-  apk upgrade && \
-  apk add sudo shadow openssh build-base \
-  openssl-dev npm bash git zsh bind-tools yarn
+    apk upgrade && \
+    apk add sudo shadow openssh build-base \
+    openssl-dev npm bash git zsh bind-tools yarn
 
 RUN groupadd --gid $USER_GID $USERNAME \
   && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
