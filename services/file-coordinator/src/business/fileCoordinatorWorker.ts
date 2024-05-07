@@ -27,7 +27,6 @@ class FileCoordinatorWorker {
   ): Promise<void> => {
     const isDownloaded = await this.fileWorker.findFileAndCheckStatus(fileId);
     if (isDownloaded) {
-
       const tags = await this.tagWorker.getTagByFileId(fileId);
       const validTags = tags.filter((tag) => {
         return this.tagWorker.validateTagStatus(tag);

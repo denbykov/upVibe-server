@@ -89,6 +89,17 @@ services:
         condition: service_started
     networks:
       - up-vibe-network
+  file-coordinator:
+    build:
+      context: ./services/file-coordinator
+      dockerfile: ./Dockerfile
+    command: -c "npm run start"
+    container_name: file-coordinator
+    volumes:
+      - ./services/file-coordinator/configs:/opt/upVibe/services/file-coordinator/configs
+      - ./services/file-coordinator/logs:/opt/upVibe/file-coordinator/logs
+    networks:
+      - up-vibe-network
 
 networks:
   up-vibe-network:
