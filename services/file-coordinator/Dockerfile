@@ -10,6 +10,7 @@ COPY . .
 COPY package.json .
 
 RUN yarn install --frozen-lockfile
+RUN yarn build
 RUN yarn lint
 
 FROM node:20-alpine AS final
