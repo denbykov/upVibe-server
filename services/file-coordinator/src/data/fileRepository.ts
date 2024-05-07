@@ -28,6 +28,29 @@ class FileRepository implements FileDatabase {
       client.release();
     }
   };
+
+  public updateFileSynchronization = async (
+    deviceId: string,
+    userFileId: string,
+    isSynchronized: boolean
+  ): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('updateFileSynchronization');
+      this.logger.info(`Query: ${query}`);
+      await client.query(query, [
+        isSynchronized,
+        new Date().toISOString(),
+        deviceId,
+        userFileId,
+      ]);
+    } catch (error) {
+      this.logger.error(`Error updating file synchronization: ${error}`);
+      throw new Error(`Error updating file synchronization: ${error}`);
+    } finally {
+      client.release();
+    }
+  };
 }
 
 export { FileRepository };

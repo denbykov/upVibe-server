@@ -29,6 +29,14 @@ class FileWorker {
       return false;
     }
   };
+
+  public updateFileSynchronization = async (
+    deviceId: string,
+    userFileId: string,
+    isSynchronized: boolean
+  ): Promise<void> => {
+    await this.db.updateFileSynchronization(deviceId, userFileId, isSynchronized);
+  };
 }
 
 export { FileWorker };

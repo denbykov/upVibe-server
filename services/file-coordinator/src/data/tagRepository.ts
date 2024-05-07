@@ -1,5 +1,4 @@
 import { TagDTO } from '@dtos/tagDTO';
-// import { TagMappingDTO } from '@dtos/tagMappingDTO';
 import { Logger } from 'log4js';
 import pg from 'pg';
 import { SQLManager } from 'src/core/sqlManager';

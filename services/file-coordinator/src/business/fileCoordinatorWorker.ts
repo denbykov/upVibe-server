@@ -56,6 +56,14 @@ class FileCoordinatorWorker {
           tagMapping,
           validTags
         );
+
+      // TODO: Implement with device id
+      await this.fileWorker.updateFileSynchronization(
+        'ee7db5b1-d569-40f1-bda0-76d970b3b348',
+        fileId,
+        true
+      );
+
       await this.tagMappingWorker.updateTagMappingById(newTagMapping);
     }
   };
