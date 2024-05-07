@@ -41,4 +41,4 @@ jobs:
       - name: Print docker compose version
         run: docker-compose --version
       - name: Run file coordinator
-        run: docker-compose -f docker-compose.yml up --build file-coordinator
+        run: docker-compose -f docker-compose.yml build file-coordinator
