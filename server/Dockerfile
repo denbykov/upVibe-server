@@ -7,15 +7,14 @@ ARG BUILD_LOCATION
 WORKDIR ${BUILD_LOCATION}
 
 COPY . .
-COPY ["package.json", "package-lock.json*"]
+COPY package.json .
 
-RUN apk add --no-cache openssl
+RUN apk add openssl
 RUN mkdir -p auto-cert && \
     openssl req -x509 -newkey rsa:4096 -keyout auto-cert/privatekey.key \
     -out auto-cert/certificate.crt -days 365 -nodes -subj "/CN=localhost"
 
-RUN yarn install --update-checksums && \
-    yarn install --frozen-lockfile
+RUN yarn install
 RUN yarn prebuild
 RUN yarn lint
 RUN yarn build
@@ -23,7 +22,7 @@ RUN yarn test-ci
 
 FROM node:20-alpine AS final
 
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash curl
 ARG BUILD_LOCATION
 
 ENV APP_USER=node
