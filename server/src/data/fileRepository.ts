@@ -59,14 +59,73 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
+  public extendGetTaggedFilesByUser = (
+    query: string,
+    statuses: Array<string> | null,
+    synchronized: boolean | null
+  ): string => {
+    let paramIndex = 3;
+
+    if (statuses !== null) {
+      query += ' AND f.status IN (';
+      for (let i = 0; i < statuses.length; i++) {
+        query += `$${paramIndex}`;
+        paramIndex++;
+        if (i < statuses.length - 1) {
+          query += ', ';
+        }
+      }
+      query += ')';
+    }
+    if (synchronized !== null) {
+      query += ` AND fs.is_synchronized = $${paramIndex}`;
+      paramIndex++;
+    }
+    return query;
+  };
+
+  public formGetTaggedFilesByUserParametersList = (
+    user: UserDTO,
+    deviceId: string,
+    statuses: Array<string> | null,
+    synchronized: boolean | null
+  ) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const params: Array<any> = [user.id, deviceId];
+    if (statuses !== null) {
+      params.push(...statuses);
+    }
+    if (synchronized !== null) {
+      params.push(synchronized);
+    }
+
+    return params;
+  };
+
   public getTaggedFilesByUser = async (
-    user: UserDTO
+    user: UserDTO,
+    deviceId: string,
+    statuses: Array<string> | null,
+    synchronized: boolean | null
   ): Promise<Array<TaggedFileDTO>> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('getTaggedFilesByUser');
+      const query = this.extendGetTaggedFilesByUser(
+        this.sqlManager.getQuery('getTaggedFilesByUser'),
+        statuses,
+        synchronized
+      );
+
       dataLogger.debug(query);
-      const queryResult = await client.query(query, [user.id]);
+      const queryResult = await client.query(
+        query,
+        this.formGetTaggedFilesByUserParametersList(
+          user,
+          deviceId,
+          statuses,
+          synchronized
+        )
+      );
       return queryResult.rows.map((row) => {
         return TaggedFileDTO.fromJSON(row);
       });
@@ -150,12 +209,13 @@ export class FileRepository implements iFileDatabase {
 
   public getTaggedFile = async (
     id: string,
+    deviceId: string,
     userId: string
   ): Promise<TaggedFileDTO | null> => {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTaggedFile');
-      const queryResult = await client.query(query, [id, userId]);
+      const queryResult = await client.query(query, [id, deviceId, userId]);
       if (queryResult.rows.length === 0) {
         return null;
       }

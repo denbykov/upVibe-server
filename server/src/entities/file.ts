@@ -27,6 +27,7 @@ class File {
   public source: Source;
   public status: string;
   public sourceUrl: string;
+  public isSynchronized: boolean;
   public tags: ShortTags | null;
 
   constructor(
@@ -34,12 +35,14 @@ class File {
     source: Source,
     status: string,
     sourceUrl: string,
+    isSynchronized: boolean,
     tags: ShortTags | null
   ) {
     this.id = id;
     this.source = source;
     this.status = status;
     this.sourceUrl = sourceUrl;
+    this.isSynchronized = isSynchronized;
     this.tags = tags;
   }
 }

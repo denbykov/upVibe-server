@@ -204,6 +204,28 @@ paths:
       summary: Get files
       description: Returns array of files for current user
       operationId: getFiles
+      parameters:
+        - name: deviceId
+          in: query
+          required: true
+          description: Device id
+          schema:
+            type: string
+        - name: statuses
+          in: query
+          required: false
+          description: CSV list of file statuses to return
+          example: 'D,R'
+          schema:
+            type: array
+            format: string
+        - name: syncronized
+          in: query
+          required: false
+          description: Required synchronization status
+          example: true
+          schema:
+            type: boolean
       responses:
         '200':
           description: successful operation
@@ -231,6 +253,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: deviceId
+          in: query
+          required: true
+          description: Device id
+          schema:
+            type: string
         - name: expand
           in: query
           required: false
@@ -534,6 +562,8 @@ components:
         sourceUrl:
           description: May contain source location
           type: string
+        isSynchoronized:
+          type: boolean
         tags:
           $ref: '#/components/schemas/ShortTag'
     FileAndMapping:

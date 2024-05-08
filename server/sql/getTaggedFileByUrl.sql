@@ -6,6 +6,7 @@ SELECT
   s.logo_path as source_logo_path,
   f.status as file_status,
   f.source_url as file_source_url,
+  FALSE as is_synchronized,
   (
     SELECT
       title
