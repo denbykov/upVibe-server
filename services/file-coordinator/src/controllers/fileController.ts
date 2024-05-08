@@ -1,11 +1,6 @@
 import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
-import { FileWorker } from '@business/fileWorker';
-import { TagMappingWorker } from '@business/tagMappingWorker';
-import { TagWorker } from '@business/tagWorker';
 import { SQLManager } from '@core/sqlManager';
-import { FileRepository } from '@data/fileRepository';
-import { TagMappingRepository } from '@data/tagMappingRepository';
-import { TagRepository } from '@data/tagRepository';
+import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
 import { Message } from 'amqplib';
 import { UUID } from 'crypto';
 import { Logger } from 'log4js';
@@ -30,32 +25,13 @@ class FileController {
     this.dbPool = dbPool;
     this.sqlManager = sqlManager;
   }
-  public buildFileWorker = (): FileWorker => {
-    return new FileWorker(
-      new FileRepository(this.dbPool, this.sqlManager, this.dataLogger),
-      this.businessLogger
-    );
-  };
-
-  public buildTagWorker = (): TagWorker => {
-    return new TagWorker(
-      new TagRepository(this.dbPool, this.sqlManager, this.dataLogger),
-      this.businessLogger
-    );
-  };
-
-  public buildTagMappingWorker = (): TagMappingWorker => {
-    return new TagMappingWorker(
-      new TagMappingRepository(this.dbPool, this.sqlManager, this.dataLogger),
-      this.businessLogger
-    );
-  };
-
   public buildFileCoordinatorWorker = (): FileCoordinatorWorker => {
     return new FileCoordinatorWorker(
-      this.buildFileWorker(),
-      this.buildTagWorker(),
-      this.buildTagMappingWorker(),
+      new FileCoordinatorRepository(
+        this.dbPool,
+        this.sqlManager,
+        this.dataLogger
+      ),
       this.businessLogger
     );
   };
@@ -88,7 +64,7 @@ class FileController {
     );
     const fileCoordinatorWorker = this.buildFileCoordinatorWorker();
     try {
-      await fileCoordinatorWorker.coordinateFile(fileId, userId, deviceId);
+      await fileCoordinatorWorker.processFile(fileId, userId, deviceId);
     } catch (error) {
       this.controllerLogger.error(`Error coordinating file: ${error}`);
       throw new Error(`Error coordinating file: ${error}`);

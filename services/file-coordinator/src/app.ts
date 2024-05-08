@@ -72,9 +72,9 @@ class App {
   };
 }
 
-const env = dotenv.config({ path: 'configs/.env' }).parsed || {};
+const env = dotenv.config({ path: 'config/.env' }).parsed || {};
 const configJson = parseJSONConfig(
-  JSON.parse(fs.readFileSync('configs/config.json', 'utf-8'))
+  JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
 );
 const config = new Config(env, configJson);
 const app = new App(config);

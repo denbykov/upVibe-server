@@ -96,7 +96,7 @@ services:
     command: -c "npm run start"
     container_name: file-coordinator
     volumes:
-      - ./services/file-coordinator/configs:/opt/upVibe/services/file-coordinator/configs
+      - ./services/file-coordinator/config:/opt/upVibe/services/file-coordinator/config
       - ./services/file-coordinator/logs:/opt/upVibe/file-coordinator/logs
     networks:
       - up-vibe-network

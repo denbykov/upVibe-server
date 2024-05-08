@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { configure, getLogger } from 'log4js';
 
-configure(JSON.parse(fs.readFileSync('configs/log4j.properties', 'utf8')));
+configure(JSON.parse(fs.readFileSync('config/log4j.properties', 'utf8')));
 
 const appLogger = getLogger('[APP]');
 const amqpLogger = getLogger('[AMQP]');

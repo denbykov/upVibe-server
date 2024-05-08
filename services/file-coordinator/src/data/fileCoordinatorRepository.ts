@@ -1,11 +1,13 @@
 import { SQLManager } from '@core/sqlManager';
+import { FileDTO } from '@dtos/fileDTO';
+import { TagDTO } from '@dtos/tagDTO';
 import { TagMappingDTO } from '@dtos/tagMappingDTO';
 import { TagMappingPriorityDTO } from '@dtos/tagMappingPriorityDTO';
-import { TagMappingDatabase } from '@interfaces/tagMappingDatabase';
+import { FileCoordinatorDatabase } from '@interfaces/fileCoordinatorDatabase';
 import { Logger } from 'log4js';
 import pg from 'pg';
 
-class TagMappingRepository implements TagMappingDatabase {
+class FileCoordinatorRepository implements FileCoordinatorDatabase {
   private dbPool: pg.Pool;
   private sqlManager: SQLManager;
   private logger: Logger;
@@ -14,6 +16,43 @@ class TagMappingRepository implements TagMappingDatabase {
     this.sqlManager = sqlManager;
     this.logger = logger;
   }
+  public getFileById = async (id: string): Promise<FileDTO> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getFileById');
+      this.logger.info(`Query: ${query}`);
+      const queryResult = await client.query(query, [id]);
+      return FileDTO.fromJSON(queryResult.rows[0]);
+    } catch (error) {
+      this.logger.error(`Error getting file by id: ${error}`);
+      throw new Error(`Error getting file by id: ${error}`);
+    } finally {
+      client.release();
+    }
+  };
+
+  public updateFileSynchronization = async (
+    deviceId: string,
+    userFileId: string,
+    isSynchronized: boolean
+  ): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('updateFileSynchronization');
+      this.logger.info(`Query: ${query}`);
+      await client.query(query, [
+        isSynchronized,
+        new Date().toISOString(),
+        deviceId,
+        userFileId,
+      ]);
+    } catch (error) {
+      this.logger.error(`Error updating file synchronization: ${error}`);
+      throw new Error(`Error updating file synchronization: ${error}`);
+    } finally {
+      client.release();
+    }
+  };
 
   public getTagMappingByFileId = async (
     userId: string,
@@ -75,6 +114,21 @@ class TagMappingRepository implements TagMappingDatabase {
       client.release();
     }
   };
+
+  public getTagByFileId = async (id: string): Promise<TagDTO[]> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getTagByFileId');
+      const queryResult = await client.query(query, [id]);
+      this.logger.info(`Query: ${query}`);
+      return queryResult.rows.map((row) => TagDTO.fromJSON(row));
+    } catch (error) {
+      this.logger.error(`Error getting tags by file id: ${error}`);
+      throw new Error(`Error getting tags by file id: ${error}`);
+    } finally {
+      client.release();
+    }
+  };
 }
 
-export { TagMappingRepository };
+export { FileCoordinatorRepository };

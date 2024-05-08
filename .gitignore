@@ -6,6 +6,7 @@ build-debug
 rest
 server/tests/sql/
 server/api
+server/config/ssl
 storage
 volumes
 server/plugins

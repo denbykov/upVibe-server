@@ -40,5 +40,5 @@ jobs:
         run: sudo chmod +x /usr/local/bin/docker-compose
       - name: Print docker compose version
         run: docker-compose --version
-      - name: Run file coordinator
+      - name: Build file coordinator
         run: docker-compose -f docker-compose.yml build file-coordinator
