@@ -2,7 +2,6 @@ import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
 import { SQLManager } from '@core/sqlManager';
 import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
 import { Message } from 'amqplib';
-import { UUID } from 'crypto';
 import { Logger } from 'log4js';
 import pg from 'pg';
 
