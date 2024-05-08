@@ -15,10 +15,7 @@ class FileCoordinatorWorker {
 
   public findFileAndCheckStatus = async (id: string): Promise<boolean> => {
     const file = await this.db.getFileById(id);
-    if (file.status !== Status.Downloaded) {
-      return false;
-    }
-    return true;
+    return file.status === Status.Downloaded;
   };
 
   private findTagById = (tags: TagDTO[], id: string): TagDTO | undefined => {
