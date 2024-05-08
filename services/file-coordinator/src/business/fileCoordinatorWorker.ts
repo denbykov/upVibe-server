@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import { Logger } from 'log4js';
 
 import { FileWorker } from './fileWorker';
@@ -23,7 +24,8 @@ class FileCoordinatorWorker {
 
   public coordinateFile = async (
     fileId: string,
-    userId: string
+    userId: string,
+    deviceId: UUID
   ): Promise<void> => {
     const isDownloaded = await this.fileWorker.findFileAndCheckStatus(fileId);
     if (isDownloaded) {
@@ -57,12 +59,7 @@ class FileCoordinatorWorker {
           validTags
         );
 
-      // TODO: Implement with device id
-      await this.fileWorker.updateFileSynchronization(
-        'ee7db5b1-d569-40f1-bda0-76d970b3b348',
-        fileId,
-        true
-      );
+      await this.fileWorker.updateFileSynchronization(deviceId, fileId, true);
 
       await this.tagMappingWorker.updateTagMappingById(newTagMapping);
     }
