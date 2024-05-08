@@ -32,7 +32,6 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
   };
 
   public updateFileSynchronization = async (
-    deviceId: string,
     userFileId: string,
     isSynchronized: boolean
   ): Promise<void> => {
@@ -43,7 +42,6 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
       await client.query(query, [
         isSynchronized,
         new Date().toISOString(),
-        deviceId,
         userFileId,
       ]);
     } catch (error) {
@@ -55,14 +53,13 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
   };
 
   public getTagMappingByFileId = async (
-    userId: string,
     fileId: string
   ): Promise<TagMappingDTO> => {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagMapping');
       this.logger.info(`Query: ${query}`);
-      const { rows } = await client.query(query, [userId, fileId]);
+      const { rows } = await client.query(query, [fileId]);
       return TagMappingDTO.fromJSON(rows[0]);
     } catch (error) {
       this.logger.error(`Error getting tags mapping by file id: ${fileId}`);
@@ -115,7 +112,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     }
   };
 
-  public getTagByFileId = async (id: string): Promise<TagDTO[]> => {
+  public getTagsByFileId = async (id: string): Promise<TagDTO[]> => {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagByFileId');
@@ -125,6 +122,20 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     } catch (error) {
       this.logger.error(`Error getting tags by file id: ${error}`);
       throw new Error(`Error getting tags by file id: ${error}`);
+    } finally {
+      client.release();
+    }
+  };
+
+  public getUserFileIdByFileId = async (fileId: string): Promise<string> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getUserFileIdByFileId');
+      const { rows } = await client.query(query, [fileId]);
+      return rows[0].user_file_id;
+    } catch (error) {
+      this.logger.error(`Error getting user file id by file id: ${error}`);
+      throw error;
     } finally {
       client.release();
     }

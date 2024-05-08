@@ -38,33 +38,25 @@ class FileController {
 
   public handle_message = async (message: Message): Promise<void> => {
     try {
-      const { fileId, userId, deviceId } = JSON.parse(
-        message.content.toString()
-      );
-      if (!fileId || !userId || !deviceId) {
+      const { fileId } = JSON.parse(message.content.toString());
+      if (!fileId) {
         this.controllerLogger.error(
           `Invalid message - ${message.content.toString()}`
         );
         return;
       }
-      await this.coordinateFile(fileId, userId, deviceId);
+      await this.coordinateFile(fileId);
     } catch (error) {
       this.controllerLogger.error(`Error handling message: ${error}`);
       return;
     }
   };
 
-  public coordinateFile = async (
-    fileId: string,
-    userId: string,
-    deviceId: UUID
-  ): Promise<void> => {
-    this.controllerLogger.info(
-      `Processing file ${fileId} for user ${userId} and device ${deviceId}`
-    );
+  public coordinateFile = async (fileId: string): Promise<void> => {
+    this.controllerLogger.info(`Processing file ${fileId}`);
     const fileCoordinatorWorker = this.buildFileCoordinatorWorker();
     try {
-      await fileCoordinatorWorker.processFile(fileId, userId, deviceId);
+      await fileCoordinatorWorker.processFile(fileId);
     } catch (error) {
       this.controllerLogger.error(`Error coordinating file: ${error}`);
       throw new Error(`Error coordinating file: ${error}`);

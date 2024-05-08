@@ -1,7 +1,6 @@
 import { AMQPPublisher } from '@/core/AMQPPublisher';
 import { Config } from '@/entities/config';
 import { iFileCoordinatorPlugin } from '@/interface/iFileCoordinatorPlugin';
-import { UUID } from 'crypto';
 import { Logger } from 'log4js';
 
 export default class FileCoordinatorPlugin extends AMQPPublisher implements iFileCoordinatorPlugin {
@@ -14,13 +13,11 @@ export default class FileCoordinatorPlugin extends AMQPPublisher implements iFil
       `[${this.pluginName}] Plugin ${this.pluginName} loaded`
     );
   }
-  public coordinateFile =  (fileId: string, userId: string, deviceId: UUID): void => {
+  public coordinateFile =  (fileId: string): void => {
     this.dataLogger.info(`[${this.pluginName}] Coordinating file: ${fileId}`);
     try {
       this.publish('checking/file', {
-        fileId: fileId,
-        userId: userId,
-        deviceId: deviceId,
+        fileId: fileId
       });
     } catch (error) {
       this.dataLogger.error(error);

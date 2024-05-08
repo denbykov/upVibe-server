@@ -1,10 +1,6 @@
-import { UUID } from 'crypto';
-
-export abstract class iFileCoordinatorPlugin {
+abstract class iFileCoordinatorPlugin {
   pluginName!: string;
-  public abstract coordinateFile(
-    fileId: string,
-    userId: string,
-    deviceId: UUID
-  ): void;
+  public abstract coordinateFile(fileId: string): void;
 }
+
+export { iFileCoordinatorPlugin };
