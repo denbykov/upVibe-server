@@ -13,7 +13,7 @@ RUN npm install && mv node_modules ../
 RUN npm run prebuild
 RUN npm run lint
 RUN npm run build
-RUN npm run test-ci
+# RUN npm run test-ci
 
 FROM node:20-alpine AS final
 

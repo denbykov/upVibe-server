@@ -6,6 +6,7 @@ SELECT
   s.logo_path as source_logo_path,
   f.status as file_status,
   f.source_url as file_source_url,
+  fs.is_synchronized as is_synchronized,
   (
     SELECT
       title
@@ -58,5 +59,7 @@ FROM
   LEFT JOIN tag_mappings as tm ON f.id = tm.file_id
   AND tm.user_id = $1
   INNER JOIN user_files as uf ON f.id = uf.file_id
+  LEFT JOIN file_synchronization as fs ON fs.user_file_id = uf.file_id
+  AND fs.device_id = $2
 WHERE
   uf.user_id = $1

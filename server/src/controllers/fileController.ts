@@ -2,6 +2,7 @@ import Express from 'express';
 import pg from 'pg';
 
 import { FileWorker } from '@src/business/fileWorker';
+import { ProcessingError } from '@src/business/processingError';
 import { FileRepository, SourceRepository, TagRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
@@ -52,9 +53,40 @@ class FileController extends BaseController {
   ) => {
     try {
       const { user } = request.body;
+      let deviceIdParam: string;
+      {
+        const { deviceId } = request.query;
+        if (!deviceId) {
+          throw new ProcessingError('Device ID is required');
+        }
+        deviceIdParam = deviceId!.toString();
+      }
+
+      let statusesParam: Array<string> | null = null;
+      {
+        const { statuses } = request.query;
+        if (statuses) {
+          statusesParam = statuses.toString().split(',');
+        }
+      }
+
+      let synchronizedParam: boolean | null = null;
+      {
+        const { synchronized } = request.query;
+        if (synchronized) {
+          synchronizedParam =
+            synchronized!.toString() === 'true' ? true : false;
+        }
+      }
+
       const fileWorker = this.buildFileWorker();
 
-      const result = await fileWorker.getTaggedFilesByUser(user);
+      const result = await fileWorker.getTaggedFilesByUser(
+        user,
+        deviceIdParam,
+        statusesParam,
+        synchronizedParam
+      );
       return response.status(200).json(result);
     } catch (error) {
       next(error);
@@ -69,11 +101,21 @@ class FileController extends BaseController {
     try {
       const { user } = request.body;
       const { fileId } = request.params;
+      let deviceIdParam: string;
+      {
+        const { deviceId } = request.query;
+        if (!deviceId) {
+          throw new ProcessingError('Device ID is required');
+        }
+        deviceIdParam = deviceId!.toString();
+      }
+
       const { expand } = request.query;
       const fileWorker = this.buildFileWorker();
       const expandOptions = expand ? expand.toString().split(',') : [];
       const result = await fileWorker.getTaggedFile(
         fileId,
+        deviceIdParam,
         user,
         expandOptions
       );
