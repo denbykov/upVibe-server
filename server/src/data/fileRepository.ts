@@ -241,4 +241,20 @@ export class FileRepository implements iFileDatabase {
       client.release();
     }
   };
+
+  public confirmFile = async (
+    fileId: string,
+    userId: string,
+    deviceId: string
+  ): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('confirmFile');
+      await client.query(query, [fileId, userId, deviceId]);
+    } catch (err) {
+      throw new Error(`FilesRepository.confirmFile: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
 }

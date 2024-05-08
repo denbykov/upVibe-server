@@ -124,6 +124,32 @@ class FileController extends BaseController {
       next(error);
     }
   };
+
+  public confirmFile = async (
+    request: Express.Request,
+    response: Express.Response,
+    next: Express.NextFunction
+  ) => {
+    try {
+      const { user } = request.body;
+      const { fileId } = request.params;
+
+      let deviceIdParam: string;
+      {
+        const { deviceId } = request.query;
+        if (!deviceId) {
+          throw new ProcessingError('Device ID is required');
+        }
+        deviceIdParam = deviceId!.toString();
+      }
+
+      const fileWorker = this.buildFileWorker();
+      const result = await fileWorker.confirmFile(fileId, user, deviceIdParam);
+      return response.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export { FileController };

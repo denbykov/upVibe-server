@@ -125,4 +125,12 @@ export class FileWorker {
 
     return new GetFileResponse(new TaggedFileMapper().toEntity(file), mapping);
   };
+
+  public confirmFile = async (
+    id: string,
+    user: User,
+    deviceId: string
+  ): Promise<void> => {
+    await this.db.confirmFile(id, user.id, deviceId);
+  };
 }
