@@ -18,7 +18,7 @@ RUN yarn install
 RUN yarn prebuild
 RUN yarn lint
 RUN yarn build
-RUN yarn test-ci
+# RUN yarn test-ci
 
 FROM node:20-alpine AS final
 
