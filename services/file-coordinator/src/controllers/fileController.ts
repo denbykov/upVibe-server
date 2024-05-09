@@ -1,9 +1,9 @@
 import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
-import { SQLManager } from '@core/sqlManager';
 import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
 import { Message } from 'amqplib';
 import { Logger } from 'log4js';
 import pg from 'pg';
+import { SQLManager } from '@core/sqlManager';
 
 class FileController {
   private controllerLogger: Logger;
@@ -16,7 +16,7 @@ class FileController {
     businessLogger: Logger,
     dataLogger: Logger,
     dbPool: pg.Pool,
-    sqlManager: SQLManager
+    sqlManager: SQLManager,
   ) {
     this.controllerLogger = logger;
     this.businessLogger = businessLogger;
@@ -29,9 +29,9 @@ class FileController {
       new FileCoordinatorRepository(
         this.dbPool,
         this.sqlManager,
-        this.dataLogger
+        this.dataLogger,
       ),
-      this.businessLogger
+      this.businessLogger,
     );
   };
 
@@ -40,7 +40,7 @@ class FileController {
       const { fileId } = JSON.parse(message.content.toString());
       if (!fileId) {
         this.controllerLogger.error(
-          `Invalid message - ${message.content.toString()}`
+          `Invalid message - ${message.content.toString()}`,
         );
         return;
       }

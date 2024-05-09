@@ -1,4 +1,3 @@
-import { SQLManager } from '@core/sqlManager';
 import { FileDTO } from '@dtos/fileDTO';
 import { TagDTO } from '@dtos/tagDTO';
 import { TagMappingDTO } from '@dtos/tagMappingDTO';
@@ -6,6 +5,7 @@ import { TagMappingPriorityDTO } from '@dtos/tagMappingPriorityDTO';
 import { FileCoordinatorDatabase } from '@interfaces/fileCoordinatorDatabase';
 import { Logger } from 'log4js';
 import pg from 'pg';
+import { SQLManager } from '@core/sqlManager';
 
 class FileCoordinatorRepository implements FileCoordinatorDatabase {
   private dbPool: pg.Pool;
@@ -33,7 +33,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
 
   public updateFileSynchronization = async (
     userFileId: string,
-    isSynchronized: boolean
+    isSynchronized: boolean,
   ): Promise<void> => {
     const client = await this.dbPool.connect();
     try {
@@ -53,7 +53,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
   };
 
   public getTagsMappingByFileId = async (
-    fileId: string
+    fileId: string,
   ): Promise<TagMappingDTO[]> => {
     const client = await this.dbPool.connect();
     try {
@@ -70,7 +70,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
   };
 
   public getTagMappingsPriorityByUserId = async (
-    userId: string
+    userId: string,
   ): Promise<TagMappingPriorityDTO> => {
     const client = await this.dbPool.connect();
     try {
@@ -79,7 +79,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
       return TagMappingPriorityDTO.fromJSON(rows);
     } catch (error) {
       this.logger.error(
-        `Error getting tags mapping priority by user id: ${userId}`
+        `Error getting tags mapping priority by user id: ${userId}`,
       );
       throw error;
     } finally {
@@ -88,7 +88,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
   };
 
   public updateTagMappingById = async (
-    tagMapping: TagMappingDTO
+    tagMapping: TagMappingDTO,
   ): Promise<void> => {
     const client = await this.dbPool.connect();
     try {
@@ -129,7 +129,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
 
   public getUserFileIdByFileId = async (
     fileId: string,
-    userId: string
+    userId: string,
   ): Promise<string> => {
     const client = await this.dbPool.connect();
     try {

@@ -28,7 +28,7 @@ class FileCoordinatorWorker {
 
     if (
       !tags.every(
-        (tag) => tag.status === Status.Completed || tag.status === Status.Error
+        (tag) => tag.status === Status.Completed || tag.status === Status.Error,
       )
     ) {
       return;
@@ -41,24 +41,24 @@ class FileCoordinatorWorker {
     }
 
     const tagMappingsPriority = await this.db.getTagMappingsPriorityByUserId(
-      tagsMappings[0].userId!
+      tagsMappings[0].userId!,
     );
 
     const newTagMapping = this.mapTagMappingByMappingPriority(
       tagMappingsPriority,
       tagsMappings,
-      tags
+      tags,
     );
 
     const userFileId = await this.db.getUserFileIdByFileId(
       fileId,
-      newTagMapping.userId!
+      newTagMapping.userId!,
     );
 
     await this.db.updateTagMappingById(newTagMapping);
 
     this.logger.debug(
-      `Updating tag mapping: ${newTagMapping} for file: ${fileId} and user: ${newTagMapping.userId}`
+      `Updating tag mapping: ${newTagMapping} for file: ${fileId} and user: ${newTagMapping.userId}`,
     );
 
     await this.db.updateFileSynchronization(userFileId, true);
@@ -67,7 +67,7 @@ class FileCoordinatorWorker {
   public mapTagMappingByMappingPriority = (
     tagMappingPriority: TagMappingPriorityDTO,
     tagsMappings: TagMappingDTO[],
-    tags: TagDTO[]
+    tags: TagDTO[],
   ): TagMappingDTO => {
     const mapTagsByPriority = (tags: TagDTO[], mappings: string[]): string => {
       const priorityTag = mappings.map((priority) => {
@@ -88,7 +88,7 @@ class FileCoordinatorWorker {
       mapTagsByPriority(tags, tagMappingPriority.picture),
       mapTagsByPriority(tags, tagMappingPriority.year),
       mapTagsByPriority(tags, tagMappingPriority.trackNumber),
-      true
+      true,
     );
 
     return mapping;

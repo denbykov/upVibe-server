@@ -7,21 +7,21 @@ abstract class FileCoordinatorDatabase {
   public abstract getFileById: (id: string) => Promise<FileDTO>;
   public abstract updateFileSynchronization: (
     userFileId: string,
-    isSynchronized: boolean
+    isSynchronized: boolean,
   ) => Promise<void>;
   public abstract getTagsByFileId: (id: string) => Promise<TagDTO[]>;
   public abstract getTagsMappingByFileId: (
-    fileId: string
+    fileId: string,
   ) => Promise<TagMappingDTO[]>;
   public abstract getTagMappingsPriorityByUserId: (
-    userId: string
+    userId: string,
   ) => Promise<TagMappingPriorityDTO>;
   public abstract updateTagMappingById: (
-    tagMapping: TagMappingDTO
+    tagMapping: TagMappingDTO,
   ) => Promise<void>;
   public abstract getUserFileIdByFileId: (
     fileId: string,
-    userId: string
+    userId: string,
   ) => Promise<string>;
 }
 

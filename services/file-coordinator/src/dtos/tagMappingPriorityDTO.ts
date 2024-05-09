@@ -16,7 +16,7 @@ class TagMappingPriorityDTO {
     album: string[],
     picture: string[],
     year: string[],
-    trackNumber: string[]
+    trackNumber: string[],
   ) {
     this.userId = userId;
     this.source = source;
@@ -41,7 +41,7 @@ class TagMappingPriorityDTO {
       jsons.map((json) => json.tag_mapping_priority_album.toString()),
       jsons.map((json) => json.tag_mapping_priority_picture.toString()),
       jsons.map((json) => json.tag_mapping_priority_year.toString()),
-      jsons.map((json) => json.tag_mapping_priority_track_number.toString())
+      jsons.map((json) => json.tag_mapping_priority_track_number.toString()),
     );
   }
 }

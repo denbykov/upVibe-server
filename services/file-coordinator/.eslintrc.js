@@ -7,7 +7,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
+    // 'plugin:prettier/recommended', not working
     'prettier',
   ],
   overrides: [],
@@ -17,5 +17,14 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'prettier'],
-  rules: {},
+  rules: {
+    'no-console': 'warn',
+    'no-warning-comments': [
+      'warn',
+      {
+        terms: ['todo', 'fixme', 'xxx'],
+        location: 'start',
+      },
+    ],
+  },
 };

@@ -10,7 +10,7 @@ class TagDTO {
     public album: string | null,
     public year: number | null,
     public trackNumber: number | null,
-    public picturePath: string | null
+    public picturePath: string | null,
   ) {}
 
   public static fromJSON(json: JSON.JSONObject): TagDTO {
@@ -25,7 +25,7 @@ class TagDTO {
       json.tag_album,
       json.tag_year,
       json.tag_track_number,
-      json.tag_picture_path
+      json.tag_picture_path,
     );
   }
 }

@@ -20,7 +20,7 @@ class TagMappingDTO {
     picture: string,
     year: string,
     trackNumber: string,
-    fixed: boolean
+    fixed: boolean,
   ) {
     this.id = id;
     this.userId = userId;
@@ -45,7 +45,7 @@ class TagMappingDTO {
       json.tag_mapping_picture.toString(),
       json.tag_mapping_year.toString(),
       json.tag_mapping_track_number.toString(),
-      json.tag_mapping_fixed
+      json.tag_mapping_fixed,
     );
   }
 }

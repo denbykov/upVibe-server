@@ -8,7 +8,7 @@ export class SourceDTO {
     id: string,
     description: string,
     allow_for_secondary_tag_parsing: boolean,
-    logoPath: string
+    logoPath: string,
   ) {
     this.id = id;
     this.description = description;
@@ -21,7 +21,7 @@ export class SourceDTO {
       json.source_id.toString(),
       json.source_description,
       json.source_allow_for_secondary_tag_parsing,
-      json.source_logo_path
+      json.source_logo_path,
     );
   };
 }

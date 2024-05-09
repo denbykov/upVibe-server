@@ -16,18 +16,18 @@ class AMQPConsumer {
   }
 
   private connectToAMQP = async (
-    amqpConfigConnection: string
+    amqpConfigConnection: string,
   ): Promise<Connection> => {
     return new Promise((resolve, reject) => {
       amqp.connect(amqpConfigConnection, (err, connection) => {
         if (err) {
           this.logger.error(
-            `Error connecting to AMQP at ${this.config.rabbitMQHost}`
+            `Error connecting to AMQP at ${this.config.rabbitMQHost}`,
           );
           reject(err);
         } else {
           this.logger.info(
-            `Connected to AMQP at ${this.config.rabbitMQHost}:${this.config.rabbitMQPort}`
+            `Connected to AMQP at ${this.config.rabbitMQHost}:${this.config.rabbitMQPort}`,
           );
           resolve(connection);
         }
@@ -51,7 +51,7 @@ class AMQPConsumer {
 
   private assertQueue = async (
     channel: Channel,
-    queueName: string
+    queueName: string,
   ): Promise<Replies.AssertQueue> => {
     return new Promise((resolve, reject) => {
       channel.assertQueue(
@@ -65,7 +65,7 @@ class AMQPConsumer {
             this.logger.info(`Queue ${q.queue} asserted`);
             resolve(q);
           }
-        }
+        },
       );
     });
   };
@@ -73,7 +73,7 @@ class AMQPConsumer {
   public consume = async (
     amqpConfigConnection: string,
     queueName: string,
-    callback: (msg: Message) => void
+    callback: (msg: Message) => void,
   ) => {
     const connection = await this.connectToAMQP(amqpConfigConnection);
     const channel = await this.createChannel(connection);
@@ -85,7 +85,7 @@ class AMQPConsumer {
           callback(msg);
         }
       },
-      { noAck: true }
+      { noAck: true },
     );
   };
 }

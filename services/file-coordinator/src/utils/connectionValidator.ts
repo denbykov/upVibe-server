@@ -13,7 +13,7 @@ class ConnectionValidator {
   }
 
   public validateRabbitMQ = async (
-    amqpConfigConnection: string
+    amqpConfigConnection: string,
   ): Promise<boolean> => {
     try {
       const connection = await amqp.connect(amqpConfigConnection);
@@ -44,7 +44,7 @@ class ConnectionValidator {
 
   public validateConnections = async (
     dbPool: pg.Pool,
-    amqpConfigConnection: string
+    amqpConfigConnection: string,
   ): Promise<void> => {
     const postgresConnection = await this.validatePostgres(dbPool);
     const rabbitMQConnection =

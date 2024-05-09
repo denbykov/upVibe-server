@@ -9,7 +9,7 @@ WORKDIR ${BUILD_LOCATION}
 COPY . .
 COPY package.json .
 
-RUN yarn install --frozen-lockfile
+RUN yarn install
 RUN yarn build
 RUN yarn lint
 

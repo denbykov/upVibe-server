@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { Logger } from 'log4js';
 import path from 'path';
+import { Logger } from 'log4js';
 
 class SQLManager {
   private static instance: SQLManager;

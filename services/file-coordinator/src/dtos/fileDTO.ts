@@ -10,7 +10,7 @@ class FileDTO {
     path: string,
     source: string,
     status: string,
-    sourceUrl: string
+    sourceUrl: string,
   ) {
     this.id = id;
     this.path = path;
@@ -25,7 +25,7 @@ class FileDTO {
       json.file_path,
       json.file_source.toString(),
       json.file_status,
-      json.file_source_url
+      json.file_source_url,
     );
   };
 }
