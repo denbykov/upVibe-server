@@ -12,4 +12,5 @@ SELECT
 FROM
   tag_mappings
 WHERE
-  file_id = $1
+  file_id = $1 AND
+  fixed = FALSE

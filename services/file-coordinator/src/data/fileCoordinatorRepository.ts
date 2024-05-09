@@ -20,7 +20,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getFileById');
-      this.logger.info(`Query: ${query}`);
+      this.logger.debug(`Query: ${query}`);
       const queryResult = await client.query(query, [id]);
       return FileDTO.fromJSON(queryResult.rows[0]);
     } catch (error) {
@@ -38,7 +38,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('updateFileSynchronization');
-      this.logger.info(`Query: ${query}`);
+      this.logger.debug(`Query: ${query}`);
       await client.query(query, [
         isSynchronized,
         new Date().toISOString(),
@@ -52,15 +52,15 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     }
   };
 
-  public getTagMappingByFileId = async (
+  public getTagsMappingByFileId = async (
     fileId: string
-  ): Promise<TagMappingDTO> => {
+  ): Promise<TagMappingDTO[]> => {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagMapping');
-      this.logger.info(`Query: ${query}`);
+      this.logger.debug(`Query: ${query}`);
       const { rows } = await client.query(query, [fileId]);
-      return TagMappingDTO.fromJSON(rows[0]);
+      return rows.map((row) => TagMappingDTO.fromJSON(row));
     } catch (error) {
       this.logger.error(`Error getting tags mapping by file id: ${fileId}`);
       throw error;
@@ -69,12 +69,12 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     }
   };
 
-  public getTagsMappingPriorityByUserId = async (
+  public getTagMappingsPriorityByUserId = async (
     userId: string
   ): Promise<TagMappingPriorityDTO> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('getTagMappingPriority');
+      const query = this.sqlManager.getQuery('getTagMappingsPriority');
       const { rows } = await client.query(query, [userId]);
       return TagMappingPriorityDTO.fromJSON(rows);
     } catch (error) {
@@ -117,7 +117,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     try {
       const query = this.sqlManager.getQuery('getTagByFileId');
       const queryResult = await client.query(query, [id]);
-      this.logger.info(`Query: ${query}`);
+      this.logger.debug(`Query: ${query}`);
       return queryResult.rows.map((row) => TagDTO.fromJSON(row));
     } catch (error) {
       this.logger.error(`Error getting tags by file id: ${error}`);

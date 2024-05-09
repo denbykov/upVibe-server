@@ -13,72 +13,40 @@ class FileCoordinatorWorker {
     this.logger = logger;
   }
 
-  public findFileAndCheckStatus = async (id: string): Promise<boolean> => {
-    const file = await this.db.getFileById(id);
-    return file.status === Status.Downloaded;
-  };
-
-  private findTagById = (tags: TagDTO[], id: string): TagDTO | undefined => {
-    return tags.find((tag) => tag.id === id);
-  };
-
-  public mapTagMappingByMappingPriority = (
-    tagMappingPriority: TagMappingPriorityDTO,
-    tagMapping: TagMappingDTO,
-    tags: TagDTO[]
-  ): TagMappingDTO => {
-    const findFirstTag = (ids: string[]): string => {
-      const tag = ids.find((id) => {
-        return this.findTagById(tags, id) !== undefined;
-      });
-      return tag || '';
-    };
-
-    const mapping = new TagMappingDTO(
-      tagMapping.id,
-      tagMapping.userId,
-      tagMapping.fileId,
-      findFirstTag(tagMappingPriority.title),
-      findFirstTag(tagMappingPriority.artist),
-      findFirstTag(tagMappingPriority.album),
-      findFirstTag(tagMappingPriority.picture),
-      findFirstTag(tagMappingPriority.year),
-      findFirstTag(tagMappingPriority.trackNumber),
-      true
-    );
-
-    return mapping;
-  };
-
-  public validateTagStatus = (tag: TagDTO): boolean => {
-    return tag.status === Status.Completed || tag.status === Status.Error;
-  };
-
   public processFile = async (fileId: string): Promise<void> => {
-    const isDownloaded = await this.findFileAndCheckStatus(fileId);
+    const file = await this.db.getFileById(fileId);
+    const isDownloaded = file.status === Status.Downloaded;
 
     if (!isDownloaded) {
       return;
     }
     const tags = await this.db.getTagsByFileId(fileId);
 
-    if (!tags.every(this.validateTagStatus)) {
+    if (tags.length <= 1) {
       return;
     }
 
-    const tagMapping = await this.db.getTagMappingByFileId(fileId);
-
-    if (tagMapping.fixed) {
+    if (
+      !tags.every(
+        (tag) => tag.status === Status.Completed || tag.status === Status.Error
+      )
+    ) {
       return;
     }
 
-    const tagsMappingPriority = await this.db.getTagsMappingPriorityByUserId(
-      tagMapping.userId!
+    const tagsMappings = await this.db.getTagsMappingByFileId(fileId);
+
+    if (tagsMappings.length === 0) {
+      return;
+    }
+
+    const tagMappingsPriority = await this.db.getTagMappingsPriorityByUserId(
+      tagsMappings[0].userId!
     );
 
     const newTagMapping = this.mapTagMappingByMappingPriority(
-      tagsMappingPriority,
-      tagMapping,
+      tagMappingsPriority,
+      tagsMappings,
       tags
     );
 
@@ -89,7 +57,41 @@ class FileCoordinatorWorker {
 
     await this.db.updateTagMappingById(newTagMapping);
 
+    this.logger.debug(
+      `Updating tag mapping: ${newTagMapping} for file: ${fileId} and user: ${newTagMapping.userId}`
+    );
+
     await this.db.updateFileSynchronization(userFileId, true);
+  };
+
+  public mapTagMappingByMappingPriority = (
+    tagMappingPriority: TagMappingPriorityDTO,
+    tagsMappings: TagMappingDTO[],
+    tags: TagDTO[]
+  ): TagMappingDTO => {
+    const mapTagsByPriority = (tags: TagDTO[], mappings: string[]): string => {
+      const priorityTag = mappings.map((priority) => {
+        const tag = tags.find((tag) => tag.source === priority);
+        return tag?.source;
+      })[0];
+
+      return priorityTag ? priorityTag : mappings[0];
+    };
+
+    const mapping = new TagMappingDTO(
+      tagsMappings[0].id,
+      tagsMappings[0].userId,
+      tagsMappings[0].fileId,
+      mapTagsByPriority(tags, tagMappingPriority.title),
+      mapTagsByPriority(tags, tagMappingPriority.artist),
+      mapTagsByPriority(tags, tagMappingPriority.album),
+      mapTagsByPriority(tags, tagMappingPriority.picture),
+      mapTagsByPriority(tags, tagMappingPriority.year),
+      mapTagsByPriority(tags, tagMappingPriority.trackNumber),
+      true
+    );
+
+    return mapping;
   };
 }
 
