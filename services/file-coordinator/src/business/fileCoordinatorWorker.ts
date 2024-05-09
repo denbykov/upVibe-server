@@ -82,7 +82,10 @@ class FileCoordinatorWorker {
       tags
     );
 
-    const userFileId = await this.db.getUserFileIdByFileId(fileId);
+    const userFileId = await this.db.getUserFileIdByFileId(
+      fileId,
+      newTagMapping.userId!
+    );
 
     await this.db.updateTagMappingById(newTagMapping);
 

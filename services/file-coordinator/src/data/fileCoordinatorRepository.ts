@@ -127,12 +127,15 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     }
   };
 
-  public getUserFileIdByFileId = async (fileId: string): Promise<string> => {
+  public getUserFileIdByFileId = async (
+    fileId: string,
+    userId: string
+  ): Promise<string> => {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getUserFileIdByFileId');
-      const { rows } = await client.query(query, [fileId]);
-      return rows[0].user_file_id;
+      const { rows } = await client.query(query, [fileId, userId]);
+      return rows[0].id;
     } catch (error) {
       this.logger.error(`Error getting user file id by file id: ${error}`);
       throw error;

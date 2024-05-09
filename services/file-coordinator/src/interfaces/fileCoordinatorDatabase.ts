@@ -19,7 +19,10 @@ abstract class FileCoordinatorDatabase {
   public abstract updateTagMappingById: (
     tagMapping: TagMappingDTO
   ) => Promise<void>;
-  public abstract getUserFileIdByFileId: (fileId: string) => Promise<string>;
+  public abstract getUserFileIdByFileId: (
+    fileId: string,
+    userId: string
+  ) => Promise<string>;
 }
 
 export { FileCoordinatorDatabase };

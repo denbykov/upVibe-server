@@ -35,5 +35,6 @@
         "type": "on-demand",
         "watch": false
     },
+    "terminal.integrated.defaultProfile.linux": "zsh"
 	}
 }
