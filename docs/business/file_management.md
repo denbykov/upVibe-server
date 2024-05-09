@@ -62,21 +62,21 @@ Form tag_mapping using <b>tags</b> and <b>pirorities</b>, set fixed to TRUE and 
 
 #### AC 5.2
 
-Get <b>user_file</b> records from [user_files](../database/files/user_files.md) table where:  
+Get <b>user_file</b> record from [user_files](../database/files/user_files.md) table where:  
 user_id = <b>mapping</b>.user_id  
 file_id = request.file_id  
 
 #### AC 5.3
-
-For each <b>user_file</b> record perform AC 5.4
-
-#### AC 5.4.1
 
 Update the [file_synchronization](../database/files/file_synchronization.md) table with:  
 is_synchronized = FALSE  
 server_ts = current timestamp    
 where:  
 user_file_id = <b>user_file</b>.id  
+
+#### AC 5.4
+
+Update the file status to done  
 
 # Plugins  
 
