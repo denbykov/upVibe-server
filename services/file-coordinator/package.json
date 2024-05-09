@@ -4,6 +4,7 @@
   "packageManager": "yarn@4.1.1",
   "description": "",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "start": "node dist/app.js",
     "dev": "nodemon src/app.ts",
@@ -20,7 +21,7 @@
     "pg": "^8.11.5"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
     "@types/amqplib": "^0.10.1",
     "@types/eslint": "^8",
     "@types/node": "^20.10.5",

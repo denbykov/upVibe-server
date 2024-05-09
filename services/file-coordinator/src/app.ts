@@ -1,6 +1,5 @@
+import fs from 'fs';
 import { FileController } from '@controllers/fileController';
-import { AMQPConsumer } from '@core/amqpConsumer';
-import { SQLManager } from '@core/sqlManager';
 import { Config } from '@entities/config';
 import { ConnectionValidator } from '@utils/connectionValidator';
 import {
@@ -12,8 +11,9 @@ import {
 } from '@utils/logger';
 import { parseJSONConfig } from '@utils/parseJSONConfig';
 import dotenv from 'dotenv';
-import fs from 'fs';
 import pg from 'pg';
+import { AMQPConsumer } from '@core/amqpConsumer';
+import { SQLManager } from '@core/sqlManager';
 
 class App {
   private config: Config;
@@ -41,11 +41,11 @@ class App {
     try {
       const connectionValidator = new ConnectionValidator(
         this.config,
-        appLogger
+        appLogger,
       );
       await connectionValidator.validateConnections(
         this.dbPool,
-        this.amqpConfigConnection
+        this.amqpConfigConnection,
       );
       this.sqlManager.setUp();
     } catch (error) {
@@ -62,19 +62,19 @@ class App {
       businessLogger,
       dataLogger,
       this.dbPool,
-      this.sqlManager
+      this.sqlManager,
     );
     await amqpConsumer.consume(
       this.amqpConfigConnection,
       'checking/file',
-      fileController.handle_message
+      fileController.handle_message,
     );
   };
 }
 
 const env = dotenv.config({ path: 'config/.env' }).parsed || {};
 const configJson = parseJSONConfig(
-  JSON.parse(fs.readFileSync('config/config.json', 'utf-8'))
+  JSON.parse(fs.readFileSync('config/config.json', 'utf-8')),
 );
 const config = new Config(env, configJson);
 const app = new App(config);
