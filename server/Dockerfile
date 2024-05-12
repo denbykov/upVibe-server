@@ -33,7 +33,7 @@ COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/sql ./sql
 
 RUN npm install --omit=dev --omit=optional
 
-RUN apk add --no-cache python3 py3-pip && \
+RUN sudo apk add --no-cache python3 py3-pip && \
   python3 -m venv /opt/upVibe/venv && \
   . /opt/upVibe/venv/bin/activate && \
   python3 -m pip install mutagen
