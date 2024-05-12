@@ -33,4 +33,10 @@ export abstract class iFileDatabase {
     userId: string,
     userFileId: string
   ) => Promise<void>;
+  public abstract confirmFile: (
+    fileId: string,
+    userId: string,
+    deviceId: string
+  ) => Promise<void>;
+  public abstract getFile(id: string): Promise<FileDTO | null>;
 }

@@ -63,6 +63,24 @@ export class FileRoute extends BaseRoute {
       controller.getTaggedFile
     );
 
+    this.app.post(
+      `${filesURI}/:fileId/confirm`,
+      auth0Middleware(this.config),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
+      controller.confirmFile
+    );
+
+    this.app.get(
+      `${filesURI}/:fileId/download`,
+      auth0Middleware(this.config),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
+      controller.tagFile
+    );
+
     return this.app;
   }
 }

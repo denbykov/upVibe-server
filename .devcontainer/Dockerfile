@@ -9,6 +9,11 @@ RUN apk update && \
   apk add sudo shadow openssh build-base \
   openssl-dev npm bash git zsh bind-tools
 
+RUN apk add --no-cache python3 py3-pip && \
+  python3 -m venv /opt/upVibe/venv && \
+  . /opt/upVibe/venv/bin/activate && \
+  python3 -m pip install mutagen
+
 RUN groupadd --gid $USER_GID $USERNAME \
   && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
   && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
