@@ -6,10 +6,12 @@ import { Status } from '@src/dtos/statusDTO';
 import { TagDTO } from '@src/dtos/tagDTO';
 import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 import { File } from '@src/entities/file';
+import { FileData } from '@src/entities/fileData';
 import { GetFileResponse } from '@src/entities/getFileResponse';
 import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
+import { iFileTagger } from '@src/interfaces/iFileTagger';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
@@ -22,19 +24,22 @@ export class FileWorker {
   private tagDb: iTagDatabase;
   private filePlugin: iFilePlugin;
   private tagPlugin: iTagPlugin;
+  private fileTagger: iFileTagger;
 
   constructor(
     db: iFileDatabase,
     sourceDb: iSourceDatabase,
     tagDb: iTagDatabase,
     filePlugin: iFilePlugin,
-    tagPlugin: iTagPlugin
+    tagPlugin: iTagPlugin,
+    fileTagger: iFileTagger
   ) {
     this.db = db;
     this.sourceDb = sourceDb;
     this.tagDb = tagDb;
     this.filePlugin = filePlugin;
     this.tagPlugin = tagPlugin;
+    this.fileTagger = fileTagger;
   }
 
   public downloadFile = async (
@@ -132,5 +137,22 @@ export class FileWorker {
     deviceId: string
   ): Promise<void> => {
     await this.db.confirmFile(id, user.id, deviceId);
+  };
+
+  public tagFile = async (
+    fileId: string,
+    userId: string
+  ): Promise<FileData> => {
+    const file = await this.db.getFile(fileId);
+
+    if (file === null || file!.status !== Status.Completed) {
+      throw new ProcessingError('File not found or not processed');
+    }
+
+    const tag = await this.tagDb.getMappedTag(fileId, userId);
+
+    const data = await this.fileTagger.tagFile(file!.path, tag);
+
+    return new FileData(`${file!.path}.mp3`, data);
   };
 }

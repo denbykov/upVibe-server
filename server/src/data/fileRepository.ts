@@ -257,4 +257,20 @@ export class FileRepository implements iFileDatabase {
       client.release();
     }
   };
+
+  public getFile = async (id: string): Promise<FileDTO | null> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getFile');
+      const queryResult = await client.query(query, [id]);
+      if (queryResult.rows.length === 0) {
+        return null;
+      }
+      return FileDTO.fromJSON(queryResult.rows[0]);
+    } catch (err) {
+      throw new Error(`FilesRepository.getFile: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
 }

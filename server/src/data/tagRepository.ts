@@ -1,5 +1,6 @@
 import pg from 'pg';
 
+import { ShortTagDTO } from '@src/dtos/shortTagDTO';
 import { TagDTO } from '@src/dtos/tagDTO';
 import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
@@ -156,6 +157,27 @@ export class TagRepository implements iTagDatabase {
         return TagMappingDTO.fromJSON(queryResult.rows[0]);
       }
       return null;
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
+
+  public getMappedTag = async (
+    fileId: string,
+    userId: string
+  ): Promise<ShortTagDTO> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getMappedTag');
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [fileId, userId]);
+      if (queryResult.rows.length > 0) {
+        return ShortTagDTO.fromJSON(queryResult.rows[0]);
+      }
+      throw new Error('No tag found');
     } catch (err) {
       dataLogger.error(err);
       throw err;

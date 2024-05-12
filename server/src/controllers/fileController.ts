@@ -4,6 +4,7 @@ import pg from 'pg';
 import { FileWorker } from '@src/business/fileWorker';
 import { ProcessingError } from '@src/business/processingError';
 import { FileRepository, SourceRepository, TagRepository } from '@src/data';
+import { FileTagger } from '@src/data/fileTagger';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -26,7 +27,8 @@ class FileController extends BaseController {
       new SourceRepository(this.dbPool, this.sqlManager),
       new TagRepository(this.dbPool, this.sqlManager),
       this.pluginManager!.getFilePlugin(),
-      this.pluginManager!.getTagPlugin()
+      this.pluginManager!.getTagPlugin(),
+      new FileTagger(this.config.appPathStorage)
     );
   };
 
@@ -146,6 +148,29 @@ class FileController extends BaseController {
       const fileWorker = this.buildFileWorker();
       const result = await fileWorker.confirmFile(fileId, user, deviceIdParam);
       return response.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public tagFile = async (
+    request: Express.Request,
+    response: Express.Response,
+    next: Express.NextFunction
+  ) => {
+    try {
+      const { user } = request.body;
+      const { fileId } = request.params;
+
+      const fileWorker = this.buildFileWorker();
+      const result = await fileWorker.tagFile(fileId, user.id);
+      response.writeHead(200, {
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename=${result.name}`,
+        'Content-Length': result.data.length,
+      });
+
+      return response.end(result.data);
     } catch (error) {
       next(error);
     }
