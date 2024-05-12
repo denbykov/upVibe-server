@@ -7,11 +7,11 @@ ARG BUILD_LOCATION
 WORKDIR ${BUILD_LOCATION}
 
 COPY . .
-COPY package.json .
+COPY ["package.json", "package-lock.json*"]
 
-RUN yarn install
-RUN yarn build
-RUN yarn lint
+RUN npm install
+RUN npm run build
+RUN npm run lint
 
 FROM node:20-alpine AS final
 
@@ -27,9 +27,9 @@ WORKDIR ${APP_WORKDIR}
 
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/dist ./dist
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package.json .
-COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/yarn.lock .
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package-lock.json .
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/sql ./sql
 
-RUN yarn install --frozen-lockfile --production
+RUN npm install --omit=dev --omit=optional
 
 ENTRYPOINT [ "/bin/bash" ]
