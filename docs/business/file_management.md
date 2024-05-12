@@ -350,7 +350,7 @@ The server should:
 #### AC 1
 
 Get <b>user_file</b> record from [user_files](../database/files/user_files.md) table where:  
-user_id = request.body.user_id  
+user_id = request.token.user_id  
 file_id = request.url.file_id  
 
 #### AC 2
@@ -359,5 +359,5 @@ Update the [file_synchronization](../database/files/file_synchronization.md) tab
 is_synchronized = TRUE  
 device_ts = current timestamp  
 where:  
-device_id = request.body.deviceId  
+device_id = request.url.deviceId  
 user_file_id = <b>user_file</b>.id  
