@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
-import { v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ShortTagDTO } from '@src/dtos/shortTagDTO';
 import { iFileTagger } from '@src/interfaces/iFileTagger';
@@ -76,7 +76,7 @@ export class FileTagger implements iFileTagger {
 
     const script =
       '. /opt/upVibe/venv/bin/activate && python3 /opt/upVibe/scripts/taggers/mp3-tagger.py';
-    const tmpFilePath = path.join('/tmp', `${v4()}.mp3`);
+    const tmpFilePath = path.join('/tmp', `${uuidv4()}.mp3`);
 
     await executeShellScript(script, [
       filePath,
