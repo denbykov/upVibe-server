@@ -318,15 +318,12 @@ paths:
           schema:
             type: integer
             format: int64
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                deviceId:
-                  type: string
-                  example: "dd938aa5-6520-492a-bf61-8927aa58872c"
+        - name: deviceId
+          in: query
+          required: true
+          description: Device id
+          schema:
+            type: string
       responses:
         '200':
           description: successful operation

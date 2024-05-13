@@ -23,6 +23,11 @@ ENV APP_USER=node
 ENV APP_GROUP=node
 ENV APP_WORKDIR=/opt/upVibe/server
 
+RUN apk add python3 py3-pip && \
+  python3 -m venv /opt/upVibe/venv && \
+  . /opt/upVibe/venv/bin/activate && \
+  python3 -m pip install mutagen
+
 USER ${APP_USER}
 WORKDIR ${APP_WORKDIR}
 
