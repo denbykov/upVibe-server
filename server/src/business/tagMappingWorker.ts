@@ -1,18 +1,19 @@
 import { TagMapping } from '@src/entities/tagMapping';
 import { TagMappingPriority } from '@src/entities/tagMappingPriority';
+import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iTagMappingDatabase } from '@src/interfaces/iTagMappingDatabase';
 import { TagMappingMapper } from '@src/mappers/tagMappingMapper';
 import { TagMappingPriorityMapper } from '@src/mappers/tagMappingPriorityMapper';
 
 import { ProcessingError } from './processingError';
 
-// import { ProcessingError } from './processingError';
-
 class TagMappingWorker {
   private db: iTagMappingDatabase;
+  private fileDb: iFileDatabase;
 
-  constructor(db: iTagMappingDatabase) {
+  constructor(db: iTagMappingDatabase, fileDb: iFileDatabase) {
     this.db = db;
+    this.fileDb = fileDb;
   }
 
   public getTagMappingPriority = async (
@@ -35,9 +36,23 @@ class TagMappingWorker {
   ): Promise<TagMapping> => {
     try {
       const tagMappingDTO = new TagMappingMapper().toDTO(tagMapping);
-      return new TagMappingMapper().toEntity(
-        await this.db.updateTagMapping(tagMappingDTO, fileId)
+      const updatedTagMappingDTO = await this.db.updateTagMapping(
+        tagMappingDTO,
+        fileId
       );
+      const userFilesIds = await this.fileDb.getUserFiles(
+        updatedTagMappingDTO.userId!,
+        fileId
+      );
+
+      for (const userFileId of userFilesIds) {
+        await this.fileDb.updateSynchronizationRecords(
+          new Date().toISOString(),
+          userFileId
+        );
+      }
+
+      return new TagMappingMapper().toEntity(updatedTagMappingDTO);
     } catch (error) {
       throw new ProcessingError('Failed to update tag mapping');
     }
