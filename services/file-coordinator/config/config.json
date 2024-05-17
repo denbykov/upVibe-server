@@ -12,5 +12,11 @@
     "password": "admin",
     "name": "up-vibe-dev",
     "max": 5
+  },
+  "UV": {
+    "server": {
+      "host": "server",
+      "port": 3000
+    }
   }
 }

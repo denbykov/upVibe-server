@@ -14,9 +14,11 @@
     "lint:prettier": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
+    "@types/node-fetch": "^2.6.11",
     "amqplib": "^0.10.4",
     "dotenv": "^16.4.5",
     "log4js": "^6.9.1",
+    "node-fetch": "^2.7.0",
     "pg": "^8.11.5"
   },
   "devDependencies": {

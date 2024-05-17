@@ -3,26 +3,38 @@ import { TagMappingDTO } from '@dtos/tagMappingDTO';
 import { TagMappingPriorityDTO } from '@dtos/tagMappingPriorityDTO';
 import { Status } from '@entities/status';
 import { FileCoordinatorDatabase } from '@interfaces/fileCoordinatorDatabase';
+import { ServerAgent } from '@interfaces/serverAgent';
 import { Logger } from 'log4js';
 
 class FileCoordinatorWorker {
   private db: FileCoordinatorDatabase;
+  private serverAgent: ServerAgent;
   private logger: Logger;
-  constructor(db: FileCoordinatorDatabase, logger: Logger) {
+  constructor(db: FileCoordinatorDatabase, serverAgent: ServerAgent, logger: Logger) {
     this.db = db;
+    this.serverAgent = serverAgent;
     this.logger = logger;
   }
 
   public processFile = async (fileId: string): Promise<void> => {
     const file = await this.db.getFileById(fileId);
-    const isDownloaded = file.status === Status.Downloaded;
 
-    if (!isDownloaded) {
+    if (file.status === Status.Downloaded) {
+      this.db.updateFileStatus(fileId, Status.Completed);
+      file.status = Status.Completed;
+    }
+
+    if (file.status !== Status.Completed) {
       return;
     }
-    const tags = await this.db.getTagsByFileId(fileId);
 
-    if (tags.length <= 1) {
+    const tags = await this.db.getTagsByFileId(fileId);
+    if (tags.length == 0) {
+      return;
+    }
+
+    if (tags.length == 1) {
+      await this.serverAgent.requestFileTagging(fileId);
       return;
     }
 
@@ -34,60 +46,56 @@ class FileCoordinatorWorker {
       return;
     }
 
-    const tagsMappings = await this.db.getTagsMappingByFileId(fileId);
+    const tagMappings = await this.db.getTagMappings(fileId, false);
 
-    if (tagsMappings.length === 0) {
-      return;
+    for (const tagMapping of tagMappings) {
+        const tagMappingPriority = await this.db.getTagMappingPriority(
+        tagMapping.userId!,
+      );
+
+      const newTagMapping = this.rebuildTagMapping(
+        tagMapping,
+        tagMappingPriority,
+        tags,
+      );
+
+      await this.db.updateTagMapping(newTagMapping);
+
+      const userFileId = await this.db.getUserFileId(
+        fileId,
+        newTagMapping.userId!,
+      );
+
+      await this.db.updateFileSynchronization(userFileId, false);
     }
-
-    const tagMappingsPriority = await this.db.getTagMappingsPriorityByUserId(
-      tagsMappings[0].userId!,
-    );
-
-    const newTagMapping = this.mapTagMappingByMappingPriority(
-      tagMappingsPriority,
-      tagsMappings,
-      tags,
-    );
-
-    const userFileId = await this.db.getUserFileIdByFileId(
-      fileId,
-      newTagMapping.userId!,
-    );
-
-    await this.db.updateTagMappingById(newTagMapping);
-
-    this.logger.debug(
-      `Updating tag mapping: ${newTagMapping} for file: ${fileId} and user: ${newTagMapping.userId}`,
-    );
-
-    await this.db.updateFileSynchronization(userFileId, true);
   };
 
-  public mapTagMappingByMappingPriority = (
+  public rebuildTagMapping = (
+    originalMapping: TagMappingDTO,
     tagMappingPriority: TagMappingPriorityDTO,
-    tagsMappings: TagMappingDTO[],
     tags: TagDTO[],
   ): TagMappingDTO => {
-    const mapTagsByPriority = (tags: TagDTO[], mappings: string[]): string => {
-      const priorityTag = mappings.map((priority) => {
-        const tag = tags.find((tag) => tag.source === priority);
-        return tag?.source;
-      })[0];
+    const getMostRelevantTag = (tags: TagDTO[], sources: string[]): string => {
+      for (const source of sources) {
+        const tag = tags.find((tag) => tag.source === source);
+        if (tag) {
+          return tag.source;
+        }
+      }
 
-      return priorityTag ? priorityTag : mappings[0];
+      return tags.find((tag) => tag.isPrimary)!.source;
     };
 
     const mapping = new TagMappingDTO(
-      tagsMappings[0].id,
-      tagsMappings[0].userId,
-      tagsMappings[0].fileId,
-      mapTagsByPriority(tags, tagMappingPriority.title),
-      mapTagsByPriority(tags, tagMappingPriority.artist),
-      mapTagsByPriority(tags, tagMappingPriority.album),
-      mapTagsByPriority(tags, tagMappingPriority.picture),
-      mapTagsByPriority(tags, tagMappingPriority.year),
-      mapTagsByPriority(tags, tagMappingPriority.trackNumber),
+      originalMapping.id,
+      originalMapping.userId,
+      originalMapping.fileId,
+      getMostRelevantTag(tags, tagMappingPriority.title),
+      getMostRelevantTag(tags, tagMappingPriority.artist),
+      getMostRelevantTag(tags, tagMappingPriority.album),
+      getMostRelevantTag(tags, tagMappingPriority.picture),
+      getMostRelevantTag(tags, tagMappingPriority.year),
+      getMostRelevantTag(tags, tagMappingPriority.trackNumber),
       true,
     );
 

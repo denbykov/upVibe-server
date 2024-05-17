@@ -10,14 +10,14 @@ This document describes file management details, such as file downloading, synch
 - [Tag mappings](#tag-mappings)
 - [File receiving](#file-receiving)
 
-# File status coordinator worker
+# File coordinator worker
 
-The file status coordinator worker is a separate program from the server, that is responsible for setting completed status for the file. It is accessible to other services via following API:
+The file coordinator worker is a separate program from the server, that is responsible for setting completed status for the file. It is accessible to other services via following API:
 ```json
 routing-key: checking/file
 body:
 {
-    "file_id": 1,
+    "file_id": "1"
 }
 ``` 
 
@@ -25,25 +25,53 @@ On message it should:
 
 #### AC 1
 
-Find the file by given id, and check whether its status is 'D'?  
+Find the file by given id  
+
+#### AC 1.1
+
+check whether its status is 'D'?  
+- yes - set its status to 'C'  
+- no - continue  
+
+#### AC 1.2
+
+Check whether its status is 'C'?  
 - yes - continue  
 - no - finish message processing  
 
 #### AC 2
 
-Fetch all <b>tags</b> for current file. There is more than one tag?  
-- yes - continue  
-- no - finish message processing  
+Fetch all <b>tags</b> for current file. 
+
+There are no tags?
+- yes - finish message processing  
+- no - continue  
 
 #### AC 2.1
 
-Check statuses of fetched tags. All statuses are 'C' or 'E'?  
+There is only one tag?  
+- yes - go to AC 2.1.1  
+- no - go to AC 2.2.1  
+
+#### AC 2.1.1
+
+Is tag status 'C'?  
+- yes - continue  
+- no - finish message processing  
+
+#### AC 2.1.2
+
+Request tag parsing via the /up-vibe/v1/files/{fileId}/parse-tags API and finish message processing  
+
+#### AC 2.2.1
+
+Are all tag statuses either 'C' or 'E'?  
 - yes - continue  
 - no - finish message processing  
 
 #### AC 3
 
-Fetch all records (<b>mappings</b> later) from [tam_mappings](../database/tags/tag_mappings.md) where:  
+Fetch all records (<b>mappings</b> later) from [tag_mappings](../database/tags/tag_mappings.md) where:  
 file_id = request.file_id  
 fixed = FALSE  
 
@@ -62,15 +90,11 @@ Form tag_mapping using <b>tags</b> and <b>pirorities</b>, set fixed to TRUE and 
 
 #### AC 5.2
 
-Get <b>user_file</b> records from [user_files](../database/files/user_files.md) table where:  
+Get <b>user_file</b> record from [user_files](../database/files/user_files.md) table where:  
 user_id = <b>mapping</b>.user_id  
 file_id = request.file_id  
 
 #### AC 5.3
-
-For each <b>user_file</b> record perform AC 5.4
-
-#### AC 5.4.1
 
 Update the [file_synchronization](../database/files/file_synchronization.md) table with:  
 is_synchronized = FALSE  

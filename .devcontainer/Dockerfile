@@ -9,11 +9,19 @@ RUN apk update && \
     apk add sudo shadow openssh build-base \
     openssl-dev npm bash git zsh bind-tools yarn
 
+RUN apk add openssl
+
 RUN groupadd --gid $USER_GID $USERNAME \
-  && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-  && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-  && chmod 0440 /etc/sudoers.d/$USERNAME
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+RUN mkdir -p /opt/upVibe/server/cert && chown $USERNAME /opt/upVibe/server/cert
+
 USER $USERNAME
+
+RUN openssl req -x509 -newkey rsa:4096 -keyout /opt/upVibe/server/cert/privatekey.key \
+    -out /opt/upVibe/server/cert/certificate.crt -days 365 -nodes -subj "/CN=localhost"
 
 WORKDIR /workspaces/upVibe-private-workers
 

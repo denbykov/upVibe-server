@@ -9,6 +9,8 @@ class Config {
   public dbPassword: string = '';
   public dbName: string = '';
   public dbMax: number = 0;
+  public uvServerHost: string = '';
+  public uvServerPort: number = 0;
 
   constructor(configEnv: JSON.JSONObject, configJson: JSON.JSONObject) {
     this.rabbitMQHost =
@@ -27,6 +29,7 @@ class Config {
       process.env.RABBITMQ_PASSWORD ||
       configEnv.RABBITMQ_PASSWORD ||
       configJson.RABBITMQ_PASSWORD;
+
     this.dbHost =
       process.env.DB_HOST || configEnv.DB_HOST || configJson.DB_HOST;
     this.dbPort =
@@ -45,6 +48,15 @@ class Config {
       parseInt(<string>process.env.DB_MAX) ||
       parseInt(configEnv.DB_MAX) ||
       parseInt(configJson.DB_MAX);
+
+      this.uvServerHost =
+      process.env.UV_SERVER_HOST ||
+      configEnv.UV_SERVER_HOST ||
+      configJson.UV_SERVER_HOST;
+    this.uvServerPort =
+      parseInt(<string>process.env.UV_SERVER_PORT) ||
+      parseInt(configEnv.UV_SERVER_PORT) ||
+      parseInt(configJson.UV_SERVER_PORT);
   }
 }
 

@@ -63,6 +63,8 @@ class App {
       dataLogger,
       this.dbPool,
       this.sqlManager,
+      this.config.uvServerHost,
+      this.config.uvServerPort,
     );
     await amqpConsumer.consume(
       this.amqpConfigConnection,

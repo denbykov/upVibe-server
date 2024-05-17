@@ -52,14 +52,15 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     }
   };
 
-  public getTagsMappingByFileId = async (
+  public getTagMappings = async (
     fileId: string,
+    fixed: boolean
   ): Promise<TagMappingDTO[]> => {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTagMapping');
       this.logger.debug(`Query: ${query}`);
-      const { rows } = await client.query(query, [fileId]);
+      const { rows } = await client.query(query, [fileId, fixed]);
       return rows.map((row) => TagMappingDTO.fromJSON(row));
     } catch (error) {
       this.logger.error(`Error getting tags mapping by file id: ${fileId}`);
@@ -69,12 +70,12 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     }
   };
 
-  public getTagMappingsPriorityByUserId = async (
+  public getTagMappingPriority = async (
     userId: string,
   ): Promise<TagMappingPriorityDTO> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('getTagMappingsPriority');
+      const query = this.sqlManager.getQuery('getTagMappingPriority');
       const { rows } = await client.query(query, [userId]);
       return TagMappingPriorityDTO.fromJSON(rows);
     } catch (error) {
@@ -87,7 +88,7 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     }
   };
 
-  public updateTagMappingById = async (
+  public updateTagMapping = async (
     tagMapping: TagMappingDTO,
   ): Promise<void> => {
     const client = await this.dbPool.connect();
@@ -127,13 +128,13 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
     }
   };
 
-  public getUserFileIdByFileId = async (
+  public getUserFileId = async (
     fileId: string,
     userId: string,
   ): Promise<string> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('getUserFileIdByFileId');
+      const query = this.sqlManager.getQuery('getUserFileId');
       const { rows } = await client.query(query, [fileId, userId]);
       return rows[0].id;
     } catch (error) {
@@ -143,6 +144,22 @@ class FileCoordinatorRepository implements FileCoordinatorDatabase {
       client.release();
     }
   };
+
+  public updateFileStatus = async (
+    fileId: string,
+    status: string,
+  ): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('updateFileStatus');
+      await client.query(query, [fileId, status]);
+    } catch (error) {
+      this.logger.error(`Error updating file status: ${error}`);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
 }
 
 export { FileCoordinatorRepository };

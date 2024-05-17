@@ -10,9 +10,9 @@ COPY . .
 COPY ["package.json", "package-lock.json*"]
 
 RUN apk add openssl
-RUN mkdir -p auto-cert && \
-    openssl req -x509 -newkey rsa:4096 -keyout auto-cert/privatekey.key \
-    -out auto-cert/certificate.crt -days 365 -nodes -subj "/CN=localhost"
+RUN mkdir -p cert && \
+    openssl req -x509 -newkey rsa:4096 -keyout cert/privatekey.key \
+    -out cert/certificate.crt -days 365 -nodes -subj "/CN=localhost"
 
 RUN npm install
 RUN npm run prebuild
@@ -36,7 +36,7 @@ COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/dist ./di
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package.json .
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package-lock.json .
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/sql ./sql
-COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/auto-cert ./auto-cert
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/cert ./cert
 
 RUN npm install --omit=dev --omit=optional
 
