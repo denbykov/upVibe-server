@@ -68,6 +68,7 @@ services:
       - ./server/config:/opt/upVibe/server/config
       - ./server/logs:/opt/upVibe/server/logs
       - ./server/plugins:/opt/upVibe/server/plugins
+      - ./scripts/taggers:/opt/upVibe/scripts/taggers
       - ./docs/api:/opt/upVibe/server/api
       - /opt/upVibe/storage:/opt/upVibe/storage
     healthcheck:

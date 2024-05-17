@@ -1,3 +1,4 @@
+import { ShortTagDTO } from '@src/dtos/shortTagDTO';
 import { TagDTO } from '@src/dtos/tagDTO';
 import { TagMappingDTO } from '@src/dtos/tagMappingDTO';
 
@@ -17,4 +18,8 @@ export abstract class iTagDatabase {
     userId: string,
     fileId: string
   ): Promise<TagMappingDTO | null>;
+  public abstract getMappedTag(
+    fileId: string,
+    userId: string
+  ): Promise<ShortTagDTO>;
 }
