@@ -4,15 +4,16 @@ import { Logger } from 'log4js';
 import path from 'path';
 
 import { Config } from '@src/entities/config';
+import { iFileCoordinatorPlugin } from '@src/interfaces/iFileCoordinatorPlugin';
+import { iFilePlugin } from '@src/interfaces/iFilePlugin';
+import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
-
-import { iFilePlugin } from './interfaces/iFilePlugin';
-import { iTagPlugin } from './interfaces/iTagPlugin';
 
 class PluginManager {
   private config: Config;
   private filePlugin: iFilePlugin | null;
   private tagPlugin: iTagPlugin | null;
+  private fileCoordinatorPlugin: iFileCoordinatorPlugin | null;
   private static instance: PluginManager;
   private dataLogger: Logger;
   private serverLogger: Logger;
@@ -23,6 +24,7 @@ class PluginManager {
     this.serverLogger = serverLogger;
     this.filePlugin = null;
     this.tagPlugin = null;
+    this.fileCoordinatorPlugin = null;
     if (PluginManager.instance) {
       return PluginManager.instance;
     }
@@ -39,25 +41,31 @@ class PluginManager {
     }
   };
 
-  private registerPlugin = (plugin: iFilePlugin | iTagPlugin): void => {
-    let pluginRegistered = false;
+  private registerPlugin = (
+    plugin: iFilePlugin | iTagPlugin | iFileCoordinatorPlugin
+  ): void => {
+    const pluginMap = {
+      FilePlugin: this.filePlugin,
+      TagPlugin: this.tagPlugin,
+      FileCoordinatorPlugin: this.fileCoordinatorPlugin,
+    };
 
-    if (plugin.pluginName === 'FilePlugin' && !this.filePlugin) {
-      this.filePlugin = plugin as iFilePlugin;
-      pluginRegistered = true;
-    } else if (plugin.pluginName === 'FilePlugin') {
+    if (pluginMap[plugin.pluginName as keyof typeof pluginMap]) {
       throw new Error(`${plugin.pluginName} already registered`);
     }
 
-    if (plugin.pluginName === 'TagPlugin' && !this.tagPlugin) {
-      this.tagPlugin = plugin as iTagPlugin;
-      pluginRegistered = true;
-    } else if (plugin.pluginName === 'TagPlugin') {
-      throw new Error(`${plugin.pluginName} already registered`);
-    }
-
-    if (!pluginRegistered) {
-      throw new Error(`Unknown plugin type {plugin.pluginName}`);
+    switch (plugin.pluginName) {
+      case 'FilePlugin':
+        this.filePlugin = plugin as iFilePlugin;
+        break;
+      case 'TagPlugin':
+        this.tagPlugin = plugin as iTagPlugin;
+        break;
+      case 'FileCoordinatorPlugin':
+        this.fileCoordinatorPlugin = plugin as iFileCoordinatorPlugin;
+        break;
+      default:
+        throw new Error(`Unknown plugin type ${plugin.pluginName}`);
     }
   };
 

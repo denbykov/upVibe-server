@@ -43,11 +43,7 @@ export class TagRoute extends BaseRoute {
       controller.getPictureOfTag
     );
 
-    this.app.post(
-      `${filesURI}/:fileId/parse-tags`,
-      auth0Middleware(this.config),
-      controller.parseTags
-    );
+    this.app.post(`${filesURI}/:fileId/parse-tags`, controller.parseTags);
 
     return this.app;
   }
