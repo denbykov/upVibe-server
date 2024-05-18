@@ -17,7 +17,7 @@ export default class FileCoordinatorPlugin extends AMQPPublisher implements iFil
     this.dataLogger.info(`[${this.pluginName}] Coordinating file: ${fileId}`);
     try {
       this.publish('checking/file', {
-        fileId: fileId
+        file_id: fileId
       });
     } catch (error) {
       this.dataLogger.error(error);
