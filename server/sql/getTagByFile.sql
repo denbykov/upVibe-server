@@ -1,6 +1,7 @@
 SELECT
   t.id AS tag_id,
   t.file_id AS tag_file_id,
+  t.is_primary AS tag_is_primary,
   t.source AS tag_source,
   t.status AS tag_status,
   t.title AS tag_title,

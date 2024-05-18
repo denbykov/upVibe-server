@@ -7,9 +7,10 @@ SELECT
   album as tag_mapping_album,
   picture as tag_mapping_picture,
   year as tag_mapping_year,
-  track_number as tag_mapping_track_number
+  track_number as tag_mapping_track_number,
+  fixed as tag_mapping_fixed
 FROM
   tag_mappings
 WHERE
-  user_id = $1
-  AND file_id = $2
+  file_id = $2
+  AND user_id = $1

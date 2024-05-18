@@ -1,18 +1,6 @@
 {
     "configurations": [
         {
-            "name": "Node.js: Nodemon debug",
-            "type": "node",
-            "request": "launch",
-            "outputCapture": "std",
-            "runtimeExecutable": "npm",
-            "cwd": "${workspaceFolder}/server",
-            "runtimeArgs": [
-                "run",
-                "dev"
-            ],
-        },
-        {
             "name": "Node.js: Attach",
             "type": "node",
             "request": "attach",

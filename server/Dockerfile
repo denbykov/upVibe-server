@@ -9,14 +9,20 @@ WORKDIR ${BUILD_LOCATION}
 COPY . .
 COPY ["package.json", "package-lock.json*"]
 
-RUN npm install && mv node_modules ../
+RUN apk add openssl
+RUN mkdir -p cert && \
+    openssl req -x509 -newkey rsa:4096 -keyout cert/privatekey.key \
+    -out cert/certificate.crt -days 365 -nodes -subj "/CN=localhost"
+
+RUN npm install
 RUN npm run prebuild
 RUN npm run lint
 RUN npm run build
-# RUN npm run test-ci
+# RUN yarn test-ci
 
 FROM node:20-alpine AS final
 
+RUN apk add --no-cache bash curl
 ARG BUILD_LOCATION
 
 ENV APP_USER=node
@@ -35,7 +41,8 @@ COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/dist ./di
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package.json .
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/package-lock.json .
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/sql ./sql
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} ${BUILD_LOCATION}/cert ./cert
 
 RUN npm install --omit=dev --omit=optional
 
-ENTRYPOINT [ "sh" ]
+ENTRYPOINT [ "/bin/bash" ]
