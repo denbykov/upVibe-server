@@ -8,6 +8,12 @@
 		},
     {
       "path": "../scripts"
+    },
+    {
+      "path": "../services"
+    },
+    {
+      "path": "../plugins"
     }
 	],
 	"settings": {
@@ -16,6 +22,7 @@
 		"path-intellisense.mappings": {
 			"@src/*": "${workspaceRoot}/server/src/*"
 		},
+    "files.autoSave": "afterDelay",
 		"path-intellisense.extensionOnImport": true,
 		"path-intellisense.showHiddenFiles": true,
 		"vsintellicode.typescript.completionsEnabled": true,
@@ -29,5 +36,7 @@
         "type": "on-demand",
         "watch": false
     },
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "typescript.tsdk": "server/node_modules/typescript/lib"
 	}
 }
