@@ -5,7 +5,8 @@ SET
   album = $3,
   picture = $4,
   year = $5,
-  track_number = $6
+  track_number = $6,
+  fixed = TRUE
 WHERE
   file_id = $7
 RETURNING
