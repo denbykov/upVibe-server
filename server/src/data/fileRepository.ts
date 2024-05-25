@@ -242,6 +242,37 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
+  public getUserFiles = async (
+    userId: string,
+    fileId: string
+  ): Promise<Array<string>> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getUserFiles');
+      const queryResult = await client.query(query, [userId, fileId]);
+      return queryResult.rows.map((row) => row.id);
+    } catch (err) {
+      throw new Error(`FilesRepository.getUserFiles: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
+
+  public updateSynchronizationRecords = async (
+    timestamp: string,
+    userFileId: string
+  ): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('updateSynchronizationRecords');
+      await client.query(query, [timestamp, userFileId]);
+    } catch (err) {
+      throw new Error(`FilesRepository.updateSynchronizationRecords: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
+
   public confirmFile = async (
     fileId: string,
     userId: string,

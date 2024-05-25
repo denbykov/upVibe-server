@@ -1,7 +1,6 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "packageManager": "yarn@4.1.1",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -29,8 +28,6 @@
     "redoc-express": "^2.1.0",
     "swagger-themes": "^1.4.3",
     "swagger-ui-express": "^5.0.0",
-    "tsc-alias": "^1.8.7",
-    "typescript": "^5.3.3",
     "uuid": "^9.0.1",
     "yaml": "^2.4.1"
   },
