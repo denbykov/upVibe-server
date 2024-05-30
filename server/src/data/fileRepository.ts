@@ -281,7 +281,12 @@ export class FileRepository implements iFileDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('confirmFile');
-      await client.query(query, [fileId, userId, deviceId]);
+      await client.query(query, [
+        fileId,
+        userId,
+        deviceId,
+        new Date().toISOString(),
+      ]);
     } catch (err) {
       throw new Error(`FilesRepository.confirmFile: ${err}`);
     } finally {
