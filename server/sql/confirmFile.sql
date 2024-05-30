@@ -1,6 +1,7 @@
 update file_synchronization as fs
 set
-  is_synchronized = true
+  is_synchronized = true,
+  device_ts = $4
 from
   user_files as uf
 where
