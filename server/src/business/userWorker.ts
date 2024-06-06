@@ -3,6 +3,7 @@ import { TagMappingPriorityDTO } from '@src/dtos/tagMappingPriorityDTO';
 import { UserDTO } from '@src/dtos/userDTO';
 import { Config } from '@src/entities/config';
 import { User } from '@src/entities/user';
+import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iUserDatabase } from '@src/interfaces/iUserDatabase';
 import { iUserInfoAgent } from '@src/interfaces/iUserInfoAgent';
 
@@ -10,10 +11,16 @@ import { ProcessingError } from './processingError';
 
 export class UserWorker {
   private db: iUserDatabase;
+  private dbFile: iFileDatabase;
   private userInfoAgent: iUserInfoAgent;
 
-  constructor(db: iUserDatabase, userInfoAgent: iUserInfoAgent) {
+  constructor(
+    db: iUserDatabase,
+    dbFile: iFileDatabase,
+    userInfoAgent: iUserInfoAgent
+  ) {
     this.db = db;
+    this.dbFile = dbFile;
     this.userInfoAgent = userInfoAgent;
   }
 
@@ -62,7 +69,7 @@ export class UserWorker {
       sub: 'debug',
       permissions: permissions,
     };
-    const deviceUUID = 'ee7db5b1-d569-40f1-bda0-76d970b3b348';
+    const deviceUUID = 'e7db5b1-d569-40f1-bda0-76d970b3b348';
     const device = new DeviceDTO(deviceUUID, 'debug', 'debug');
     let user = await this.getUser(debugToken.sub);
     if (!user) {
@@ -86,7 +93,12 @@ export class UserWorker {
     }
 
     device.user_id = user.id;
-    await this.registerDevice(device);
+    const newDevice = await this.registerDevice(device);
+
+    const userFilesIds = await this.dbFile.getUserFileIds(user.id);
+    for (const userFileId of userFilesIds) {
+      await this.dbFile.InserSyncrhonizationRecords(newDevice.id, userFileId);
+    }
   };
 
   public handleRegistration = async (
@@ -116,6 +128,11 @@ export class UserWorker {
     }
 
     device.user_id = user.id;
-    await this.registerDevice(device);
+    const newDevice = await this.registerDevice(device);
+
+    const userFilesIds = await this.dbFile.getUserFileIds(user.id);
+    for (const userFileId of userFilesIds) {
+      await this.dbFile.InserSyncrhonizationRecords(newDevice.id, userFileId);
+    }
   };
 }

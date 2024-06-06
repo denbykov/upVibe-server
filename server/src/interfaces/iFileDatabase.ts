@@ -33,6 +33,10 @@ export abstract class iFileDatabase {
     userId: string,
     userFileId: string
   ) => Promise<void>;
+  public abstract InserSyncrhonizationRecords: (
+    deviceId: string,
+    userFileId: string
+  ) => Promise<void>;
   public abstract updateSynchronizationRecords: (
     timestamp: string,
     userFileId: string
@@ -41,6 +45,7 @@ export abstract class iFileDatabase {
     userId: string,
     fileId: string
   ) => Promise<Array<string>>;
+  public abstract getUserFileIds: (userId: string) => Promise<Array<string>>;
   public abstract confirmFile: (
     fileId: string,
     userId: string,
