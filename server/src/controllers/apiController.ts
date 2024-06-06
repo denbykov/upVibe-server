@@ -3,7 +3,7 @@ import pg from 'pg';
 
 import { ApiWorker } from '@src/business/apiWorker';
 import { UserWorker } from '@src/business/userWorker';
-import { UserInfoAgent, UserRepository } from '@src/data';
+import { FileRepository, UserInfoAgent, UserRepository } from '@src/data';
 import { DeviceDTO } from '@src/dtos/deviceDTO';
 import { Config } from '@src/entities/config';
 import { DEBUG } from '@src/routes/permissions';
@@ -20,6 +20,7 @@ class APIController extends BaseController {
   private buildUserWorker = (): UserWorker => {
     return new UserWorker(
       new UserRepository(this.dbPool, this.sqlManager),
+      new FileRepository(this.dbPool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
   };
