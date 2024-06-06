@@ -220,6 +220,29 @@ Create a record in the [file_synchronization](../database/files/file_synchroniza
 device_id = record.id  
 user_file_id = created_user_file.id  
 
+# File deletion  
+
+The client can request the server to delete a file via DELETE /up-vibe/v1/files/{fileId} request. 
+
+### AC 1
+
+Find a record in the [user_files](../database/files/user_files.md) where:  
+file_id = request.url.id  
+user_id = request.user.id  
+
+Does a record exist?
+- yes - continues
+- no - abort the operation and send the "File does not exist" error response to the user  
+
+### AC 2
+
+Update the [file_synchronization](../database/files/file_synchronization.md) table with:  
+is_synchronized = FALSE  
+marked_for_deletion = TRUE  
+server_ts = current timestamp  
+where:  
+user_file_id = <b>user_file</b>.id  
+
 # Tag parsing  
 
 The client can request the server to create and parse tags via POST /up-vibe/v1/files/{fileId}/tags request. The client has to pass a request with the related file id as a url parameter.
@@ -371,7 +394,7 @@ Does the plugin report an error?
 
 # File confirmation  
 
-The client must confirm file downloading using POST /up-vibe/v1/files/{fileId}/confirm request
+The client must confirm file downloading or deletion using POST /up-vibe/v1/files/{fileId}/confirm request
 
 The server should:
 
@@ -383,9 +406,50 @@ file_id = request.url.file_id
 
 #### AC 2
 
+Find a [file_synchronization](../database/files/file_synchronization.md) record where:  
+device_id = request.url.deviceId  
+user_file_id = <b>user_file</b>.id  
+
+If <b>file_synchronization</b>.marked_for_deletion is:  
+- false - go to AC 3
+- true - go to AC 4
+
+#### AC 3
+
 Update the [file_synchronization](../database/files/file_synchronization.md) table with:  
 is_synchronized = TRUE  
 device_ts = current timestamp  
 where:  
 device_id = request.url.deviceId  
 user_file_id = <b>user_file</b>.id  
+
+finalize processing
+
+#### AC 4
+
+Delete record from the [file_synchronization](../database/files/file_synchronization.md) table where:    
+where:  
+device_id = request.url.deviceId  
+user_file_id = <b>user_file</b>.id  
+
+#### AC 5
+
+Find a [file_synchronization](../database/files/file_synchronization.md) records where:  
+user_file_id = <b>user_file</b>.id  
+
+Any records found?
+- yes - finalize processing
+- no - go to AC 6
+
+#### AC 6
+
+Find records in the [user_files](../database/files/user_files.md) table where:  
+file_id = request.url.file_id  
+
+Any records found?
+- yes - finalize processing
+- no - go to AC 7
+
+#### AC 7
+
+Delete file and all records refering it where file id = request.url.file_id  
