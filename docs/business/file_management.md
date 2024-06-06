@@ -285,6 +285,62 @@ Does the plugin report an error?
 - yes - abort the operation and send the error response to the user (errorCode -1)  
 - no - send a successful response to the user
 
+# Custom tags  
+
+The client can request the server to add custom tags for file via POST /up-vibe/v1/files/{fileId}/custom-tags request.
+
+The server should:
+
+#### AC 1
+
+Try to find a record in the [user_files](../database/files/user_files.md) table where:  
+file_id = request.url.file_id  
+user_id = request.user.id   
+
+Does the record exist?  
+- yes - continue  
+- no - abort the operation and send the "No such file" message  
+
+#### AC 2
+
+Create or update record in the [tags](../database/tags/tags.md) table with:
+file_id = request.url.file_id
+title = request.body.title  
+artist = request.body.artist  
+album = request.body.album  
+year = request.body.year  
+trackNumber = request.body.trackNumber  
+user_id = request.user.id  
+
+where:  
+file_id = request.url.file_id
+user_id = request.user.id  
+
+# Custom picture tag  
+
+The client can request the server to add custom tags for file via POST /up-vibe/v1/files/{fileId}/custom-tags/picture request.
+
+The server should:
+
+#### AC 1
+
+Try to find a record in the [tags](../database/tags/tags.md) table where:  
+file_id = request.url.file_id  
+user_id = request.user.id   
+
+Does the record exist?  
+- yes - continue  
+- no - abort the operation and send the "No such tag" message
+
+#### AC 2
+
+Save file to default picture location and update record in the [tags](../database/tags/tags.md) table with:
+picture_path = path  
+
+where:  
+file_id = request.url.file_id
+user_id = request.user.id  
+
 # Tag mappings  
 
 Tag mappings contain information about which exact tags should be applied to the file. They are unique for each user.  

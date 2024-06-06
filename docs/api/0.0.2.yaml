@@ -445,6 +445,68 @@ paths:
         - BearerAuth: []
         - upvibe-auth:
             - user
+  /up-vibe/v1/files/{fileId}/custom-tags:
+    post:
+      tags:
+        - tags
+      summary: Create or update custom tag for given fileId
+      description: Create or update custom tag for given fileId
+      operationId: createCustomTags
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Create a new file
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShortTag'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Tag'
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/files/{fileId}/custom-tags/picture:
+    post:
+      tags:
+        - tags
+      summary: Upload custom picture tag for given fileId
+      description: Upload custom picture tag for given fileId
+      operationId: uploadCustomPicture
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Create a new file
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '200':
+          description: successful operation
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
   /up-vibe/v1/tags/tag-mapping-priority:
     get:
       tags:
