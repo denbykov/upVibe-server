@@ -10,7 +10,7 @@ This document describes user management details.
 
 # Overview
 
-This implementation of the server relies on auth0 for user authentication and authorization. Naturally, it means that auth0 is handling user creation. But we also need to store some internal information about the user to connect him with respective resources. This information is stored in the [users](../database/users/users.md) table, and logic is described in [User handling](#user-handling).
+This implementation of the server relies on auth0 for user authentication and authorization. Naturally, it means that auth0 is handling user creation. But we also need to store some internal information about the user to connect him with respective resources. This information is stored in the [users](../../database/users/users.md) table, and logic is described in [User handling](#user-handling).
 
 # Permissions
 
@@ -28,7 +28,7 @@ The server should:
 
 #### AC 1
 
-Get the user's id from the "sub" claim of the access token and use it to find the respective record in the [users](../database/users/users.md) table filtering by:  
+Get the user's id from the "sub" claim of the access token and use it to find the respective record in the [users](../../database/users/users.md) table filtering by:  
 sub = access_token.sub  
 Does the record exist?
 - yes - go to AC 3
@@ -36,27 +36,27 @@ Does the record exist?
 
 #### AC 2
 
-Request the user's nickname from the auth0 /userinfo endpoint. Then, insert the record into the [users](../database/users/users.md) table with the following values:  
+Request the user's nickname from the auth0 /userinfo endpoint. Then, insert the record into the [users](../../database/users/users.md) table with the following values:  
 sub = access_token.sub  
 name = user_info.nickname  
 
 #### AC 2.1
 
-Create a record in the [tag_mapping_priorities](../database/tags/tag_mapping_priorities.md) table according to the configuration(for more details see [file management](./file_management.md) Tag mapping priorities)  
+Create a record in the [tag_mapping_priorities](../../database/tags/tag_mapping_priorities.md) table according to the configuration(for more details see [file management](../../file_management.md) Tag mapping priorities)  
 
 #### AC 3
 
-Insert record in the [devices](../database/users/devices.md) table with the following values:  
+Insert record in the [devices](../../database/users/devices.md) table with the following values:  
 id = request.body.deviceId  
 user_id = (created_user/read_user).id  
 name = request.body.deviceName  
 
 #### AC 4
 
-For each record in the [user_files](../database/files/user_files.md) table filtering by:  
+For each record in the [user_files](../../database/files/user_files.md) table filtering by:  
 user_id = (created_user/read_user).id  
 
-Insert record in the [file_synchronization](../database/files/file_synchronization.md) table with the following values:  
+Insert record in the [file_synchronization](../../database/files/file_synchronization.md) table with the following values:  
 device_id = created_device.id  
 user_file_id = record.id  
 
@@ -74,7 +74,7 @@ Does the token contain all permissions required by the business logic?
 
 #### AC 2
 
-Get the user's id from the "sub" claim of the access token and use it to find the respective record in the [users](../database/users/users.md) table filtering by:  
+Get the user's id from the "sub" claim of the access token and use it to find the respective record in the [users](../../database/users/users.md) table filtering by:  
 sub = access_token.sub  
 Does the record exist?
 - yes - continue
