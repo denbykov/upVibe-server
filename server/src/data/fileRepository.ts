@@ -321,20 +321,16 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public insertSynchronizationDeviceRecords = async (
+  public InserSyncrhonizationRecords = async (
     deviceId: string,
     userFileId: string
   ): Promise<void> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery(
-        'insertSynchronizationDeviceRecords'
-      );
+      const query = this.sqlManager.getQuery('InserSyncrhonizationRecords');
       await client.query(query, [deviceId, userFileId]);
     } catch (err) {
-      throw new Error(
-        `FilesRepository.insertSynchronizationDeviceRecords: ${err}`
-      );
+      throw new Error(`FilesRepository.InserSyncrhonizationRecords: ${err}`);
     } finally {
       client.release();
     }

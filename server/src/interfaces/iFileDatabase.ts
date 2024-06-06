@@ -33,7 +33,7 @@ export abstract class iFileDatabase {
     userId: string,
     userFileId: string
   ) => Promise<void>;
-  public abstract insertSynchronizationDeviceRecords: (
+  public abstract InserSyncrhonizationRecords: (
     deviceId: string,
     userFileId: string
   ) => Promise<void>;
