@@ -285,3 +285,60 @@ tag_id = [created_tag.id]
 Does the plugin report an error?  
 - yes - abort the operation and send the error response to the user (errorCode -1)  
 - no - send a successful response to the user
+
+
+Insert a new record in the [playlists](../../database/files/playlists.md) table with the following values:    
+source_url = normalizedUrl  
+source_id = sourceId  
+status = "CR"  
+
+# Add playlist  
+
+This functionality is responsible for the playlist creation.
+
+API:
+```json
+routing-key: /downloading/file
+body:
+{
+    "url": "some/url",
+    "user_id": 1
+}
+```
+
+The server should:
+
+#### AC 1
+
+Via the filePlugin perform request.body.url normalization and get sourceId  
+normalizedUrl = normalize request.body.url  
+sourceId = get source id for request.body.url  
+
+#### AC 2
+
+Try to find a record in the [playlists](../../database/files/playlists.md) table by the following filter:  
+source_url = normalizedUrl  
+
+Does the record exist?
+- yes - go to AC 4
+- no - go to AC 3
+
+#### AC 3
+
+Insert a record in the [playlists](../../database/files/playlists.md) table with following data:    
+source_url = normalizedUrl  
+source_id = sourceId  
+added_ts = now  
+status = CR  
+synchronization_ts = NULL  
+
+#### AC 4
+
+Try to insert record to the [user_playlists](../../database/files/user_playlists.md) table with follwing data:  
+user_id = request.body.user_id  
+playlist_id = <b>playlist</b>.id  
+added_ts = NOW()  
+
+Does the record already exist?
+- exit with error "User already has a playlist ${playlist.id}"
+- no - finalize processing

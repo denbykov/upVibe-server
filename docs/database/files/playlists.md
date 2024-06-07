@@ -2,7 +2,7 @@
 
 This page describes the public.playlists table
 
-![alt text](image.png)
+![alt text](playlists.png)
 
 ## Structure definition
 
@@ -10,11 +10,14 @@ This page describes the public.playlists table
 | - | - | - | - |
 | id | BIGINT | PK, GENERATED ALWAYS AS IDENTITY |
 | source_url | VARCHAR(255) | UNIQUE, IDX |
+| source_id | INT | NOT NULL,<br/> FK to public.sources(id) 
 | added_ts | TIMESTAMPTZ | NOT NULL, DEFAULT CURRENT_TIMESTAMP |
+| status | VARCHAR(2) | NOT NULL,<br/> FK to public.playlist_statuses(status) |
+| syncrhonization_ts | TIMESTAMPTZ | NULL |
 | title | VARCHAR(255) | NOT NULL |
 
 ## Data definition 
 
-| source_url | added_ts | title
-| - | - | - |
-| NULL  | NOW() | Default |
+| source_url | source_id | added_ts | title
+| - | - | - | - |
+| NULL | 'custom' source id | NOW() | Default |

@@ -17,8 +17,8 @@ tags:
     description: Tag management
   - name: tag-mappings
     description: Tag mappings management
-  - name: user-management
-    description: User management
+  - name: playlists
+    description: Playlist management
 
 paths:
   /up-vibe/v1/health:
@@ -530,6 +530,86 @@ paths:
         - upvibe-auth:
             - user
         - BearerAuth: []
+  /up-vibe/v1/playlists:
+    post:
+      tags:
+        - playlists
+      summary: Add new playlist
+      description: Create new playlist.
+      operationId: addPlaylist
+      requestBody:
+        description: Create new playlist
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaylistCreationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Playlist already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "Playlist already exists"
+                code: -1
+        '405':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "Invalid input"
+                code: -1
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+    # get:
+    #   tags:
+    #     - files
+    #   summary: Get files
+    #   description: Returns array of files for current user
+    #   operationId: getFiles
+    #   parameters:
+    #     - name: deviceId
+    #       in: query
+    #       required: true
+    #       description: Device id
+    #       schema:
+    #         type: string
+    #     - name: statuses
+    #       in: query
+    #       required: false
+    #       description: CSV list of file statuses to return
+    #       example: 'D,R'
+    #       schema:
+    #         type: array
+    #         format: string
+    #     - name: syncronized
+    #       in: query
+    #       required: false
+    #       description: Required synchronization status
+    #       example: true
+    #       schema:
+    #         type: boolean
+    #   responses:
+    #     '200':
+    #       description: successful operation
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: array
+    #             items:
+    #               $ref: '#/components/schemas/File'
+    #   security:
+    #     - upvibe-auth:
+    #         - user
+    #     - BearerAuth: []
 
 components:
   schemas:
@@ -547,6 +627,11 @@ components:
           type: integer
           format: int32
     FileCreationRequest:
+      type: object
+      properties:
+        url:
+          type: string
+    PlaylistCreationRequest:
       type: object
       properties:
         url:

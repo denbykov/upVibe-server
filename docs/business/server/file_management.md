@@ -13,6 +13,7 @@ This document describes file management details, such as file downloading, synch
 - [Tag mapping priorities](#tag-mapping-priorities)
 - [File receiving](#file-receiving)
 - [File confirmation](#file-confirmation)
+- [Add playlist](#add-playlist)
 
 # Downloading  
 
@@ -298,3 +299,46 @@ Any records found?
 #### AC 7
 
 Delete file and all records refering it where file id = request.url.file_id  
+
+# Add playlist  
+
+The client can request the server to add a playlist via POST /up-vibe/v1/playlists request. The client has to pass a request with the following JSON structure in the body:
+```json
+{
+    "url": "some/url"
+}
+```
+
+The server should:
+
+#### AC 1
+
+Via the filePlugin perform request.body.url normalization and get sourceId  
+normalizedUrl = normalize request.body.url  
+sourceId = get source id for request.body.url  
+
+#### AC 2
+
+Try to find a record in the [playlists](../../database/files/playlists.md) table by the following filter:  
+source_url = normalizedUrl  
+
+Does the record exist?
+- yes - go to AC 3
+- no - go to AC 4
+
+#### AC 3
+
+Try to find a record in the [user_playlists](../../database/files/user_playlists.md) table by the following filter:  
+user_id = request.body.user.id
+file  
+
+Does the record exist?
+- yes - go to AC 3
+- no - go to AC 4
+
+#### AC 4
+
+Request playlist creation  
+routing-key: /add/playlist
+url = request.body.url  
+user_id = request.body.user.id
