@@ -49,6 +49,7 @@ Request file donwloading
 routing-key: /downloading/file
 url = request.body.url  
 user_id = request.body.user.id  
+playlist_id = 1 (DEFAULT playlist)  
 
 # Deletion  
 

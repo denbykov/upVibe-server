@@ -44,6 +44,10 @@ name = user_info.nickname
 
 Create a record in the [tag_mapping_priorities](../../database/tags/tag_mapping_priorities.md) table according to the configuration(for more details see [file management](../../file_management.md) Tag mapping priorities)  
 
+#### AC 2.2
+
+Create a record in the [user_playlists](../../database/files/user_playlists.md) table for 'Default' playlist  
+
 #### AC 3
 
 Insert record in the [devices](../../database/users/devices.md) table with the following values:  

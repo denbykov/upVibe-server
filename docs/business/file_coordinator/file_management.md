@@ -44,7 +44,7 @@ body:
 
 # Downloading  
 
-This functionality responsible for secondary tag downloading.
+This functionality is responsible for the file downloading.
 
 API:
 ```json
@@ -52,7 +52,8 @@ routing-key: /downloading/file
 body:
 {
     "url": "some/url",
-    "user_id": 1
+    "user_id": 1,
+    "playlist_id": 1
 }
 ```
 
@@ -73,12 +74,22 @@ Does the record exist?
 - yes - go to AC 6
 - no - go to AC 2
 
-#### AC 2
+#### AC 2.1
 
 Insert a new record in the [files](../../database/files/files.md) table with the following values:  
 path = null  
 source_url = normalizedUrl  
 status = "CR"  
+
+#### AC 2.2
+
+Insert a new record in the [user_paylist_files](../../database/files/user_paylist_files.md) table with the following values:  
+file_id = <b>file</b>.id  
+user_playlist_id =   
+&emsp; id from [user_playlists](../../database/files/user_playlists.md) where:  
+&emsp; user_id = request.body.user_id  
+&emsp; playlist_id = request.body.playlist_id  
+missing_from_remote = FALSE  
 
 #### AC 3
 
@@ -225,7 +236,7 @@ Update the file status to done
 
 # Tag parsing  
 
-This functionality responsible for secondary tag parsing.
+This functionality is responsible for the secondary tag parsing.
 
 API:
 ```json

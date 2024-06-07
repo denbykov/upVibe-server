@@ -172,10 +172,6 @@ paths:
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/File'
         '400':
           description: File already exists
           content:
@@ -605,6 +601,8 @@ components:
           description: May contain source location
           type: string
         isSynchoronized:
+          type: boolean
+        markedForDeletion:
           type: boolean
         tags:
           $ref: '#/components/schemas/ShortTag'
