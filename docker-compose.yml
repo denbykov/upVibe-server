@@ -10,10 +10,10 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: up-vibe-dev
+      POSTGRES_DB: up-vibe
       PGDATA: /var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d up-vibe-dev"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d up-vibe"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -30,7 +30,7 @@ services:
       - ./scripts/db/changesets:/liquibase/changesets/
       - ./scripts/db/liquibase.properties:/liquibase/liquibase.properties
     command: --defaultsFile=liquibase.properties update
-    restart: "no"
+    restart: on-failure
     networks:
       - up-vibe-network
     container_name: liquibase
@@ -98,7 +98,14 @@ services:
     container_name: file-coordinator
     volumes:
       - ./services/file-coordinator/config:/opt/upVibe/services/file-coordinator/config
-      - ./services/file-coordinator/logs:/opt/upVibe/file-coordinator/logs
+      - ./services/file-coordinator/logs:/opt/upVibe/services/file-coordinator/logs
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_started
     networks:
       - up-vibe-network
 
