@@ -2,15 +2,15 @@
   "RABBITMQ": {
     "host": "rabbitmq",
     "port": 5672,
-    "user": "",
-    "password": ""
+    "user": "admin",
+    "password": "admin"
   },
   "DB": {
     "host": "postgresql",
     "port": 5432,
-    "user": "",
-    "password": "",
-    "name": "",
+    "user": "admin",
+    "password": "admin",
+    "name": "up-vibe",
     "max": 5
   },
   "UV": {
