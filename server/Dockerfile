@@ -38,8 +38,8 @@ RUN apk add python3 py3-pip && \
   . /opt/upVibe/venv/bin/activate && \
   python3 -m pip install mutagen
 
-RUN addgroup -g $USER_GID $USERNAME && \
-    adduser -D -u $USER_UID -G $USERNAME $USERNAME
+RUN groupadd --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 
 USER ${USERNAME}
 WORKDIR ${APP_WORKDIR}

@@ -12,9 +12,6 @@ WORKDIR ${BUILD_LOCATION}
 COPY . .
 COPY ["package.json", "package-lock.json*"]
 
-RUN addgroup -g $USER_GID $USERNAME && \
-    adduser -D -u $USER_UID -G $USERNAME $USERNAME
-
 RUN npm install
 RUN npm run build
 RUN npm run lint
@@ -29,8 +26,8 @@ ARG USER_GID
 
 ENV APP_WORKDIR=/opt/upVibe/services/file-coordinator
 
-RUN addgroup -g $USER_GID $USERNAME && \
-    adduser -D -u $USER_UID -G $USERNAME $USERNAME
+RUN groupadd --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 
 USER ${USERNAME}
 WORKDIR ${APP_WORKDIR}
