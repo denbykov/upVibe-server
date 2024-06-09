@@ -2,8 +2,8 @@ name: Create and publish a Docker image to GitHub Packages
 
 on:
   push:
-    branches:
-      - 'release/**'
+    tags:
+    - '*'
 
 env:
   REGISTRY: ghcr.io
@@ -34,6 +34,11 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest
 
       - name: Build and push Docker server image
         uses: docker/build-push-action@v5
@@ -68,6 +73,11 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest
 
       - name: Build and push Docker file-coordinator image
         uses: docker/build-push-action@v5

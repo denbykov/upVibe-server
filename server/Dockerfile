@@ -3,6 +3,9 @@ ARG BUILD_LOCATION=/build/server
 FROM node:20-alpine AS builder
 
 ARG BUILD_LOCATION
+ARG USERNAME=up-vibe
+ARG USER_UID=1002
+ARG USER_GID=$USER_UID
 
 WORKDIR ${BUILD_LOCATION}
 
@@ -14,25 +17,33 @@ RUN mkdir -p cert && \
     openssl req -x509 -newkey rsa:4096 -keyout cert/privatekey.key \
     -out cert/certificate.crt -days 365 -nodes -subj "/CN=localhost"
 
+RUN addgroup -g $USER_GID $USERNAME && \
+    adduser -D -u $USER_UID -G $USERNAME $USERNAME
+
 RUN npm install
 RUN npm run prebuild
 RUN npm run lint
 RUN npm run build
 # RUN yarn test-ci
 
+USER $USERNAME
+
 FROM node:20-alpine AS final
 
 RUN apk add --no-cache bash curl
 ARG BUILD_LOCATION
 
-ENV APP_USER=node
-ENV APP_GROUP=node
+ENV APP_USER=up-vibe
+ENV APP_GROUP=up-vibe
 ENV APP_WORKDIR=/opt/upVibe/server
 
 RUN apk add python3 py3-pip && \
   python3 -m venv /opt/upVibe/venv && \
   . /opt/upVibe/venv/bin/activate && \
   python3 -m pip install mutagen
+
+RUN addgroup -g 1002 up-vibe && \
+    adduser -D -u 1002 -G up-vibe up-vibe
 
 USER ${APP_USER}
 WORKDIR ${APP_WORKDIR}
