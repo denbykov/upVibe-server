@@ -9,7 +9,7 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  build-and-push-image:
+  build-and-push-server-image:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,7 +30,7 @@ jobs:
         id: server-meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/up-vibe/server
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/up-vibe/server
           tags: |
             type=ref,event=branch
             type=sha
@@ -48,11 +48,28 @@ jobs:
           tags: ${{ steps.server-meta.outputs.tags }}
           labels: ${{ steps.server-meta.outputs.labels }}
 
+  build-and-push-file-coordinator-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Extract metadata (tags, labels) for Docker
         id: services-file-coordinator-meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/up-vibe/services/file-coordinator
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/up-vibe/services/file-coordinator
           tags: |
             type=ref,event=branch
             type=sha
@@ -69,3 +86,4 @@ jobs:
           push: true
           tags: ${{ steps.services-file-coordinator-meta.outputs.tags }}
           labels: ${{ steps.services-file-coordinator-meta.outputs.labels }}
+
