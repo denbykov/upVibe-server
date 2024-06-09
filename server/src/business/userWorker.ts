@@ -69,7 +69,7 @@ export class UserWorker {
       sub: 'debug',
       permissions: permissions,
     };
-    const deviceUUID = 'e7db5b1-d569-40f1-bda0-76d970b3b348';
+    const deviceUUID = '83bdf68c-4f07-40e1-b453-eaf18677f6eb';
     const device = new DeviceDTO(deviceUUID, 'debug', 'debug');
     let user = await this.getUser(debugToken.sub);
     if (!user) {
