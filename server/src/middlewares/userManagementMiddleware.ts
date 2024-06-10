@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { UserWorker } from '@src/business/userWorker';
 import { Config } from '@src/entities/config';
+import { serverLogger } from '@src/utils/server/logger';
 
 const userManagementMiddleware = (
   permissions: Array<string>,
@@ -28,6 +29,10 @@ const userManagementMiddleware = (
       const tokenPayload: JSON.JSONObject = JSON.parse(
         Buffer.from(encodedTokenPayload!, 'base64').toString('ascii')
       );
+      serverLogger.debug(`Sub: ${tokenPayload.sub}`);
+      serverLogger.debug(`Expire: ${tokenPayload.exp}`);
+      const expireDate = new Date(tokenPayload.exp * 1000).toISOString();
+      serverLogger.debug(`Expire: ${expireDate}`);
 
       const dbUser = await worker.handleAuthorization(
         tokenPayload,
