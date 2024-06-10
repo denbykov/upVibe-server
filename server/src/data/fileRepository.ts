@@ -266,6 +266,8 @@ export class FileRepository implements iFileDatabase {
       return queryResult.rows.map((row) => row.file_id);
     } catch (err) {
       throw new Error(`FilesRepository.getUserFileIds: ${err}`);
+    } finally {
+      client.release();
     }
   };
 
