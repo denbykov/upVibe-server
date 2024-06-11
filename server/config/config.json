@@ -16,13 +16,13 @@
     "version": "v1"
   },
   "TAG_MAPPING_PRIORITY": {
-    "source": ["3", "2", "1"],
-    "title": ["3", "2", "1"],
-    "artist": ["3", "2", "1"],
-    "album": ["3", "2", "1"],
-    "picture": ["3", "2", "1"],
-    "year": ["3", "2", "1"],
-    "track_number": ["3", "2", "1"]
+    "source": ["1"],
+    "title": ["1"],
+    "artist": ["1"],
+    "album": ["1"],
+    "picture": ["1"],
+    "year": ["1"],
+    "track_number": ["1"]
   },
   "AUTH0": {
     "audience": "",
