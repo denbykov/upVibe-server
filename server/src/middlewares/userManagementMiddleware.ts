@@ -20,7 +20,6 @@ const userManagementMiddleware = (
           permissions
         );
         request.body.user = dbUser;
-        next();
         return;
       }
       const rawToken = request.headers.authorization!.split(' ')[1];
@@ -35,9 +34,11 @@ const userManagementMiddleware = (
       );
       request.body.rawToken = rawToken;
       request.body.user = dbUser;
-      next();
+      return;
     } catch (error) {
       next(error);
+    } finally {
+      next();
     }
   };
 };
