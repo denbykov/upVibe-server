@@ -1,10 +1,7 @@
-import { ServerAgent } from "@interfaces/serverAgent";
-
-import { Logger } from 'log4js';
-
-import fetch from 'node-fetch';
 import https from 'https';
-
+import { ServerAgent } from '@interfaces/serverAgent';
+import { Logger } from 'log4js';
+import fetch from 'node-fetch';
 
 export class ServerAgentImpl implements ServerAgent {
   private hostname: string;
@@ -20,6 +17,7 @@ export class ServerAgentImpl implements ServerAgent {
   public requestFileTagging = async (id: string): Promise<void> => {
     try {
       const url = `https://${this.hostname}:${this.port}/up-vibe/v1/files/${id}/parse-tags`;
+      this.logger.info(`Requesting file tagging to: ${url}`);
 
       const agent = new https.Agent({
         rejectUnauthorized: false,
@@ -33,7 +31,6 @@ export class ServerAgentImpl implements ServerAgent {
       if (!response.ok) {
         throw new Error(`Request failed with status code: ${response.status}`);
       }
-
     } catch (error) {
       this.logger.error(`Error requesting file tagging: ${error}`);
       throw error;
