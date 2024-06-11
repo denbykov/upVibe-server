@@ -17,7 +17,6 @@ export class ServerAgentImpl implements ServerAgent {
   public requestFileTagging = async (id: string): Promise<void> => {
     try {
       const url = `https://${this.hostname}:${this.port}/up-vibe/v1/files/${id}/parse-tags`;
-      this.logger.debug(`Requesting file tagging to: ${url}`);
 
       const agent = new https.Agent({
         rejectUnauthorized: false,
@@ -34,7 +33,7 @@ export class ServerAgentImpl implements ServerAgent {
     } catch (error) {
       this.logger.error(`Error requesting file tagging: ${error}`);
       this.logger.error(
-        `Requesting file tagging to: ${this.hostname}:${this.port}/up-vibe/v1/files/${id}/parse-tags`,
+        `Url was: ${this.hostname}:${this.port}/up-vibe/v1/files/${id}/parse-tags`,
       );
       throw error;
     }
