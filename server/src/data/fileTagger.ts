@@ -70,17 +70,17 @@ export class FileTagger implements iFileTagger {
       image_path: tags.picturePath,
     };
 
-    const replaceQuotes = (str: string) => {
-      return str.replaceAll('"', '\\"');
-    };
-
     const script =
       '. /opt/upVibe/venv/bin/activate && python3 /opt/upVibe/scripts/taggers/mp3-tagger.py';
     const tmpFilePath = path.join('/tmp', `${uuidv4()}.mp3`);
 
+    const jsonString = JSON.stringify(tagsObject);
+    const jsonBytes = new TextEncoder().encode(jsonString);
+    const base64String = btoa(String.fromCharCode(...jsonBytes));
+
     await executeShellScript(script, [
       filePath,
-      `"${replaceQuotes(JSON.stringify(tagsObject))}"`,
+      `"${base64String}"`,
       tmpFilePath,
     ]);
 
