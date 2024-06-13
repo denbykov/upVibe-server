@@ -75,6 +75,7 @@ class FileCoordinatorWorker {
     tagMappingPriority: TagMappingPriorityDTO,
     tags: TagDTO[],
   ): TagMappingDTO => {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     const getMostRelevantTag = (tags: TagDTO[], sources: string[], tagSatisfies: Function): string => {
       for (const source of sources) {
         const tag = tags.find((tag) => tag.source === source);
