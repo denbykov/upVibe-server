@@ -249,11 +249,11 @@ export class FileRepository implements iFileDatabase {
   ): Promise<Array<string>> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('getUserFilesByFileId');
+      const query = this.sqlManager.getQuery('getUserFiles');
       const queryResult = await client.query(query, [userId, fileId]);
       return queryResult.rows.map((row) => row.id);
     } catch (err) {
-      throw new Error(`FilesRepository.getUserFilesByFileId: ${err}`);
+      throw new Error(`FilesRepository.getUserFiles: ${err}`);
     } finally {
       client.release();
     }
