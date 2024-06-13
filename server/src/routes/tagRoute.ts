@@ -58,13 +58,7 @@ export class TagRoute extends BaseRoute {
       controller.getPictureOfTag
     );
 
-    this.app.post(
-      `${filesURI}/:fileId/parse-tags`,
-      this.config.appDebug
-        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
-        : userManagementMiddleware([GENERAL], userWorker, this.config),
-      controller.parseTags
-    );
+    this.app.post(`${filesURI}/:fileId/parse-tags`, controller.parseTags);
 
     return this.app;
   }
