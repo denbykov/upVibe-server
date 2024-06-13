@@ -54,7 +54,8 @@ FROM
   LEFT JOIN tag_mappings as tm ON f.id = tm.file_id
   AND tm.user_id = $3
   LEFT JOIN user_files as uf ON f.id = uf.file_id
-  LEFT JOIN file_synchronization as fs ON fs.user_file_id = uf.file_id
+  AND uf.user_id = $3
+  LEFT JOIN file_synchronization as fs ON fs.user_file_id = uf.id
   AND fs.device_id = $2
 WHERE
   f.id = $1

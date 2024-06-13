@@ -215,6 +215,7 @@ export class FileRepository implements iFileDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getTaggedFile');
+      dataLogger.debug(query);
       const queryResult = await client.query(query, [id, deviceId, userId]);
       if (queryResult.rows.length === 0) {
         return null;
