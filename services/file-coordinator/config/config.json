@@ -13,10 +13,8 @@
     "name": "up-vibe",
     "max": 5
   },
-  "UV": {
-    "server": {
-      "host": "server",
-      "port": 3000
-    }
+  "UV_SERVER": {
+    "host": "server",
+    "port": 3000
   }
 }
