@@ -19,12 +19,7 @@ class FileCoordinatorWorker {
   public processFile = async (fileId: string): Promise<void> => {
     const file = await this.db.getFileById(fileId);
 
-    if (file.status === Status.Downloaded) {
-      this.db.updateFileStatus(fileId, Status.Completed);
-      file.status = Status.Completed;
-    }
-
-    if (file.status !== Status.Completed) {
+    if (file.status !== Status.Downloaded && file.status !== Status.Completed) {
       return;
     }
 
@@ -67,6 +62,11 @@ class FileCoordinatorWorker {
       );
 
       await this.db.updateFileSynchronization(userFileId, false);
+    }
+
+    if (file.status === Status.Downloaded) {
+      this.db.updateFileStatus(fileId, Status.Completed);
+      file.status = Status.Completed;
     }
   };
 
