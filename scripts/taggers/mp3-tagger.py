@@ -1,4 +1,5 @@
 import sys
+import base64
 import json
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TALB, TYER, TRCK
@@ -64,11 +65,12 @@ if __name__ == "__main__":
       sys.exit(3)
 
     mp3_path = sys.argv[1]
-    json_tags = ' '.join(sys.argv[2:-1])
+    decoded_json_bytes = base64.b64decode(sys.argv[2])
+    decoded_json_string = decoded_json_bytes.decode('utf-8')
     output_path = sys.argv[3]
 
     try:
-      tags = json.loads(json_tags)
+      tags = json.loads(decoded_json_string)
     except json.JSONDecodeError:
       print("Invalid JSON format for tags.")
       sys.exit(2)
