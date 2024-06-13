@@ -75,10 +75,10 @@ class FileCoordinatorWorker {
     tagMappingPriority: TagMappingPriorityDTO,
     tags: TagDTO[],
   ): TagMappingDTO => {
-    const getMostRelevantTag = (tags: TagDTO[], sources: string[]): string => {
+    const getMostRelevantTag = (tags: TagDTO[], sources: string[], tagSatisfies: Function): string => {
       for (const source of sources) {
         const tag = tags.find((tag) => tag.source === source);
-        if (tag) {
+        if (tag && tagSatisfies(tag)) {
           return tag.source;
         }
       }
@@ -90,12 +90,12 @@ class FileCoordinatorWorker {
       originalMapping.id,
       originalMapping.userId,
       originalMapping.fileId,
-      getMostRelevantTag(tags, tagMappingPriority.title),
-      getMostRelevantTag(tags, tagMappingPriority.artist),
-      getMostRelevantTag(tags, tagMappingPriority.album),
-      getMostRelevantTag(tags, tagMappingPriority.picture),
-      getMostRelevantTag(tags, tagMappingPriority.year),
-      getMostRelevantTag(tags, tagMappingPriority.trackNumber),
+      getMostRelevantTag(tags, tagMappingPriority.title, (tag: TagDTO) => tag.title !== null),
+      getMostRelevantTag(tags, tagMappingPriority.artist, (tag: TagDTO) => tag.artist !== null),
+      getMostRelevantTag(tags, tagMappingPriority.album, (tag: TagDTO) => tag.album !== null),
+      getMostRelevantTag(tags, tagMappingPriority.picture, (tag: TagDTO) => tag.picturePath !== null),
+      getMostRelevantTag(tags, tagMappingPriority.year, (tag: TagDTO) => tag.year !== null),
+      getMostRelevantTag(tags, tagMappingPriority.trackNumber, (tag: TagDTO) => tag.trackNumber !== null),
       true,
     );
 
