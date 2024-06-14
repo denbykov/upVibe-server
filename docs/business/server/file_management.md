@@ -5,7 +5,7 @@ This document describes file management details, such as file downloading, synch
 # Content
 
 - [Plugins](#plugins)
-- [Downloading](#downloading)
+- [File Downloading](#file-downloading)
 - [File deletion](#file-deletion)
 - [Custom tags](#custom-tags)
 - [Custom picture tag](#custom-picture-tag)
@@ -13,9 +13,10 @@ This document describes file management details, such as file downloading, synch
 - [Tag mapping priorities](#tag-mapping-priorities)
 - [File receiving](#file-receiving)
 - [File confirmation](#file-confirmation)
-- [Add playlist](#add-playlist)
+- [Playlist addition](#playlist-addition)
+- [Playlist deletion](#playlist-deletion)
 
-# Downloading  
+# File downloading  
 
 The client can request the server to download a file via POST /up-vibe/v1/files request. The client has to pass a request with the following JSON structure in the body:
 ```json
@@ -324,7 +325,7 @@ Are any records found?
 
 Delete file and all records refering it where file id = request.url.file_id from the database and from the fyle system.  
 
-# Add playlist  
+# Playlist addition  
 
 The client can request the server to add a playlist via POST /up-vibe/v1/playlists request. The client has to pass a request with the following JSON structure in the body:
 ```json
@@ -366,3 +367,56 @@ Request playlist creation
 routing-key: /add/playlist
 url = request.body.url  
 user_id = request.body.user.id
+
+# Playlist deletion  
+
+The client can request the server to delete a playlist via DELETE /up-vibe/v1/playlists request.
+
+The server should:
+
+#### AC 1
+
+Find record in the [user_playlists](../../database/files/user_platlists.md) table where:  
+user_id = request.body.user.id  
+playlist_id = request.url.palylistId  
+
+#### AC 2
+
+Find records in the [user_playlists_files](../../database/files/user_playlists_files.md) table where:  
+user_playlist_id = <b>user_playlists</b>.id
+
+#### AC 3
+
+For each <b>record</b> in <b>user_playlists_files</b>:
+
+Remove record from the [user_playlists_files](../../database/files/user_playlists_files.md) table where:  
+id = <b>user_playlists</b>.id
+
+Update the [file_synchronization](../../database/files/file_synchronization.md) table with:  
+is_synchronized = FALSE  
+server_ts = current timestamp  
+where:  
+user_file_id =  
+&emsp; select id from the [user_files](../../database/files/user_files.md) where:  
+&emsp; user_id = request.body.user.id  
+&emsp; file_id = <b>record</b>.file_id  
+
+#### AC 4
+
+Remove record from the [user_playlists](../../database/files/user_platlists.md) table where:  
+user_id = request.body.user.id  
+playlist_id = request.url.palylistId  
+
+#### AC 5
+
+Find records in the [user_playlists](../../database/files/user_platlists.md) table where:  
+playlist_id = request.url.palylistId  
+
+Are any records found:
+- yes - finalize  
+- no - continue  
+
+#### AC 6
+
+Remove records from the [playlists](../../database/files/playlists.md) table where:  
+id = request.url.palylistId  

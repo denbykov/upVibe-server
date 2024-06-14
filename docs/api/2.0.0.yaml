@@ -617,6 +617,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Playlist'
+    delete:
+        tags:
+          - playlists
+        summary: Delete palylist
+        description: Delete palylist
+        operationId: deletePlaylist
+        parameters:
+          - name: playlistId
+            in: path
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          '200':
+            description: successful operation
+        security:
+          - upvibe-auth:
+              - user
+          - BearerAuth: []
 
 components:
   schemas:
