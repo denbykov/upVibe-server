@@ -25,15 +25,15 @@
     "track_number": ["1"]
   },
   "AUTH0": {
-    "audience": "volodymyr-test-null",
-    "domain": "up-vibe.eu.auth0.com"
+    "audience": "",
+    "domain": ""
   },
   "DB": {
     "host": "postgresql",
     "port": 5432,
     "user": "admin",
     "password": "admin",
-    "name": "up-vibe-dev",
+    "name": "up-vibe",
     "max": 5
   }
 }

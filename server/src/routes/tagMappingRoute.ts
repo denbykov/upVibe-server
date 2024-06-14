@@ -3,7 +3,7 @@ import pg from 'pg';
 
 import { UserWorker } from '@src/business/userWorker';
 import { TagMappingController } from '@src/controllers';
-import { UserInfoAgent, UserRepository } from '@src/data';
+import { FileRepository, UserInfoAgent, UserRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { userManagementMiddleware } from '@src/middlewares';
 import auth0Middleware from '@src/middlewares/auth0Middleware';
@@ -37,6 +37,7 @@ export class TagMappingRoute extends BaseRoute {
 
     const userWorker = new UserWorker(
       new UserRepository(this.dbPool, this.sqlManager),
+      new FileRepository(this.dbPool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 
@@ -61,6 +62,9 @@ export class TagMappingRoute extends BaseRoute {
     this.app.put(
       `${filesURI}/:fileId/tag-mapping`,
       auth0Middleware(this.config),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.updateTagMapping
     );
 

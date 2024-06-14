@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Node.js: Attach",
+            "name": "Node.js: Attach (Server)",
             "type": "node",
             "request": "attach",
             "port": 9229,
@@ -13,9 +13,26 @@
             "request": "attach",
             "port": 9229,
             "restart": true,
-            "name": "Docker: Attach to Node",
+            "name": "Docker: Attach to Node (Server)",
             "remoteRoot": "/opt/upVibe",
             "localRoot": "${workspaceFolder}/server"
         },
+        {
+          "name": "Node.js: Attach (File-Coordinator)",
+          "type": "node",
+          "request": "attach",
+          "port": 9229,
+          "restart": true,
+          "localRoot": "${workspaceFolder}/services/file-coordinator",
+        },
+        {
+           "name": "Docker: Attach to Node (File-Coordinator)",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "restart": true,
+            "remoteRoot": "/opt/upVibe",
+            "localRoot": "${workspaceFolder}/services/file-coordinator"
+        }
     ]
 }

@@ -3,7 +3,7 @@ import pg from 'pg';
 
 import { UserWorker } from '@src/business/userWorker';
 import { FileController } from '@src/controllers';
-import { UserInfoAgent, UserRepository } from '@src/data';
+import { FileRepository, UserInfoAgent, UserRepository } from '@src/data';
 import { Config } from '@src/entities/config';
 import { auth0Middleware, userManagementMiddleware } from '@src/middlewares';
 import { PluginManager } from '@src/pluginManager';
@@ -33,6 +33,7 @@ export class FileRoute extends BaseRoute {
     const filesURI = `/up-vibe/v1/files`;
     const userWorker = new UserWorker(
       new UserRepository(this.dbPool, this.sqlManager),
+      new FileRepository(this.dbPool, this.sqlManager),
       new UserInfoAgent(this.config)
     );
 

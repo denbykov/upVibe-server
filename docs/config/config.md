@@ -136,7 +136,7 @@ Config example:
     "port": 5432,
     "user": "admin",
     "password": "admin",
-    "name": "up-vibe-dev",
+    "name": "up-vibe",
     "max": 5
   },
   "RABBITMQ": {
