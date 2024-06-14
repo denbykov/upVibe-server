@@ -4,7 +4,9 @@ import { configure, getLogger } from 'log4js';
 const config = JSON.parse(fs.readFileSync('config/log4j.properties', 'utf8'));
 configure(config);
 
-export const serverLogger = getLogger('[SERVER]');
-export const dataLogger = getLogger('[DATA]');
-export const businessLogger = getLogger('[Business]');
-export const presentationLogger = getLogger('presentation');
+const serverLogger = getLogger('[SERVER]');
+const dataLogger = getLogger('[DATA]');
+const businessLogger = getLogger('[BUSINESS]');
+const presentationLogger = getLogger('[PRESENTATION]');
+
+export { serverLogger, dataLogger, businessLogger, presentationLogger };

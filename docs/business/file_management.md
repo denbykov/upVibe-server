@@ -25,17 +25,11 @@ On message it should:
 
 #### AC 1
 
-Find the file by given id  
+Find the file by given id   
 
 #### AC 1.1
 
-check whether its status is 'D'?  
-- yes - set its status to 'C'  
-- no - continue  
-
-#### AC 1.2
-
-Check whether its status is 'C'?  
+Check whether its status is 'C' or 'D'?  
 - yes - continue  
 - no - finish message processing  
 
@@ -104,7 +98,9 @@ user_file_id = <b>user_file</b>.id
 
 #### AC 5.4
 
-Update the file status to done  
+check whether its status is 'D'?  
+- yes - set its status to 'C'  
+- no - continue  
 
 # Plugins  
 

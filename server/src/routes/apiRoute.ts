@@ -49,43 +49,43 @@ export class APIRoute extends BaseRoute {
       customCss: swaggerTheme.getBuffer(SwaggerThemeNameEnum.DARK_MONOKAI),
     };
 
-    this.app.use(
-      `${apiURI}/api`,
-      swaggerUi.serve,
-      swaggerUi.setup(swaggerSpec, theme)
-    );
-
-    this.app.get(`${apiURI}/docs/swagger.json`, controller.getSwaggerSpec);
-
-    this.app.get(
-      `${apiURI}/docs`,
-      redoc({
-        title: 'API Docs',
-        specUrl: `${apiURI}/docs/swagger.json`,
-        nonce: '',
-        redocOptions: {
-          theme: {
-            colors: {
-              primary: {
-                main: '#6EC5AB',
+    if (this.config.appDebug) {
+      this.app.use(
+        `${apiURI}/api`,
+        swaggerUi.serve,
+        swaggerUi.setup(swaggerSpec, theme)
+      );
+      this.app.get(`${apiURI}/docs/swagger.json`, controller.getSwaggerSpec);
+      this.app.get(
+        `${apiURI}/docs`,
+        redoc({
+          title: 'API Docs',
+          specUrl: `${apiURI}/docs/swagger.json`,
+          nonce: '',
+          redocOptions: {
+            theme: {
+              colors: {
+                primary: {
+                  main: '#6EC5AB',
+                },
               },
-            },
-            typography: {
-              fontFamily: `"museo-sans", 'Helvetica Neue', Helvetica, Arial, sans-serif`,
-              fontSize: '15px',
-              lineHeight: '1.5',
-              code: {
-                code: '#87E8C7',
-                backgroundColor: '#4D4D4E',
+              typography: {
+                fontFamily: `"museo-sans", 'Helvetica Neue', Helvetica, Arial, sans-serif`,
+                fontSize: '15px',
+                lineHeight: '1.5',
+                code: {
+                  code: '#87E8C7',
+                  backgroundColor: '#4D4D4E',
+                },
               },
-            },
-            menu: {
-              backgroundColor: '#ffffff',
+              menu: {
+                backgroundColor: '#ffffff',
+              },
             },
           },
-        },
-      })
-    );
+        })
+      );
+    }
 
     this.app.get(`${apiURI}/health`, controller.healthCheck);
 

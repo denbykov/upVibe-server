@@ -62,6 +62,9 @@ export class TagMappingRoute extends BaseRoute {
     this.app.put(
       `${filesURI}/:fileId/tag-mapping`,
       auth0Middleware(this.config),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.updateTagMapping
     );
 

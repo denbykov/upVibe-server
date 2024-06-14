@@ -2,14 +2,14 @@ name: Create and publish a Docker image to GitHub Packages
 
 on:
   push:
-    branches:
-      - 'release/**'
+    tags:
+    - '*'
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
-  build-and-push-image:
+  build-and-push-server-image:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,10 +17,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -28,34 +28,62 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: server-meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/up-vibe/server
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/up-vibe/server
           tags: |
             type=ref,event=branch
             type=sha
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest
 
       - name: Build and push Docker server image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v5
         with:
           context: ./server
           push: true
           tags: ${{ steps.server-meta.outputs.tags }}
           labels: ${{ steps.server-meta.outputs.labels }}
 
+  build-and-push-file-coordinator-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Extract metadata (tags, labels) for Docker
         id: services-file-coordinator-meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/up-vibe/services/file-coordinator
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/up-vibe/services/file-coordinator
           tags: |
             type=ref,event=branch
             type=sha
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest
 
       - name: Build and push Docker file-coordinator image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v5
         with:
           context: ./services/file-coordinator
           push: true
           tags: ${{ steps.services-file-coordinator-meta.outputs.tags }}
           labels: ${{ steps.services-file-coordinator-meta.outputs.labels }}
+
