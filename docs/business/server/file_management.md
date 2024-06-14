@@ -6,7 +6,7 @@ This document describes file management details, such as file downloading, synch
 
 - [Plugins](#plugins)
 - [Downloading](#downloading)
-- [Deletion](#deletion)
+- [File deletion](#file-deletion)
 - [Custom tags](#custom-tags)
 - [Custom picture tag](#custom-picture-tag)
 - [Tag mappings](#tag-mappings)
@@ -52,7 +52,7 @@ url = request.body.url
 user_id = request.body.user.id  
 playlist_id = 1 (DEFAULT playlist)  
 
-# Deletion  
+# File deletion  
 
 The client can request the server to delete a file via DELETE /up-vibe/v1/files/{fileId} request. 
 
@@ -68,9 +68,18 @@ Does a record exist?
 
 ### AC 2
 
+Remove records from the [user_playlist_files](../../database/files/user_paylist_files.md) for given request.url.playlists where:  
+file_id = request.url.id  
+user_playlist_id = any(  
+&emsp; id from [user_playlists](../../database/files/user_platlists.md) where:  
+&emsp; playlist_id = any(request.url.playlist_id)  
+&emsp; user_id = any(request.body.user_id)  
+)  
+
+### AC 3
+
 Update the [file_synchronization](../../database/files/file_synchronization.md) table with:  
 is_synchronized = FALSE  
-marked_for_deletion = TRUE  
 server_ts = current timestamp  
 where:  
 user_file_id = <b>user_file</b>.id  
@@ -244,23 +253,29 @@ The client must confirm file downloading or deletion using POST /up-vibe/v1/file
 
 The server should:
 
-#### AC 1
+#### AC 1.1
 
 Get <b>user_file</b> record from [user_files](../../database/files/user_files.md) table where:  
 user_id = request.token.user_id  
 file_id = request.url.file_id  
 
-#### AC 2
+#### AC 1.2
 
 Find a [file_synchronization](../../database/files/file_synchronization.md) record where:  
 device_id = request.url.deviceId  
 user_file_id = <b>user_file</b>.id  
 
-If <b>file_synchronization</b>.marked_for_deletion is:  
-- false - go to AC 3
-- true - go to AC 4
+### AC 1.3
 
-#### AC 3
+Find records in the [user_playlist_files](../../database/files/user_paylist_files.md) where:  
+file_id = request.url.id    
+user_id = request.body.user_id    
+
+Are any records found?
+- yes - go to AC 2  
+- no - go to AC 3  
+
+#### AC 2
 
 Update the [file_synchronization](../../database/files/file_synchronization.md) table with:  
 is_synchronized = TRUE  
@@ -271,34 +286,43 @@ user_file_id = <b>user_file</b>.id
 
 finalize processing
 
-#### AC 4
+#### AC 3.1
 
 Delete record from the [file_synchronization](../../database/files/file_synchronization.md) table where:    
 where:  
 device_id = request.url.deviceId  
 user_file_id = <b>user_file</b>.id  
 
-#### AC 5
+#### AC 3.2
 
-Find a [file_synchronization](../../database/files/file_synchronization.md) records where:  
+Find a record in the [file_synchronization](../../database/files/file_synchronization.md) table where:    
+where:  
 user_file_id = <b>user_file</b>.id  
 
-Any records found?
-- yes - finalize processing
-- no - go to AC 6
+Are any records found?
 
-#### AC 6
+- yes - finalize processing  
+- no - go to AC 4  
+
+#### AC 4.1
+
+Delete record from the [user_files](../../database/files/user_files.md) table where:    
+where:  
+user_id = request.body.user_id  
+user_file_id = <b>user_file</b>.id  
+
+#### AC 4.2
 
 Find records in the [user_files](../../database/files/user_files.md) table where:  
 file_id = request.url.file_id  
 
-Any records found?
+Are any records found?
 - yes - finalize processing
-- no - go to AC 7
+- no - go to AC 5
 
-#### AC 7
+#### AC 5
 
-Delete file and all records refering it where file id = request.url.file_id  
+Delete file and all records refering it where file id = request.url.file_id from the database and from the fyle system.  
 
 # Add playlist  
 

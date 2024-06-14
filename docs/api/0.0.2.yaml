@@ -210,7 +210,7 @@ paths:
         - name: statuses
           in: query
           required: false
-          description: CSV list of file statuses to return
+          description: CSV list of the file statuses to return
           example: 'D,R'
           schema:
             type: array
@@ -219,6 +219,21 @@ paths:
           in: query
           required: false
           description: Required synchronization status
+          example: true
+          schema:
+            type: boolean
+        - name: playlists
+          in: query
+          required: false
+          description: CSV list of the playlists to return
+          example: '1,2'
+          schema:
+            type: array
+            format: string
+        - name: missingRemote
+          in: query
+          required: false
+          description: Is remote missing
           example: true
           schema:
             type: boolean
@@ -569,47 +584,39 @@ paths:
         - BearerAuth: []
         - upvibe-auth:
             - user
-    # get:
-    #   tags:
-    #     - files
-    #   summary: Get files
-    #   description: Returns array of files for current user
-    #   operationId: getFiles
-    #   parameters:
-    #     - name: deviceId
-    #       in: query
-    #       required: true
-    #       description: Device id
-    #       schema:
-    #         type: string
-    #     - name: statuses
-    #       in: query
-    #       required: false
-    #       description: CSV list of file statuses to return
-    #       example: 'D,R'
-    #       schema:
-    #         type: array
-    #         format: string
-    #     - name: syncronized
-    #       in: query
-    #       required: false
-    #       description: Required synchronization status
-    #       example: true
-    #       schema:
-    #         type: boolean
-    #   responses:
-    #     '200':
-    #       description: successful operation
-    #       content:
-    #         application/json:
-    #           schema:
-    #             type: array
-    #             items:
-    #               $ref: '#/components/schemas/File'
-    #   security:
-    #     - upvibe-auth:
-    #         - user
-    #     - BearerAuth: []
+    get:
+      tags:
+        - playlists
+      summary: Get playlists
+      description: Returns array of playlists for current user
+      operationId: getPlaylists
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Playlist'
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/playlists/{playlistId}:
+    get:
+      tags:
+        - playlists
+      summary: Get playlist
+      description: Return information about playlist
+      operationId: getPlaylist
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
 
 components:
   schemas:
@@ -687,8 +694,10 @@ components:
           type: string
         isSynchoronized:
           type: boolean
-        markedForDeletion:
-          type: boolean
+        palylists:
+          type: array
+          items:
+            type: string
         tags:
           $ref: '#/components/schemas/ShortTag'
     FileAndMapping:
@@ -740,6 +749,23 @@ components:
           type: integer
         picture:
           type: integer
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        source:
+          $ref: '#/components/schemas/Source'
+        status:
+          type: string
+        sourceUrl:
+          description: May contain source location
+          type: string
+        syncrhonizationTs:
+          type: string
+        title:
+          type: string
   securitySchemes:
     upvibe-auth:
       type: oauth2
