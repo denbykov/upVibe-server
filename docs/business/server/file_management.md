@@ -333,7 +333,7 @@ user_id = request.body.user.id
 file  
 
 Does the record exist?
-- yes - go to AC 3
+- yes - abort the operation and send the "Playlist already added" error  
 - no - go to AC 4
 
 #### AC 4

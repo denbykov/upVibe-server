@@ -8,6 +8,7 @@ This document describes file management details, such as file downloading, synch
 - [Downloading](#downloading)
 - [File checking](#file-checking)
 - [Tag parsing](#tag-parsing)
+- [Add playlist](#add-playlist)
 
 # Plugins  
 
@@ -39,6 +40,15 @@ routing-key: parsing/source-name
 body:
 {
     "tag_id": 1
+}
+```
+- Playlist parser  
+This plugin is responsible for the communication with playlist parsing workers. For example, the amqp message produced by this plugin should look like one of the following:
+```json
+routing-key: parsing/playlists/source-name
+body:
+{
+    "playlist_id": 1,
 }
 ```
 
@@ -183,7 +193,16 @@ Is tag status 'C'?
 
 #### AC 2.1.2
 
-Request tag parsing via the /up-vibe/v1/files/{fileId}/parse-tags API and finish message processing  
+Request tag parsing via following API:
+API:
+```json
+routing-key: /parsing/tag
+body:
+{
+    "file_id": 1,
+    "url": "some/url"
+}
+```
 
 #### AC 2.2.1
 
@@ -274,14 +293,9 @@ status = "CR"
 
 #### AC 4
 
-Request tag parsing via its parser plugin.  
+Request tag parsing via the parser plugin.  
 Value mapping for the request:  
 tag_id = [created_tag.id]  
-
-Does the plugin report an error?  
-- yes - abort the operation and send the error response to the user (errorCode -1)  
-- no - send a successful response to the user
-
 
 Insert a new record in the [playlists](../../database/files/playlists.md) table with the following values:    
 source_url = normalizedUrl  
@@ -316,7 +330,7 @@ Try to find a record in the [playlists](../../database/files/playlists.md) table
 source_url = normalizedUrl  
 
 Does the record exist?
-- yes - go to AC 4
+- yes - go to AC 5
 - no - go to AC 3
 
 #### AC 3
@@ -330,11 +344,17 @@ synchronization_ts = NULL
 
 #### AC 4
 
+Request playlist parsing via the playlist parser plugin.  
+Value mapping for the request:  
+playlist_id = <b>playlist</b>.id  
+
+#### AC 5
+
 Try to insert record to the [user_playlists](../../database/files/user_playlists.md) table with follwing data:  
 user_id = request.body.user_id  
 playlist_id = <b>playlist</b>.id  
 added_ts = NOW()  
 
 Does the record already exist?
-- exit with error "User already has a playlist ${playlist.id}"
+- yes - exit with error "User already has a playlist ${playlist.id}"
 - no - finalize processing
