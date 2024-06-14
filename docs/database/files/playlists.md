@@ -13,7 +13,7 @@ This page describes the public.playlists table
 | source_id | INT | NOT NULL,<br/> FK to public.sources(id) 
 | added_ts | TIMESTAMPTZ | NOT NULL, DEFAULT CURRENT_TIMESTAMP |
 | status | VARCHAR(2) | NOT NULL,<br/> FK to public.playlist_statuses(status) |
-| syncrhonization_ts | TIMESTAMPTZ | NULL |
+| synchronization_ts | TIMESTAMPTZ | NULL |
 | title | VARCHAR(255) | NOT NULL |
 
 ## Data definition 
