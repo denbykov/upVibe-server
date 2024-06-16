@@ -3,6 +3,7 @@ import pg from 'pg';
 import { FileDTO } from '@src/dtos/fileDTO';
 import { TaggedFileDTO } from '@src/dtos/taggedFileDTO';
 import { UserDTO } from '@src/dtos/userDTO';
+import { UserFileDTO } from '@src/dtos/userFileDTO';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger } from '@src/utils/server/logger';
@@ -334,6 +335,25 @@ export class FileRepository implements iFileDatabase {
       await client.query(query, [deviceId, userFileId]);
     } catch (err) {
       throw new Error(`FilesRepository.InserSyncrhonizationRecords: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
+
+  public getUserFileRecord = async (
+    fileId: string,
+    userId: string
+  ): Promise<UserFileDTO | null> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getUserFileRecord');
+      const queryResult = await client.query(query, [fileId, userId]);
+      if (queryResult.rows.length === 0) {
+        return null;
+      }
+      return UserFileDTO.fromJSON(queryResult.rows[0]);
+    } catch (err) {
+      throw new Error(`FilesRepository.getUserFileRecord: ${err}`);
     } finally {
       client.release();
     }

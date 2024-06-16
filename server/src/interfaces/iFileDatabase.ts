@@ -1,6 +1,7 @@
 import { FileDTO } from '@src/dtos/fileDTO';
 import { TaggedFileDTO } from '@src/dtos/taggedFileDTO';
 import { UserDTO } from '@src/dtos/userDTO';
+import { UserFileDTO } from '@src/dtos/userFileDTO';
 
 export abstract class iFileDatabase {
   public abstract getFileByUrl: (url: string) => Promise<FileDTO | null>;
@@ -52,4 +53,8 @@ export abstract class iFileDatabase {
     deviceId: string
   ) => Promise<void>;
   public abstract getFile(id: string): Promise<FileDTO | null>;
+  public abstract getUserFileRecord(
+    fileId: string,
+    userId: string
+  ): Promise<UserFileDTO | null>;
 }

@@ -42,7 +42,7 @@ export class APIRoute extends BaseRoute {
     );
 
     const swaggerTheme = new SwaggerTheme();
-    const swaggerSpec = YAML.parse(fs.readFileSync('api/0.0.1.yaml', 'utf8'));
+    const swaggerSpec = YAML.parse(fs.readFileSync('api/2.0.0.yaml', 'utf8'));
 
     const theme = {
       explorer: false,
