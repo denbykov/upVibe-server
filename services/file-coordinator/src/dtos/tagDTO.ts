@@ -28,6 +28,28 @@ class TagDTO {
       json.tag_picture_path,
     );
   }
+
+  public static allFromOneSource = (
+    id: string,
+    fileId: string,
+    isPrimary: boolean,
+    source: string,
+    status: string,
+  ): TagDTO => {
+    return new TagDTO(
+      id,
+      fileId,
+      isPrimary,
+      source,
+      status,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    );
+  };
 }
 
 export { TagDTO };

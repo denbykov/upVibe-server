@@ -1,10 +1,13 @@
 import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
 import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
+import { ServerAgentImpl } from '@data/serverAgent';
+import { SourceRepository } from '@data/sourceRepository';
+import { TagRepository } from '@data/tagRepository';
 import { Message } from 'amqplib';
 import { Logger } from 'log4js';
 import pg from 'pg';
+import { PluginManager } from '@core/pluginManager';
 import { SQLManager } from '@core/sqlManager';
-import { ServerAgentImpl } from '@data/serverAgent';
 
 class FileController {
   private controllerLogger: Logger;
@@ -12,6 +15,7 @@ class FileController {
   private dataLogger: Logger;
   private dbPool: pg.Pool;
   private sqlManager: SQLManager;
+  private pluginManager: PluginManager;
   private uvServerHost: string;
   private uvServerPort: number;
   constructor(
@@ -20,6 +24,7 @@ class FileController {
     dataLogger: Logger,
     dbPool: pg.Pool,
     sqlManager: SQLManager,
+    pluginManager: PluginManager,
     uvServerHost: string,
     uvServerPort: number,
   ) {
@@ -28,6 +33,7 @@ class FileController {
     this.dataLogger = dataLogger;
     this.dbPool = dbPool;
     this.sqlManager = sqlManager;
+    this.pluginManager = pluginManager;
     this.uvServerHost = uvServerHost;
     this.uvServerPort = uvServerPort;
   }
@@ -38,7 +44,14 @@ class FileController {
         this.sqlManager,
         this.dataLogger,
       ),
-      new ServerAgentImpl(this.uvServerHost, this.uvServerPort, this.dataLogger),
+      new TagRepository(this.dbPool, this.sqlManager, this.dataLogger),
+      new SourceRepository(this.dbPool, this.sqlManager, this.dataLogger),
+      new ServerAgentImpl(
+        this.uvServerHost,
+        this.uvServerPort,
+        this.dataLogger,
+      ),
+      this.pluginManager!.getTagPlugin(),
       this.businessLogger,
     );
   };

@@ -1,4 +1,6 @@
 class Config {
+  public appPluginsLocation: string = '';
+  public appPluginsConfigLocation: string = '';
   public rabbitMQHost: string = '';
   public rabbitMQPort: number = 0;
   public rabbitMQUser: string = '';
@@ -13,6 +15,14 @@ class Config {
   public uvServerPort: number = 0;
 
   constructor(configEnv: JSON.JSONObject, configJson: JSON.JSONObject) {
+    this.appPluginsLocation =
+      process.env.APP_PLUGINS_LOCATION ||
+      configEnv.APP_PLUGINS_LOCATION ||
+      configJson.APP_PLUGINS_LOCATION;
+    this.appPluginsConfigLocation =
+      process.env.APP_PLUGINS_CONFIG_LOCATION ||
+      configEnv.APP_PLUGINS_CONFIG_LOCATION ||
+      configJson.APP_PLUGINS_CONFIG_LOCATION;
     this.rabbitMQHost =
       process.env.RABBITMQ_HOST ||
       configEnv.RABBITMQ_HOST ||

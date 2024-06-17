@@ -1,11 +1,15 @@
 {
-  "RABBITMQ": {
+  "app": {
+    "plugins_location": "plugins",
+    "plugins_config_location": "config/plugins.json"
+  },
+  "rabbitmq": {
     "host": "rabbitmq",
     "port": 5672,
     "user": "admin",
     "password": "admin"
   },
-  "DB": {
+  "db": {
     "host": "postgresql",
     "port": 5432,
     "user": "admin",
@@ -13,7 +17,7 @@
     "name": "up-vibe",
     "max": 5
   },
-  "UV_SERVER": {
+  "uv_server": {
     "host": "server",
     "port": 3000
   }
