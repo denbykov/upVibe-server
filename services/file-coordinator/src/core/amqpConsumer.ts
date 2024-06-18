@@ -1,4 +1,3 @@
-import { Config } from '@entities/config';
 import amqp, {
   Channel,
   Connection,
@@ -6,6 +5,7 @@ import amqp, {
   Replies,
 } from 'amqplib/callback_api';
 import { Logger } from 'log4js';
+import { Config } from '@entities/config';
 
 class AMQPConsumer {
   private config: Config;
@@ -73,7 +73,7 @@ class AMQPConsumer {
   public consume = async (
     amqpConfigConnection: string,
     queueName: string,
-    callback: (msg: Message) => void,
+    callback: (queueName: string, msg: Message) => void,
   ) => {
     const connection = await this.connectToAMQP(amqpConfigConnection);
     const channel = await this.createChannel(connection);
@@ -82,7 +82,7 @@ class AMQPConsumer {
       q.queue,
       (msg: Message | null) => {
         if (msg) {
-          callback(msg);
+          callback(queueName, msg);
         }
       },
       { noAck: true },

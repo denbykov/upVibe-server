@@ -48,6 +48,25 @@ class TagMappingDTO {
       json.tag_mapping_fixed,
     );
   }
+
+  public static allFromOneSource = (
+    user_id: string,
+    file_id: string,
+    source: string,
+  ): TagMappingDTO => {
+    return new TagMappingDTO(
+      '0',
+      user_id,
+      file_id,
+      source,
+      source,
+      source,
+      source,
+      source,
+      source,
+      true,
+    );
+  };
 }
 
 export { TagMappingDTO };

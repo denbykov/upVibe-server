@@ -1,5 +1,10 @@
 import fs from 'fs';
 import { FileController } from '@controllers/fileController';
+import dotenv from 'dotenv';
+import pg from 'pg';
+import { AMQPConsumer } from '@core/amqpConsumer';
+import { PluginManager } from '@core/pluginManager';
+import { SQLManager } from '@core/sqlManager';
 import { Config } from '@entities/config';
 import { ConnectionValidator } from '@utils/connectionValidator';
 import {
@@ -10,11 +15,6 @@ import {
   dataLogger,
 } from '@utils/logger';
 import { parseJSONConfig } from '@utils/parseJSONConfig';
-import dotenv from 'dotenv';
-import pg from 'pg';
-import { AMQPConsumer } from '@core/amqpConsumer';
-import { PluginManager } from '@core/pluginManager';
-import { SQLManager } from '@core/sqlManager';
 
 class App {
   private config: Config;
@@ -74,6 +74,11 @@ class App {
     await amqpConsumer.consume(
       this.amqpConfigConnection,
       'checking/file',
+      fileController.handle_message,
+    );
+    await amqpConsumer.consume(
+      this.amqpConfigConnection,
+      'downloading/file',
       fileController.handle_message,
     );
   };

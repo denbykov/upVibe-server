@@ -1,33 +1,43 @@
+import { randomUUID as UUIDV4 } from 'crypto';
+import { Logger } from 'log4js';
+import { FileDTO } from '@dtos/fileDTO';
 import { TagDTO } from '@dtos/tagDTO';
 import { TagMappingDTO } from '@dtos/tagMappingDTO';
 import { TagMappingPriorityDTO } from '@dtos/tagMappingPriorityDTO';
 import { Status } from '@entities/status';
 import { FileCoordinatorDatabase } from '@interfaces/fileCoordinatorDatabase';
+import { FileDatabase } from '@interfaces/fileDatabase';
+import { FilePlugin } from '@interfaces/filePlugin';
 import { ServerAgent } from '@interfaces/serverAgent';
 import { SourceDatabase } from '@interfaces/sourceDatabase';
 import { TagDatabase } from '@interfaces/tagDatabase';
 import { TagPlugin } from '@interfaces/tagPlugin';
-import { Logger } from 'log4js';
 
 class FileCoordinatorWorker {
   private db: FileCoordinatorDatabase;
+  private fileDb: FileDatabase;
   private tagDb: TagDatabase;
   private sourceDb: SourceDatabase;
   private serverAgent: ServerAgent; // Likely to be used in future updates
+  private filePlugin: FilePlugin;
   private tagPlugin: TagPlugin;
   private logger: Logger;
   constructor(
     db: FileCoordinatorDatabase,
+    fileDb: FileDatabase,
     tagDb: TagDatabase,
     sourceDb: SourceDatabase,
     serverAgent: ServerAgent,
+    filePlugin: FilePlugin,
     tagPlugin: TagPlugin,
     logger: Logger,
   ) {
     this.db = db;
+    this.fileDb = fileDb;
     this.tagDb = tagDb;
     this.sourceDb = sourceDb;
     this.serverAgent = serverAgent;
+    this.filePlugin = filePlugin;
     this.tagPlugin = tagPlugin;
     this.logger = logger;
   }
@@ -177,6 +187,46 @@ class FileCoordinatorWorker {
         await this.tagPlugin.parseTags(fileId, source.description);
       }),
     );
+  };
+
+  public downloadFile = async (
+    url: string,
+    userId: string,
+    // TODO: Implement the implementation of playlists
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    playlistId: string,
+  ): Promise<void> => {
+    const sourceId = await this.filePlugin.getSource(url);
+    const normalizedUrl = await this.filePlugin.normalizeUrl(url);
+    let file = await this.fileDb.getFileByUrl(normalizedUrl);
+    if (!file) {
+      file = await this.fileDb.insertFile(
+        new FileDTO('0', UUIDV4(), sourceId, Status.Created, normalizedUrl),
+      );
+      await this.tagDb.insertTag(
+        TagDTO.allFromOneSource('0', file.id, true, sourceId, Status.Created),
+      );
+      await this.requestFileProcessing(file, userId);
+    }
+
+    if (await this.fileDb.doesUserFileExist(userId, file.id)) {
+      throw new Error('File already exists');
+    }
+
+    const userFileId = await this.fileDb.insertUserFile(userId, file.id);
+    await this.tagDb.insertTagMapping(
+      TagMappingDTO.allFromOneSource(userId, file.id, sourceId),
+    );
+    await this.fileDb.insertSynchronizationRecords(userId, userFileId);
+  };
+
+  public requestFileProcessing = async (
+    file: FileDTO,
+    userId: string,
+  ): Promise<void> => {
+    const source = await this.sourceDb.getSource(file.source);
+    await this.filePlugin.downloadFile(file, source!.description);
+    await this.tagPlugin.tagFile(file, userId, source!.description);
   };
 }
 

@@ -1,13 +1,14 @@
-import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
-import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
-import { ServerAgentImpl } from '@data/serverAgent';
-import { SourceRepository } from '@data/sourceRepository';
-import { TagRepository } from '@data/tagRepository';
 import { Message } from 'amqplib';
 import { Logger } from 'log4js';
 import pg from 'pg';
 import { PluginManager } from '@core/pluginManager';
 import { SQLManager } from '@core/sqlManager';
+import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
+import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
+import { ServerAgentImpl } from '@data/serverAgent';
+import { SourceRepository } from '@data/sourceRepository';
+import { TagRepository } from '@data/tagRepository';
+import { FileRepository } from '@data/fileRepository';
 
 class FileController {
   private controllerLogger: Logger;
@@ -44,6 +45,7 @@ class FileController {
         this.sqlManager,
         this.dataLogger,
       ),
+      new FileRepository(this.dbPool, this.sqlManager, this.dataLogger),
       new TagRepository(this.dbPool, this.sqlManager, this.dataLogger),
       new SourceRepository(this.dbPool, this.sqlManager, this.dataLogger),
       new ServerAgentImpl(
@@ -51,32 +53,52 @@ class FileController {
         this.uvServerPort,
         this.dataLogger,
       ),
+      this.pluginManager!.getFilePlugin(),
       this.pluginManager!.getTagPlugin(),
       this.businessLogger,
     );
   };
 
-  public handle_message = async (message: Message): Promise<void> => {
+  public handle_message = async (
+    queueName: string,
+    message: Message,
+  ): Promise<void> => {
     try {
-      const { file_id: fileId } = JSON.parse(message.content.toString());
-      if (!fileId) {
-        this.controllerLogger.error(
-          `Invalid message - ${message.content.toString()}`,
-        );
+      if (!message.content) {
+        this.controllerLogger.error('Invalid message');
         return;
       }
-      await this.coordinateFile(fileId);
+      const messageContent = JSON.parse(message.content.toString());
+      await this.coordinateFile(queueName, messageContent);
     } catch (error) {
       this.controllerLogger.error(`Error handling message: ${error}`);
       return;
     }
   };
 
-  public coordinateFile = async (fileId: string): Promise<void> => {
-    this.controllerLogger.info(`Processing file ${fileId}`);
+  public coordinateFile = async (
+    queueName: string,
+    messageContent: JSON.JSONObject,
+  ): Promise<void> => {
     const fileCoordinatorWorker = this.buildFileCoordinatorWorker();
     try {
-      await fileCoordinatorWorker.processFile(fileId);
+      if (queueName === 'downloading/file') {
+        const {
+          url,
+          user_id: userId,
+          playlist_id: playlistId,
+        } = messageContent;
+        this.controllerLogger.info(
+          `Processing file ${url}. Queue: ${queueName}`,
+        );
+        await fileCoordinatorWorker.downloadFile(url, userId, playlistId);
+      } else if (queueName === 'checking/file') {
+        const { file_id: fileId } = messageContent;
+        this.controllerLogger.info(
+          `Processing file ${fileId}. Queue: ${queueName}`,
+        );
+        await fileCoordinatorWorker.processFile(fileId);
+      }
     } catch (error) {
       this.controllerLogger.error(`Error processing file: ${error}`);
       throw new Error(`Error processing file: ${error}`);

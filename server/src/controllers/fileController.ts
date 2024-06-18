@@ -3,7 +3,7 @@ import pg from 'pg';
 
 import { FileWorker } from '@src/business/fileWorker';
 import { ProcessingError } from '@src/business/processingError';
-import { FileRepository, SourceRepository, TagRepository } from '@src/data';
+import { FileRepository, TagRepository } from '@src/data';
 import { FileTagger } from '@src/data/fileTagger';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
@@ -24,10 +24,8 @@ class FileController extends BaseController {
   private buildFileWorker = (): FileWorker => {
     return new FileWorker(
       new FileRepository(this.dbPool, this.sqlManager),
-      new SourceRepository(this.dbPool, this.sqlManager),
       new TagRepository(this.dbPool, this.sqlManager),
       this.pluginManager!.getFilePlugin(),
-      this.pluginManager!.getTagPlugin(),
       new FileTagger(this.config.appPathStorage)
     );
   };
