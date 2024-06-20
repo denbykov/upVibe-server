@@ -12,3 +12,9 @@ This page describes the public.sources table
 | description | VARCHAR(255) | NOT NULL |
 | allow_for_secondary_tag_parsing | BOOLEAN | NOT NULL |
 | logo_path | VARCHAR(255) | NOT NULL |
+
+## Data definition 
+
+| description | allow_for_secondary_tag_parsing | logo_path |
+| - | - | - |
+| 'custom' | FALSE | /opt/upVibe/storage/logos/custom.svg |

@@ -19,3 +19,4 @@ This page describes the public.tags table
 | track_number | INT |
 | source | INT | NOT NULL,<br/> FK to public.sources(id) |
 | status | VARCHAR(2) | NOT NULL,<br/> FK to public.tag_statuses(status) |
+| user_id | INT | FK to public.users(id) |
