@@ -38,7 +38,7 @@ export class FileWorker {
 
     const file = await this.db.getFileByUrl(normalizedUrl);
     if (!file) {
-      await this.filePlugin.requestFileProcessing(sourceUrl, user.id, '');
+      await this.filePlugin.requestFileProcessing(sourceUrl, user.id, '1');
       return new File(
         '',
         new Source('', ''),

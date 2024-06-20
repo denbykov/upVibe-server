@@ -5,10 +5,11 @@ import { PluginManager } from '@core/pluginManager';
 import { SQLManager } from '@core/sqlManager';
 import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
 import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
+import { FileRepository } from '@data/fileRepository';
+import { PlaylistRepository } from '@data/playlistRepository';
 import { ServerAgentImpl } from '@data/serverAgent';
 import { SourceRepository } from '@data/sourceRepository';
 import { TagRepository } from '@data/tagRepository';
-import { FileRepository } from '@data/fileRepository';
 
 class FileController {
   private controllerLogger: Logger;
@@ -48,6 +49,7 @@ class FileController {
       new FileRepository(this.dbPool, this.sqlManager, this.dataLogger),
       new TagRepository(this.dbPool, this.sqlManager, this.dataLogger),
       new SourceRepository(this.dbPool, this.sqlManager, this.dataLogger),
+      new PlaylistRepository(this.dbPool, this.sqlManager, this.dataLogger),
       new ServerAgentImpl(
         this.uvServerHost,
         this.uvServerPort,

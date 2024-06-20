@@ -8,6 +8,7 @@ import { Status } from '@entities/status';
 import { FileCoordinatorDatabase } from '@interfaces/fileCoordinatorDatabase';
 import { FileDatabase } from '@interfaces/fileDatabase';
 import { FilePlugin } from '@interfaces/filePlugin';
+import { PlaylistDatabase } from '@interfaces/playlistDatabase';
 import { ServerAgent } from '@interfaces/serverAgent';
 import { SourceDatabase } from '@interfaces/sourceDatabase';
 import { TagDatabase } from '@interfaces/tagDatabase';
@@ -18,6 +19,7 @@ class FileCoordinatorWorker {
   private fileDb: FileDatabase;
   private tagDb: TagDatabase;
   private sourceDb: SourceDatabase;
+  private playlistDb: PlaylistDatabase;
   private serverAgent: ServerAgent; // Likely to be used in future updates
   private filePlugin: FilePlugin;
   private tagPlugin: TagPlugin;
@@ -27,6 +29,7 @@ class FileCoordinatorWorker {
     fileDb: FileDatabase,
     tagDb: TagDatabase,
     sourceDb: SourceDatabase,
+    playlistDb: PlaylistDatabase,
     serverAgent: ServerAgent,
     filePlugin: FilePlugin,
     tagPlugin: TagPlugin,
@@ -36,6 +39,7 @@ class FileCoordinatorWorker {
     this.fileDb = fileDb;
     this.tagDb = tagDb;
     this.sourceDb = sourceDb;
+    this.playlistDb = playlistDb;
     this.serverAgent = serverAgent;
     this.filePlugin = filePlugin;
     this.tagPlugin = tagPlugin;
@@ -192,8 +196,6 @@ class FileCoordinatorWorker {
   public downloadFile = async (
     url: string,
     userId: string,
-    // TODO: Implement the implementation of playlists
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     playlistId: string,
   ): Promise<void> => {
     const sourceId = await this.filePlugin.getSource(url);
@@ -203,6 +205,7 @@ class FileCoordinatorWorker {
       file = await this.fileDb.insertFile(
         new FileDTO('0', UUIDV4(), sourceId, Status.Created, normalizedUrl),
       );
+      await this.playlistDb.insertUserPaylistFiles(playlistId, file.id);
       await this.tagDb.insertTag(
         TagDTO.allFromOneSource('0', file.id, true, sourceId, Status.Created),
       );

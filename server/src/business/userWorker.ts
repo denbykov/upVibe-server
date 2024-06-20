@@ -81,6 +81,7 @@ export class UserWorker {
           config
         );
         await this.db.insertDefaultTagMappingPriority(priority);
+        await this.db.insertDefaultUserPlaylist(user.id);
       } catch (error) {
         throw new ProcessingError(
           'Failed to insert default tag mapping priority'
