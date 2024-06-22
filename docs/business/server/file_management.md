@@ -95,11 +95,22 @@ user_playlist_id =
 &emsp; playlist_id = DEFAULT_PLAYLIST_ID(1)  
 missing_from_remote = FALSE  
 
-#### AC 9
+#### AC 9.1
+
+Read a record from the [user_files](../../database/files/user_files.md) table using following filter:  
+user_id = request.user.id  
+file_id = <b>file</b>.id  
+
+Record exists?
+
+- yes - go to AC 10
+- no - continue
+
+#### AC 9.2
 
 Create a record in the [user_files](../../database/files/user_files.md) table with the following values:  
 user_id = request.user.id  
-file_id = (created_file / found_file).id  
+file_id = <b>file</b>.id  
 
 #### AC 10
 
@@ -115,7 +126,7 @@ user_id = request.user.id
   
 Create a record in the [file_synchronization](../../database/files/file_synchronization.md) table with the following values:  
 device_id = record.id  
-user_file_id = created_user_file.id  
+user_file_id = <b>user_file</b>.id  
 
 # File deletion  
 
