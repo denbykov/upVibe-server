@@ -35,41 +35,32 @@ sourceId = get source id for request.body.url
 
 #### AC 2
 
-Try to find a record in the [user_files](../../database/files/user_files.md) table by the following filter:  
-file_id =  
-&emsp; id from [files](../../database/files/files.md) where:  
-&emsp; source_url = normalizedUrl  
-user_id = request.body.user.id  
-
-Does the record exist?
-- yes - abort with "File alreay exists"
-- no - continue
-
-#### AC 3
-
 Try to find a record in the [files](../../database/files/files.md) table by the following filter:  
 source_url = normalizedUrl  
 
 Does the record exist?
-- yes - go to AC 8
+- yes - go to AC 3
 - no - go to AC 4
 
-#### AC 4.1
+#### AC 3
+
+Try to find a record in the [user_paylist_files](../../database/files/user_paylist_files.md) using following filter:  
+file_id = <b>file</b>.id  
+user_playlist_id =   
+&emsp; id from [user_playlists](../../database/files/user_playlists.md) where:  
+&emsp; user_id = request.body.user_id  
+&emsp; playlist_id = DEFAULT_PLAYLIST_ID(1)  
+
+Does the record exist?
+- yes - abort with "File alreay exists"
+- no - go to AC 8
+
+#### AC 4
 
 Insert a new record in the [files](../../database/files/files.md) table with the following values:  
 path = null  
 source_url = normalizedUrl  
 status = "CR"  
-
-#### AC 4.2
-
-Insert a new record in the [user_paylist_files](../../database/files/user_paylist_files.md) table with the following values:  
-file_id = <b>file</b>.id  
-user_playlist_id =   
-&emsp; id from [user_playlists](../../database/files/user_playlists.md) where:  
-&emsp; user_id = request.body.user_id  
-&emsp; playlist_id = request.body.playlist_id  
-missing_from_remote = FALSE  
 
 #### AC 5
 
@@ -96,18 +87,28 @@ url = normalizedUrl
 
 #### AC 8
 
+Insert a new record in the [user_paylist_files](../../database/files/user_paylist_files.md) table with the following values:  
+file_id = <b>file</b>.id  
+user_playlist_id =   
+&emsp; id from [user_playlists](../../database/files/user_playlists.md) where:  
+&emsp; user_id = request.body.user_id  
+&emsp; playlist_id = DEFAULT_PLAYLIST_ID(1)  
+missing_from_remote = FALSE  
+
+#### AC 9
+
 Create a record in the [user_files](../../database/files/user_files.md) table with the following values:  
 user_id = request.user.id  
 file_id = (created_file / found_file).id  
 
-#### AC 9
+#### AC 10
 
 Create a record in the [tag_mappings](../../database/tags/tag_mappings.md) table with the following values:  
 user_id = request.user.id  
 file_id = (created_file / found_file).id  
 all tags = sourceId  
 
-### AC 10
+### AC 11
 
 For each record in the [devices](../../database/users/devices.md) table fulfilling following filter:  
 user_id = request.user.id  
