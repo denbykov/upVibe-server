@@ -5,6 +5,7 @@ import { FileWorker } from '@src/business/fileWorker';
 import { ProcessingError } from '@src/business/processingError';
 import { FileRepository, SourceRepository, TagRepository } from '@src/data';
 import { FileTagger } from '@src/data/fileTagger';
+import { PlaylistRepository } from '@src/data/playlistRepository';
 import { Config } from '@src/entities/config';
 import { PluginManager } from '@src/pluginManager';
 import { SQLManager } from '@src/sqlManager';
@@ -26,6 +27,7 @@ class FileController extends BaseController {
       new FileRepository(this.dbPool, this.sqlManager),
       new SourceRepository(this.dbPool, this.sqlManager),
       new TagRepository(this.dbPool, this.sqlManager),
+      new PlaylistRepository(this.dbPool, this.sqlManager),
       this.pluginManager!.getFilePlugin(),
       this.pluginManager!.getTagPlugin(),
       new FileTagger(this.config.appPathStorage)
