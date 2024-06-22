@@ -1,33 +1,29 @@
+import { Logger } from 'log4js';
 import { TagDTO } from '@dtos/tagDTO';
 import { TagMappingDTO } from '@dtos/tagMappingDTO';
 import { TagMappingPriorityDTO } from '@dtos/tagMappingPriorityDTO';
 import { Status } from '@entities/status';
 import { FileCoordinatorDatabase } from '@interfaces/fileCoordinatorDatabase';
-import { ServerAgent } from '@interfaces/serverAgent';
 import { SourceDatabase } from '@interfaces/sourceDatabase';
 import { TagDatabase } from '@interfaces/tagDatabase';
 import { TagPlugin } from '@interfaces/tagPlugin';
-import { Logger } from 'log4js';
 
 class FileCoordinatorWorker {
   private db: FileCoordinatorDatabase;
   private tagDb: TagDatabase;
   private sourceDb: SourceDatabase;
-  private serverAgent: ServerAgent; // Likely to be used in future updates
   private tagPlugin: TagPlugin;
   private logger: Logger;
   constructor(
     db: FileCoordinatorDatabase,
     tagDb: TagDatabase,
     sourceDb: SourceDatabase,
-    serverAgent: ServerAgent,
     tagPlugin: TagPlugin,
     logger: Logger,
   ) {
     this.db = db;
     this.tagDb = tagDb;
     this.sourceDb = sourceDb;
-    this.serverAgent = serverAgent;
     this.tagPlugin = tagPlugin;
     this.logger = logger;
   }
@@ -47,7 +43,7 @@ class FileCoordinatorWorker {
       const tag = tags[0];
       if (tag.status === Status.Completed) {
         this.logger.info(`Requesting tagging for file ${fileId}`);
-        await this.parseTags(fileId);
+        await this.requestTagging(fileId);
       }
       return;
     }
@@ -148,10 +144,6 @@ class FileCoordinatorWorker {
     );
 
     return mapping;
-  };
-
-  public parseTags = async (fileId: string): Promise<void> => {
-    await this.requestTagging(fileId);
   };
 
   public requestTagging = async (fileId: string): Promise<void> => {

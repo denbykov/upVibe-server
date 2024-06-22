@@ -1,13 +1,12 @@
-import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
-import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
-import { ServerAgentImpl } from '@data/serverAgent';
-import { SourceRepository } from '@data/sourceRepository';
-import { TagRepository } from '@data/tagRepository';
 import { Message } from 'amqplib';
 import { Logger } from 'log4js';
 import pg from 'pg';
 import { PluginManager } from '@core/pluginManager';
 import { SQLManager } from '@core/sqlManager';
+import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
+import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
+import { SourceRepository } from '@data/sourceRepository';
+import { TagRepository } from '@data/tagRepository';
 
 class FileController {
   private controllerLogger: Logger;
@@ -16,8 +15,6 @@ class FileController {
   private dbPool: pg.Pool;
   private sqlManager: SQLManager;
   private pluginManager: PluginManager;
-  private uvServerHost: string;
-  private uvServerPort: number;
   constructor(
     logger: Logger,
     businessLogger: Logger,
@@ -25,8 +22,6 @@ class FileController {
     dbPool: pg.Pool,
     sqlManager: SQLManager,
     pluginManager: PluginManager,
-    uvServerHost: string,
-    uvServerPort: number,
   ) {
     this.controllerLogger = logger;
     this.businessLogger = businessLogger;
@@ -34,8 +29,6 @@ class FileController {
     this.dbPool = dbPool;
     this.sqlManager = sqlManager;
     this.pluginManager = pluginManager;
-    this.uvServerHost = uvServerHost;
-    this.uvServerPort = uvServerPort;
   }
   public buildFileCoordinatorWorker = (): FileCoordinatorWorker => {
     return new FileCoordinatorWorker(
@@ -46,11 +39,6 @@ class FileController {
       ),
       new TagRepository(this.dbPool, this.sqlManager, this.dataLogger),
       new SourceRepository(this.dbPool, this.sqlManager, this.dataLogger),
-      new ServerAgentImpl(
-        this.uvServerHost,
-        this.uvServerPort,
-        this.dataLogger,
-      ),
       this.pluginManager!.getTagPlugin(),
       this.businessLogger,
     );
