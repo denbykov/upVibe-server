@@ -1,10 +1,12 @@
-import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
-import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
 import { Message } from 'amqplib';
 import { Logger } from 'log4js';
 import pg from 'pg';
+import { PluginManager } from '@core/pluginManager';
 import { SQLManager } from '@core/sqlManager';
-import { ServerAgentImpl } from '@data/serverAgent';
+import { FileCoordinatorWorker } from '@business/fileCoordinatorWorker';
+import { FileCoordinatorRepository } from '@data/fileCoordinatorRepository';
+import { SourceRepository } from '@data/sourceRepository';
+import { TagRepository } from '@data/tagRepository';
 
 class FileController {
   private controllerLogger: Logger;
@@ -12,24 +14,21 @@ class FileController {
   private dataLogger: Logger;
   private dbPool: pg.Pool;
   private sqlManager: SQLManager;
-  private uvServerHost: string;
-  private uvServerPort: number;
+  private pluginManager: PluginManager;
   constructor(
     logger: Logger,
     businessLogger: Logger,
     dataLogger: Logger,
     dbPool: pg.Pool,
     sqlManager: SQLManager,
-    uvServerHost: string,
-    uvServerPort: number,
+    pluginManager: PluginManager,
   ) {
     this.controllerLogger = logger;
     this.businessLogger = businessLogger;
     this.dataLogger = dataLogger;
     this.dbPool = dbPool;
     this.sqlManager = sqlManager;
-    this.uvServerHost = uvServerHost;
-    this.uvServerPort = uvServerPort;
+    this.pluginManager = pluginManager;
   }
   public buildFileCoordinatorWorker = (): FileCoordinatorWorker => {
     return new FileCoordinatorWorker(
@@ -38,7 +37,9 @@ class FileController {
         this.sqlManager,
         this.dataLogger,
       ),
-      new ServerAgentImpl(this.uvServerHost, this.uvServerPort, this.dataLogger),
+      new TagRepository(this.dbPool, this.sqlManager, this.dataLogger),
+      new SourceRepository(this.dbPool, this.sqlManager, this.dataLogger),
+      this.pluginManager!.getTagPlugin(),
       this.businessLogger,
     );
   };

@@ -1,18 +1,30 @@
+import { Logger } from 'log4js';
 import { TagDTO } from '@dtos/tagDTO';
 import { TagMappingDTO } from '@dtos/tagMappingDTO';
 import { TagMappingPriorityDTO } from '@dtos/tagMappingPriorityDTO';
 import { Status } from '@entities/status';
 import { FileCoordinatorDatabase } from '@interfaces/fileCoordinatorDatabase';
-import { ServerAgent } from '@interfaces/serverAgent';
-import { Logger } from 'log4js';
+import { SourceDatabase } from '@interfaces/sourceDatabase';
+import { TagDatabase } from '@interfaces/tagDatabase';
+import { TagPlugin } from '@interfaces/tagPlugin';
 
 class FileCoordinatorWorker {
   private db: FileCoordinatorDatabase;
-  private serverAgent: ServerAgent;
+  private tagDb: TagDatabase;
+  private sourceDb: SourceDatabase;
+  private tagPlugin: TagPlugin;
   private logger: Logger;
-  constructor(db: FileCoordinatorDatabase, serverAgent: ServerAgent, logger: Logger) {
+  constructor(
+    db: FileCoordinatorDatabase,
+    tagDb: TagDatabase,
+    sourceDb: SourceDatabase,
+    tagPlugin: TagPlugin,
+    logger: Logger,
+  ) {
     this.db = db;
-    this.serverAgent = serverAgent;
+    this.tagDb = tagDb;
+    this.sourceDb = sourceDb;
+    this.tagPlugin = tagPlugin;
     this.logger = logger;
   }
 
@@ -27,9 +39,12 @@ class FileCoordinatorWorker {
     if (tags.length == 0) {
       return;
     }
-
     if (tags.length == 1) {
-      await this.serverAgent.requestFileTagging(fileId);
+      const tag = tags[0];
+      if (tag.status === Status.Completed) {
+        this.logger.info(`Requesting tagging for file ${fileId}`);
+        await this.requestTagging(fileId);
+      }
       return;
     }
 
@@ -44,7 +59,7 @@ class FileCoordinatorWorker {
     const tagMappings = await this.db.getTagMappings(fileId, false);
 
     for (const tagMapping of tagMappings) {
-        const tagMappingPriority = await this.db.getTagMappingPriority(
+      const tagMappingPriority = await this.db.getTagMappingPriority(
         tagMapping.userId!,
       );
 
@@ -75,8 +90,12 @@ class FileCoordinatorWorker {
     tagMappingPriority: TagMappingPriorityDTO,
     tags: TagDTO[],
   ): TagMappingDTO => {
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    const getMostRelevantTag = (tags: TagDTO[], sources: string[], tagSatisfies: Function): string => {
+    const getMostRelevantTag = (
+      tags: TagDTO[],
+      sources: string[],
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      tagSatisfies: Function,
+    ): string => {
       for (const source of sources) {
         const tag = tags.find((tag) => tag.source === source);
         if (tag && tagSatisfies(tag)) {
@@ -91,16 +110,65 @@ class FileCoordinatorWorker {
       originalMapping.id,
       originalMapping.userId,
       originalMapping.fileId,
-      getMostRelevantTag(tags, tagMappingPriority.title, (tag: TagDTO) => tag.title !== null),
-      getMostRelevantTag(tags, tagMappingPriority.artist, (tag: TagDTO) => tag.artist !== null),
-      getMostRelevantTag(tags, tagMappingPriority.album, (tag: TagDTO) => tag.album !== null),
-      getMostRelevantTag(tags, tagMappingPriority.picture, (tag: TagDTO) => tag.picturePath !== null),
-      getMostRelevantTag(tags, tagMappingPriority.year, (tag: TagDTO) => tag.year !== null),
-      getMostRelevantTag(tags, tagMappingPriority.trackNumber, (tag: TagDTO) => tag.trackNumber !== null),
+      getMostRelevantTag(
+        tags,
+        tagMappingPriority.title,
+        (tag: TagDTO) => tag.title !== null,
+      ),
+      getMostRelevantTag(
+        tags,
+        tagMappingPriority.artist,
+        (tag: TagDTO) => tag.artist !== null,
+      ),
+      getMostRelevantTag(
+        tags,
+        tagMappingPriority.album,
+        (tag: TagDTO) => tag.album !== null,
+      ),
+      getMostRelevantTag(
+        tags,
+        tagMappingPriority.picture,
+        (tag: TagDTO) => tag.picturePath !== null,
+      ),
+      getMostRelevantTag(
+        tags,
+        tagMappingPriority.year,
+        (tag: TagDTO) => tag.year !== null,
+      ),
+      getMostRelevantTag(
+        tags,
+        tagMappingPriority.trackNumber,
+        (tag: TagDTO) => tag.trackNumber !== null,
+      ),
       true,
     );
 
     return mapping;
+  };
+
+  public requestTagging = async (fileId: string): Promise<void> => {
+    const primaryTag = await this.tagDb.getPrimaryTag(fileId);
+
+    if (!primaryTag) {
+      throw Error('Primary tag not found');
+    }
+
+    if (primaryTag.status !== 'C') {
+      throw Error('Primary tag is not parsed');
+    }
+
+    const sources = await this.sourceDb.getSourcesWithParsingPermission();
+    await Promise.all(
+      sources.map(async (source) => {
+        if (await this.tagDb.getTagByFile(fileId, source.id)) {
+          throw Error('Parsing already requested');
+        }
+        await this.tagDb.insertTag(
+          TagDTO.allFromOneSource('0', fileId, false, source.id, 'CR'),
+        );
+        await this.tagPlugin.parseTags(fileId, source.description);
+      }),
+    );
   };
 }
 

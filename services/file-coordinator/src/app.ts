@@ -1,5 +1,10 @@
 import fs from 'fs';
 import { FileController } from '@controllers/fileController';
+import dotenv from 'dotenv';
+import pg from 'pg';
+import { AMQPConsumer } from '@core/amqpConsumer';
+import { PluginManager } from '@core/pluginManager';
+import { SQLManager } from '@core/sqlManager';
 import { Config } from '@entities/config';
 import { ConnectionValidator } from '@utils/connectionValidator';
 import {
@@ -10,16 +15,13 @@ import {
   dataLogger,
 } from '@utils/logger';
 import { parseJSONConfig } from '@utils/parseJSONConfig';
-import dotenv from 'dotenv';
-import pg from 'pg';
-import { AMQPConsumer } from '@core/amqpConsumer';
-import { SQLManager } from '@core/sqlManager';
 
 class App {
   private config: Config;
   private dbPool: pg.Pool;
   private amqpConfigConnection: string;
   private sqlManager: SQLManager;
+  private pluginManager: PluginManager;
   constructor(config: Config) {
     this.config = config;
     this.dbPool = new pg.Pool({
@@ -34,6 +36,7 @@ class App {
       `amqp://${this.config.rabbitMQUser}:${this.config.rabbitMQPassword}` +
       `@${this.config.rabbitMQHost}:${this.config.rabbitMQPort}`;
     this.sqlManager = new SQLManager(controllerLogger, controllerLogger);
+    this.pluginManager = new PluginManager(this.config, dataLogger, appLogger);
   }
 
   public setUp = async (): Promise<void> => {
@@ -48,6 +51,7 @@ class App {
         this.amqpConfigConnection,
       );
       this.sqlManager.setUp();
+      await this.pluginManager.setUp();
     } catch (error) {
       appLogger.error(error);
       throw new Error('Error setting up the application');
@@ -63,8 +67,7 @@ class App {
       dataLogger,
       this.dbPool,
       this.sqlManager,
-      this.config.uvServerHost,
-      this.config.uvServerPort,
+      this.pluginManager,
     );
     await amqpConsumer.consume(
       this.amqpConfigConnection,

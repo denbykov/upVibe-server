@@ -1,4 +1,6 @@
 class Config {
+  public appPluginsLocation: string = '';
+  public appPluginsConfigLocation: string = '';
   public rabbitMQHost: string = '';
   public rabbitMQPort: number = 0;
   public rabbitMQUser: string = '';
@@ -9,10 +11,16 @@ class Config {
   public dbPassword: string = '';
   public dbName: string = '';
   public dbMax: number = 0;
-  public uvServerHost: string = '';
-  public uvServerPort: number = 0;
 
   constructor(configEnv: JSON.JSONObject, configJson: JSON.JSONObject) {
+    this.appPluginsLocation =
+      process.env.APP_PLUGINS_LOCATION ||
+      configEnv.APP_PLUGINS_LOCATION ||
+      configJson.APP_PLUGINS_LOCATION;
+    this.appPluginsConfigLocation =
+      process.env.APP_PLUGINS_CONFIG_LOCATION ||
+      configEnv.APP_PLUGINS_CONFIG_LOCATION ||
+      configJson.APP_PLUGINS_CONFIG_LOCATION;
     this.rabbitMQHost =
       process.env.RABBITMQ_HOST ||
       configEnv.RABBITMQ_HOST ||
@@ -47,14 +55,6 @@ class Config {
       parseInt(<string>process.env.DB_MAX) ||
       parseInt(configEnv.DB_MAX) ||
       parseInt(configJson.DB_MAX);
-    this.uvServerHost =
-      process.env.UV_SERVER_HOST ||
-      configEnv.UV_SERVER_HOST ||
-      configJson.UV_SERVER_HOST;
-    this.uvServerPort =
-      parseInt(<string>process.env.UV_SERVER_PORT) ||
-      parseInt(configEnv.UV_SERVER_PORT) ||
-      parseInt(configJson.UV_SERVER_PORT);
   }
 }
 
