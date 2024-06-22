@@ -62,6 +62,10 @@ export class FileWorker {
       await this.tagDb.insertTag(
         TagDTO.allFromOneSource('0', file.id, true, sourceId, Status.Created)
       );
+      const userPlaylistFileId = await this.playlistDb.getDefaultUserPlaylistId(
+        user.id
+      );
+      await this.playlistDb.insertUserPaylistFiles(userPlaylistFileId, file.id);
       await this.requestFileProcessing(file!, user.id);
     }
 
@@ -72,13 +76,6 @@ export class FileWorker {
     const userFileId = await this.db.insertUserFile(user.id, file!.id);
     await this.tagDb.insertTagMapping(
       TagMappingDTO.allFromOneSource(user.id, file!.id, sourceId)
-    );
-    const userPlaylistFileId = await this.playlistDb.getDefaultUserPlaylistId(
-      user.id
-    );
-    await this.playlistDb.insertUserPaylistFiles(
-      userPlaylistFileId,
-      userFileId
     );
     await this.db.insertSynchronizationRecords(user.id, userFileId);
     const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
