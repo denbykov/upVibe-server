@@ -14,13 +14,13 @@ class PlaylistRepository implements iPlaylistDatabase {
     this.sqlManager = sqlManager;
   }
 
-  public insertUserPaylistFiles = async (
+  public insertUserPaylistFile = async (
     playlistId: string,
     fileId: string
   ): Promise<void> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('insertUserPaylistFiles');
+      const query = this.sqlManager.getQuery('insertUserPaylistFile');
       dataLogger.debug(query);
       await client.query(query, [playlistId, fileId]);
     } catch (err) {

@@ -26,10 +26,10 @@ export abstract class iFileDatabase {
     userId: string
   ) => Promise<TaggedFileDTO | null>;
   public abstract doesFileExist(fileId: string): Promise<boolean>;
-  public abstract doesUserFileExist: (
+  public abstract getUserFileExist: (
     userId: string,
     fileId: string
-  ) => Promise<boolean>;
+  ) => Promise<string | null>;
   public abstract insertSynchronizationRecords: (
     userId: string,
     userFileId: string
@@ -57,5 +57,4 @@ export abstract class iFileDatabase {
     fileId: string,
     userId: string
   ): Promise<UserFileDTO | null>;
-  public abstract getUserFileId(userId: string): Promise<string>;
 }

@@ -190,18 +190,21 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public doesUserFileExist = async (
+  public getUserFileExist = async (
     userId: string,
     fileId: string
-  ): Promise<boolean> => {
+  ): Promise<string | null> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('doesUserFileExist');
+      const query = this.sqlManager.getQuery('getUserFileExist');
       dataLogger.debug(query);
       const queryResult = await client.query(query, [userId, fileId]);
-      return queryResult.rows.length > 0;
+      if (queryResult.rows.length === 0) {
+        return null;
+      }
+      return queryResult.rows[0].id;
     } catch (err) {
-      dataLogger.error(`FilesRepository.doesUserFileExist: ${err}`);
+      dataLogger.error(`FilesRepository.getUserFileExist: ${err}`);
       throw err;
     } finally {
       client.release();
@@ -354,19 +357,6 @@ export class FileRepository implements iFileDatabase {
       return UserFileDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       throw new Error(`FilesRepository.getUserFileRecord: ${err}`);
-    } finally {
-      client.release();
-    }
-  };
-
-  public getUserFileId = async (userId: string): Promise<string> => {
-    const client = await this.dbPool.connect();
-    try {
-      const query = this.sqlManager.getQuery('getUserFileId');
-      const queryResult = await client.query(query, [userId]);
-      return queryResult.rows[0].id;
-    } catch (err) {
-      throw new Error(`FilesRepository.getUserFileId: ${err}`);
     } finally {
       client.release();
     }
