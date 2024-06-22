@@ -96,4 +96,14 @@ export class UserRepository implements iUserDatabase {
       client.release();
     }
   }
+
+  public async insertDefaultUserPlaylist(userId: string): Promise<void> {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('insertDefaultUserPlaylist');
+      await client.query(query, [userId]);
+    } finally {
+      client.release();
+    }
+  }
 }

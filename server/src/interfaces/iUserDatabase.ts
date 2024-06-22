@@ -12,4 +12,5 @@ export abstract class iUserDatabase {
   public abstract insertDefaultTagMappingPriority(
     tagMappingPriorityDTO: TagMappingPriorityDTO
   ): Promise<void>;
+  public abstract insertDefaultUserPlaylist(userId: string): Promise<void>;
 }

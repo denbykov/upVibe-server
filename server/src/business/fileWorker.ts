@@ -12,6 +12,7 @@ import { User } from '@src/entities/user';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
 import { iFileTagger } from '@src/interfaces/iFileTagger';
+import { iPlaylistDatabase } from '@src/interfaces/iPlaylistDatabase';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
 import { iTagDatabase } from '@src/interfaces/iTagDatabase';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
@@ -22,6 +23,7 @@ export class FileWorker {
   private db: iFileDatabase;
   private sourceDb: iSourceDatabase;
   private tagDb: iTagDatabase;
+  private playlistDb: iPlaylistDatabase;
   private filePlugin: iFilePlugin;
   private tagPlugin: iTagPlugin;
   private fileTagger: iFileTagger;
@@ -30,6 +32,7 @@ export class FileWorker {
     db: iFileDatabase,
     sourceDb: iSourceDatabase,
     tagDb: iTagDatabase,
+    playlistDb: iPlaylistDatabase,
     filePlugin: iFilePlugin,
     tagPlugin: iTagPlugin,
     fileTagger: iFileTagger
@@ -37,6 +40,7 @@ export class FileWorker {
     this.db = db;
     this.sourceDb = sourceDb;
     this.tagDb = tagDb;
+    this.playlistDb = playlistDb;
     this.filePlugin = filePlugin;
     this.tagPlugin = tagPlugin;
     this.fileTagger = fileTagger;
@@ -58,6 +62,10 @@ export class FileWorker {
       await this.tagDb.insertTag(
         TagDTO.allFromOneSource('0', file.id, true, sourceId, Status.Created)
       );
+      const userPlaylistFileId = await this.playlistDb.getDefaultUserPlaylistId(
+        user.id
+      );
+      await this.playlistDb.insertUserPaylistFiles(userPlaylistFileId, file.id);
       await this.requestFileProcessing(file!, user.id);
     }
 
