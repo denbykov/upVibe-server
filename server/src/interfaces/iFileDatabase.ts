@@ -19,17 +19,17 @@ export abstract class iFileDatabase {
   public abstract insertUserFile: (
     userId: string,
     fileId: string
-  ) => Promise<string>;
+  ) => Promise<UserFileDTO>;
   public abstract getTaggedFile: (
     id: string,
     deviceId: string,
     userId: string
   ) => Promise<TaggedFileDTO | null>;
   public abstract doesFileExist(fileId: string): Promise<boolean>;
-  public abstract getUserFileExist: (
+  public abstract getUserFile: (
     userId: string,
     fileId: string
-  ) => Promise<string | null>;
+  ) => Promise<UserFileDTO | null>;
   public abstract insertSynchronizationRecords: (
     userId: string,
     userFileId: string

@@ -81,16 +81,16 @@ export class FileWorker {
 
     await this.playlistDb.insertUserPaylistFile(userPlaylistId, file.id);
 
-    let userFileId = await this.db.getUserFileExist(user.id, file!.id);
+    let userFile = await this.db.getUserFile(user.id, file!.id);
 
-    if (!userFileId) {
-      userFileId = await this.db.insertUserFile(user.id, file!.id);
+    if (!userFile) {
+      userFile = await this.db.insertUserFile(user.id, file!.id);
     }
 
     await this.tagDb.insertTagMapping(
       TagMappingDTO.allFromOneSource(user.id, file.id, sourceId)
     );
-    await this.db.insertSynchronizationRecords(user.id, userFileId);
+    await this.db.insertSynchronizationRecords(user.id, userFile.id);
     const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
     return new TaggedFileMapper().toEntity(taggedFile!);
   };

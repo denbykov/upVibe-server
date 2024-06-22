@@ -160,13 +160,13 @@ export class FileRepository implements iFileDatabase {
   public insertUserFile = async (
     userId: string,
     fileId: string
-  ): Promise<string> => {
+  ): Promise<UserFileDTO> => {
     const client = await this.dbPool.connect();
     try {
       const query =
         'INSERT INTO user_files (user_id, file_id) VALUES ($1, $2) RETURNING id';
       const queryResult = await client.query(query, [userId, fileId]);
-      return queryResult.rows[0].id;
+      return UserFileDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       dataLogger.error(err);
       throw err;
@@ -190,19 +190,19 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public getUserFileExist = async (
+  public getUserFile = async (
     userId: string,
     fileId: string
-  ): Promise<string | null> => {
+  ): Promise<UserFileDTO | null> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('getUserFileExist');
+      const query = this.sqlManager.getQuery('getUserFile');
       dataLogger.debug(query);
       const queryResult = await client.query(query, [userId, fileId]);
       if (queryResult.rows.length === 0) {
         return null;
       }
-      return queryResult.rows[0].id;
+      return UserFileDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       dataLogger.error(`FilesRepository.getUserFileExist: ${err}`);
       throw err;
