@@ -36,7 +36,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIMessage'
               example:
-                message: 'API is healthly!'
+                  message: "API is healthly!"
   /up-vibe/v1/auth-test:
     get:
       tags:
@@ -52,7 +52,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIMessage'
               example:
-                message: 'Auth test passed!'
+                  message: "Auth test passed!"
         '401':
           description: Unauthorized
           content:
@@ -60,7 +60,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIMessage'
               example:
-                message: 'Requires authentication'
+                  message: "Requires authentication"
       security:
         - BearerAuth: []
         - upvibe-auth:
@@ -82,13 +82,13 @@ paths:
                 properties:
                   version:
                     type: string
-                    example: '1.0.0'
+                    example: "1.0.0"
   /up-vibe/v1/register:
     post:
       tags:
         - api
-      summary: Register a new user and device
-      description: Register a new user and device, if user already exists, only device is registered
+      summary:  Register a new user and device
+      description:  Register a new user and device, if user already exists, only device is registered
       operationId: registerUser
       requestBody:
         content:
@@ -98,10 +98,10 @@ paths:
               properties:
                 deviceId:
                   type: string
-                  example: 'dd938aa5-6520-492a-bf61-8927aa58872c'
+                  example: "dd938aa5-6520-492a-bf61-8927aa58872c"
                 deviceName:
                   type: string
-                  example: 'Some device'
+                  example: "Some device"
       responses:
         '200':
           description: successful operation
@@ -179,7 +179,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIMessageError'
               example:
-                message: 'File already exists'
+                message: "File already exists"
                 code: -1
         '405':
           description: Invalid input
@@ -188,7 +188,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIMessageError'
               example:
-                message: 'Invalid input'
+                message: "Invalid input"
                 code: -1
       security:
         - BearerAuth: []
@@ -569,7 +569,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIMessageError'
               example:
-                message: 'Playlist already exists'
+                message: "Playlist already exists"
                 code: -1
         '405':
           description: Invalid input
@@ -578,7 +578,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIMessageError'
               example:
-                message: 'Invalid input'
+                message: "Invalid input"
                 code: -1
       security:
         - BearerAuth: []
@@ -618,25 +618,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Playlist'
     delete:
-      tags:
-        - playlists
-      summary: Delete palylist
-      description: Delete palylist
-      operationId: deletePlaylist
-      parameters:
-        - name: playlistId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-      security:
-        - upvibe-auth:
-            - user
-        - BearerAuth: []
+        tags:
+          - playlists
+        summary: Delete palylist
+        description: Delete palylist
+        operationId: deletePlaylist
+        parameters:
+          - name: playlistId
+            in: path
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          '200':
+            description: successful operation
+        security:
+          - upvibe-auth:
+              - user
+          - BearerAuth: []
 
 components:
   schemas:
@@ -798,6 +798,7 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
+
 
 security:
   - BearerAuth: []
