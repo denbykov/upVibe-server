@@ -62,22 +62,35 @@ export class FileWorker {
       await this.tagDb.insertTag(
         TagDTO.allFromOneSource('0', file.id, true, sourceId, Status.Created)
       );
-      const userPlaylistFileId = await this.playlistDb.getDefaultUserPlaylistId(
-        user.id
-      );
-      await this.playlistDb.insertUserPaylistFiles(userPlaylistFileId, file.id);
       await this.requestFileProcessing(file!, user.id);
     }
 
-    if (await this.db.doesUserFileExist(user.id, file!.id)) {
+    const userPlaylistId = await this.playlistDb.getDefaultUserPlaylistId(
+      user.id
+    );
+
+    const playlistFile = await this.playlistDb.getUserPlaylistFile(
+      file!.id,
+      user.id,
+      userPlaylistId
+    );
+
+    if (playlistFile) {
       throw new ProcessingError('File already exists');
     }
 
-    const userFileId = await this.db.insertUserFile(user.id, file!.id);
+    await this.playlistDb.insertUserPaylistFile(userPlaylistId, file.id);
+
+    let userFile = await this.db.getUserFile(user.id, file!.id);
+
+    if (!userFile) {
+      userFile = await this.db.insertUserFile(user.id, file!.id);
+    }
+
     await this.tagDb.insertTagMapping(
-      TagMappingDTO.allFromOneSource(user.id, file!.id, sourceId)
+      TagMappingDTO.allFromOneSource(user.id, file.id, sourceId)
     );
-    await this.db.insertSynchronizationRecords(user.id, userFileId);
+    await this.db.insertSynchronizationRecords(user.id, userFile.id);
     const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
     return new TaggedFileMapper().toEntity(taggedFile!);
   };
