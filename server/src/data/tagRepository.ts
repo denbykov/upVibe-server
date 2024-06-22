@@ -185,4 +185,29 @@ export class TagRepository implements iTagDatabase {
       client.release();
     }
   };
+
+  public updateTag = async (tag: TagDTO): Promise<TagDTO> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('updateTag');
+      const queryResult = await client.query(query, [
+        tag.id,
+        tag.isPrimary,
+        tag.source,
+        tag.status,
+        tag.title,
+        tag.artist,
+        tag.album,
+        tag.year,
+        tag.trackNumber,
+        tag.picturePath,
+      ]);
+      return TagDTO.fromJSON(queryResult.rows[0]);
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
 }

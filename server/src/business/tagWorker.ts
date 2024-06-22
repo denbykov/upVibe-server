@@ -1,4 +1,6 @@
+import { Status } from '@src/dtos/statusDTO';
 import { TagDTO } from '@src/dtos/tagDTO';
+import { ShortTags } from '@src/entities/file';
 import { Tag } from '@src/entities/tag';
 import { iFileDatabase } from '@src/interfaces/iFileDatabase';
 import { iSourceDatabase } from '@src/interfaces/iSourceDatabase';
@@ -80,6 +82,86 @@ export class TagWorker {
         );
         await this.tagPlugin.parseTags(fileId, source.description);
       })
+    );
+  };
+
+  public addCustomTags = async (
+    fileId: string,
+    userId: string,
+    customTags: ShortTags
+  ): Promise<Tag> => {
+    const userFileRecord = await this.fileDb.getUserFileRecord(fileId, userId);
+    if (!userFileRecord) {
+      throw new ProcessingError('File not found');
+    }
+    const customId = await this.sourceDb.getCustomSourceId();
+    const existingTag = await this.db.getTagByFile(fileId, customId);
+
+    const result = existingTag
+      ? await this.db.updateTag(
+          new TagDTO(
+            existingTag.id,
+            existingTag.fileId,
+            existingTag.isPrimary,
+            existingTag.source,
+            existingTag.status,
+            customTags.title,
+            customTags.artist,
+            customTags.album,
+            customTags.year,
+            customTags.trackNumber,
+            existingTag.picturePath
+          )
+        )
+      : await this.db.insertTag(
+          new TagDTO(
+            '0',
+            fileId,
+            false,
+            customId,
+            Status.Completed,
+            customTags.title,
+            customTags.artist,
+            customTags.album,
+            customTags.year,
+            customTags.trackNumber,
+            null
+          )
+        );
+
+    return new TagMapper().toEntity(result);
+  };
+
+  public addCustomTagPicture = async (
+    fileId: string,
+    userId: string,
+    picturePath: string
+  ): Promise<void> => {
+    const userFileRecord = await this.fileDb.getUserFileRecord(fileId, userId);
+    if (!userFileRecord) {
+      throw new ProcessingError('File not found');
+    }
+    const customId = await this.sourceDb.getCustomSourceId();
+    const existingTag = await this.db.getTagByFile(fileId, customId);
+
+    if (!existingTag) {
+      throw new ProcessingError('Tag not found');
+    }
+
+    await this.db.updateTag(
+      new TagDTO(
+        existingTag.id,
+        existingTag.fileId,
+        existingTag.isPrimary,
+        existingTag.source,
+        existingTag.status,
+        existingTag.title,
+        existingTag.artist,
+        existingTag.album,
+        existingTag.year,
+        existingTag.trackNumber,
+        picturePath
+      )
     );
   };
 }
