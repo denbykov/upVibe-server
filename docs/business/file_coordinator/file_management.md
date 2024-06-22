@@ -193,16 +193,7 @@ Is tag status 'C'?
 
 #### AC 2.1.2
 
-Request tag parsing via following API:
-API:
-```json
-routing-key: /parsing/tag
-body:
-{
-    "file_id": 1,
-    "url": "some/url"
-}
-```
+Perform tag parsing ([Tag parsing](#tag-parsing))
 
 #### AC 2.2.1
 
@@ -253,22 +244,12 @@ check whether its status is 'D'?
 
 This functionality is responsible for the secondary tag parsing.
 
-API:
-```json
-routing-key: /parsing/tag
-body:
-{
-    "file_id": 1,
-    "url": "some/url"
-}
-```
-
 The system should:
 
 #### AC 1
 
 Try to find a record in the [tags](../../database/tags/tags.md) table by the following filter:  
-file_id = request.url.file_id  
+file_id = request.file_id  
 is_primary = true  
 
 Does the record exist?  
@@ -287,7 +268,7 @@ If a status is:
 #### AC 3
 
 Create records in the [tags](../../database/tags/tags.md) table with the following values:  
-file_id = request.url.file_id  
+file_id = request.file_id  
 source = [all sources with record.allow_for_secondary_tag_parsing = true]  
 status = "CR"  
 
