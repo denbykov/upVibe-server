@@ -12,4 +12,4 @@ CREATE TABLE playlists (
     CONSTRAINT fk_playlists_sources FOREIGN KEY (source_id) REFERENCES sources(id),
     CONSTRAINT fk_playlists_statuses FOREIGN KEY (status) REFERENCES playlist_statuses(status)
 );
-INSERT INTO playlists (source_id, status, title) VALUES (1, 'CR', 'Default');
+INSERT INTO playlists (source_id, status, title) VALUES (1, 'S', 'Default');
