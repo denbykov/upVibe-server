@@ -16,6 +16,48 @@ This document describes file management details, such as file downloading, synch
 - [Playlist addition](#playlist-addition)
 - [Playlist deletion](#playlist-deletion)
 
+# Plugins  
+
+The server relies on plugins to perform such actions as file downloading, parsing, etc. The current version requires the following plugins:
+- Downloader  
+This plugin is responsible for the file.source_url parsing and validation and communication with downloading workers. For example, the amqp message produced by this plugin should look like the following:
+```json
+routing-key: downloading/file-source-name
+body:
+{
+    "file_id": 1,
+    "url": "some/url",
+    "uuid": "uuid",
+}
+```
+This plugin should also provide an API for getting source id by the url(getSource method), and an API for url normalization(normalizeUrl).
+- Parser  
+This plugin is responsible for the communication with parsing workers. For example, the amqp message produced by this plugin should look like one of the following:
+```json
+routing-key: parsing/native/file-source-name
+body:
+{
+    "file_id": 1,
+    "url": "some/url"
+}
+```
+```json
+routing-key: parsing/source-name
+body:
+{
+    "tag_id": 1
+}
+```
+- Playlist parser  
+This plugin is responsible for the communication with playlist parsing workers. For example, the amqp message produced by this plugin should look like one of the following:
+```json
+routing-key: parsing/playlists/source-name
+body:
+{
+    "playlist_id": 1,
+}
+```
+
 # File downloading  
 
 The client can request the server to download a file via POST /up-vibe/v1/files request. The client has to pass a request with the following JSON structure in the body:
@@ -438,10 +480,29 @@ Does the record exist?
 
 #### AC 4
 
-Request playlist creation  
-routing-key: /add/playlist
-url = request.body.url  
-user_id = request.body.user.id
+Insert a record in the [playlists](../../database/files/playlists.md) table with following data:    
+source_url = normalizedUrl  
+source_id = sourceId  
+added_ts = now  
+status = CR  
+synchronization_ts = NULL  
+
+#### AC 5
+
+Request playlist parsing via the playlist parser plugin.  
+Value mapping for the request:  
+playlist_id = <b>playlist</b>.id  
+
+#### AC 6
+
+Try to insert record to the [user_playlists](../../database/files/user_playlists.md) table with follwing data:  
+user_id = request.body.user_id  
+playlist_id = <b>playlist</b>.id  
+added_ts = NOW()  
+
+Does the record already exist?
+- yes - exit with error "User already subscribed to the playlist ${playlist.id}"
+- no - finalize processing
 
 # Playlist deletion  
 
