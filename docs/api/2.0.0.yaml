@@ -1,0 +1,806 @@
+openapi: '3.0.3'
+info:
+  title: upVibe-Server
+  license:
+    name: Express v.4.18.2
+    url: https://github.com/expressjs/express/blob/master/LICENSE
+  version: 0.0.1
+
+tags:
+  - name: api
+    description: API management
+  - name: sources
+    description: Source management
+  - name: files
+    description: File management
+  - name: tags
+    description: Tag management
+  - name: tag-mappings
+    description: Tag mappings management
+  - name: playlists
+    description: Playlist management
+
+paths:
+  /up-vibe/v1/health:
+    get:
+      tags:
+        - api
+      summary: Health check
+      description: Health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessage'
+              example:
+                  message: "API is healthly!"
+  /up-vibe/v1/auth-test:
+    get:
+      tags:
+        - api
+      summary: Test authentication
+      description: Test authentication
+      operationId: authTest
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessage'
+              example:
+                  message: "Auth test passed!"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessage'
+              example:
+                  message: "Requires authentication"
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/info:
+    get:
+      tags:
+        - api
+      summary: Get API info
+      description: Get API info
+      operationId: getApiInfo
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                    example: "1.0.0"
+  /up-vibe/v1/register:
+    post:
+      tags:
+        - api
+      summary:  Register a new user and device
+      description:  Register a new user and device, if user already exists, only device is registered
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+                  example: "dd938aa5-6520-492a-bf61-8927aa58872c"
+                deviceName:
+                  type: string
+                  example: "Some device"
+      responses:
+        '200':
+          description: successful operation
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+
+  /up-vibe/v1/sources:
+    get:
+      tags:
+        - sources
+      summary: Get sources
+      description: Returns array of the available sources
+      operationId: getSources
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Source'
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/sources/{sourceId}/logo:
+    get:
+      tags:
+        - sources
+      summary: Get logo for the given source id
+      operationId: getSourceLogo
+      parameters:
+        - name: sourceId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/files:
+    post:
+      tags:
+        - files
+      summary: Create a new file
+      description: Create a new file.
+      operationId: addFile
+      requestBody:
+        description: Create a new file
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileCreationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: File already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "File already exists"
+                code: -1
+        '405':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "Invalid input"
+                code: -1
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+    get:
+      tags:
+        - files
+      summary: Get files
+      description: Returns array of files for current user
+      operationId: getFiles
+      parameters:
+        - name: deviceId
+          in: query
+          required: true
+          description: Device id
+          schema:
+            type: string
+        - name: statuses
+          in: query
+          required: false
+          description: CSV list of the file statuses to return
+          example: 'D,R'
+          schema:
+            type: array
+            format: string
+        - name: syncronized
+          in: query
+          required: false
+          description: Required synchronization status
+          example: true
+          schema:
+            type: boolean
+        - name: playlists
+          in: query
+          required: false
+          description: CSV list of the playlists to return
+          example: '1,2'
+          schema:
+            type: array
+            format: string
+        - name: missingRemote
+          in: query
+          required: false
+          description: Is remote missing
+          example: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/files/{fileId}:
+    get:
+      tags:
+        - files
+      summary: Get file
+      description: Return information about file
+      operationId: getTaggedFileAndMapping
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: deviceId
+          in: query
+          required: true
+          description: Device id
+          schema:
+            type: string
+        - name: expand
+          in: query
+          required: false
+          description: CSV list of possible expand options
+          example: 'mapping'
+          schema:
+            type: array
+            format: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileAndMapping'
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+    delete:
+      tags:
+        - files
+      summary: Get file
+      description: Delete file
+      operationId: deleteFile
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/files/{fileId}/download:
+    get:
+      tags:
+        - files
+      summary: Download tagged file
+      description: Download tagged file
+      operationId: tagAndLoadFile
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/files/{fileId}/confirm:
+    post:
+      tags:
+        - files
+      summary: Confirm file downloading
+      description: Confirm file downloading
+      operationId: confirmFileDownloading
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: deviceId
+          in: query
+          required: true
+          description: Device id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/files/{fileId}/tags:
+    get:
+      tags:
+        - tags
+      summary: Find tags for given fileId
+      description: Returns array of tags for given fileId
+      operationId: getTags
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/tags/{tagId}/picture:
+    get:
+      tags:
+        - tags
+      summary: Get picture for the given tag id
+      operationId: getTagPicture
+      parameters:
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+  /up-vibe/v1/files/{fileId}/custom-tags:
+    post:
+      tags:
+        - tags
+      summary: Create or update custom tag for given fileId
+      description: Create or update custom tag for given fileId
+      operationId: createCustomTags
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Create a new file
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShortTag'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Tag'
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/files/{fileId}/custom-tags/picture:
+    post:
+      tags:
+        - tags
+      summary: Upload custom picture tag for given fileId
+      description: Upload custom picture tag for given fileId
+      operationId: uploadCustomPicture
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Create a new file
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '200':
+          description: successful operation
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/tags/tag-mapping-priority:
+    get:
+      tags:
+        - tag-mappings
+      summary: Get tag mapping priority
+      description: Get tag mapping priority
+      operationId: getTagMappingPriority
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagMappingPriority'
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+    put:
+      tags:
+        - tag-mappings
+      summary: Update tag mapping priority
+      description: Update tag mapping priority
+      operationId: updateTagMappingPriority
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagMappingPriority'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/files/{fileId}/tag-mapping:
+    put:
+      tags:
+        - tag-mappings
+      summary: Update tag mapping for given file id
+      description: Update tag mapping for given file id
+      operationId: updateTagMapping
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagMapping'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/playlists:
+    post:
+      tags:
+        - playlists
+      summary: Add new playlist
+      description: Create new playlist.
+      operationId: addPlaylist
+      requestBody:
+        description: Create new playlist
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaylistCreationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Playlist already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "Playlist already exists"
+                code: -1
+        '405':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMessageError'
+              example:
+                message: "Invalid input"
+                code: -1
+      security:
+        - BearerAuth: []
+        - upvibe-auth:
+            - user
+    get:
+      tags:
+        - playlists
+      summary: Get playlists
+      description: Returns array of playlists for current user
+      operationId: getPlaylists
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Playlist'
+      security:
+        - upvibe-auth:
+            - user
+        - BearerAuth: []
+  /up-vibe/v1/playlists/{playlistId}:
+    get:
+      tags:
+        - playlists
+      summary: Get playlist
+      description: Return information about playlist
+      operationId: getPlaylist
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+    delete:
+        tags:
+          - playlists
+        summary: Delete palylist
+        description: Delete palylist
+        operationId: deletePlaylist
+        parameters:
+          - name: playlistId
+            in: path
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          '200':
+            description: successful operation
+        security:
+          - upvibe-auth:
+              - user
+          - BearerAuth: []
+
+components:
+  schemas:
+    APIMessage:
+      type: object
+      properties:
+        message:
+          type: string
+    APIMessageError:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
+          format: int32
+    FileCreationRequest:
+      type: object
+      properties:
+        url:
+          type: string
+    PlaylistCreationRequest:
+      type: object
+      properties:
+        url:
+          type: string
+    Source:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        description:
+          type: string
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        source:
+          $ref: '#/components/schemas/Source'
+        status:
+          type: string
+        sourceUrl:
+          description: May contain source location
+          type: string
+        tags:
+          $ref: '#/components/schemas/ShortTag'
+    ShortTag:
+      type: object
+      properties:
+        title:
+          type: string
+        artist:
+          type: string
+        album:
+          type: string
+        year:
+          type: integer
+        trackNumber:
+          type: integer
+    File:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        source:
+          $ref: '#/components/schemas/Source'
+        status:
+          type: string
+        sourceUrl:
+          description: May contain source location
+          type: string
+        isSynchoronized:
+          type: boolean
+        palylists:
+          type: array
+          items:
+            type: string
+        tags:
+          $ref: '#/components/schemas/ShortTag'
+    FileAndMapping:
+      type: object
+      properties:
+        file:
+          $ref: '#/components/schemas/File'
+        mapping:
+          $ref: '#/components/schemas/TagMapping'
+    TagMappingPriority:
+      type: object
+      properties:
+        title:
+          type: array
+          items:
+            type: integer
+        artist:
+          type: array
+          items:
+            type: integer
+        album:
+          type: array
+          items:
+            type: integer
+        year:
+          type: array
+          items:
+            type: integer
+        trackNumber:
+          type: array
+          items:
+            type: integer
+        picture:
+          type: array
+          items:
+            type: integer
+    TagMapping:
+      type: object
+      properties:
+        title:
+          type: integer
+        artist:
+          type: integer
+        album:
+          type: integer
+        year:
+          type: integer
+        trackNumber:
+          type: integer
+        picture:
+          type: integer
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        source:
+          $ref: '#/components/schemas/Source'
+        status:
+          type: string
+        sourceUrl:
+          description: May contain source location
+          type: string
+        syncrhonizationTs:
+          type: string
+        title:
+          type: string
+  securitySchemes:
+    upvibe-auth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://up-vibe.eu.auth0.com/authorize
+          tokenUrl: https://up-vibe.eu.auth0.com/oauth/token
+          scopes:
+            user: user
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+
+security:
+  - BearerAuth: []
+  - upvibe-auth:
+      - user

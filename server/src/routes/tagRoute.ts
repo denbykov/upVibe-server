@@ -60,6 +60,24 @@ export class TagRoute extends BaseRoute {
 
     this.app.post(`${filesURI}/:fileId/parse-tags`, controller.parseTags);
 
+    this.app.post(
+      `${filesURI}/:fileId/custom-tags`,
+      auth0Middleware(this.config),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
+      controller.addCustomTags
+    );
+
+    this.app.post(
+      `${filesURI}/:fileId/custom-tags/picture`,
+      auth0Middleware(this.config),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
+      controller.addCustomTagPicture
+    );
+
     return this.app;
   }
 }

@@ -22,4 +22,5 @@ export abstract class iTagDatabase {
     fileId: string,
     userId: string
   ): Promise<ShortTagDTO>;
+  public abstract updateTag(tag: TagDTO): Promise<TagDTO>;
 }

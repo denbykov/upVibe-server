@@ -63,4 +63,17 @@ export class SourceRepository implements iSourceDatabase {
       client.release();
     }
   };
+
+  public getCustomSourceId = async (): Promise<string> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getCustomSourceId');
+      const queryResult = await client.query(query);
+      return queryResult.rows[0].id;
+    } catch (err) {
+      throw new Error(`FilesRepository.getCustomSourceId: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
 }
