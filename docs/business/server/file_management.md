@@ -47,11 +47,74 @@ Does the record exist?
 
 #### AC 3
 
-Request file donwloading  
-routing-key: /downloading/file
-url = request.body.url  
-user_id = request.body.user.id  
-playlist_id = 1 (DEFAULT playlist)  
+Try to find a record in the [files](../../database/files/files.md) table by the following filter:  
+source_url = normalizedUrl  
+
+Does the record exist?
+- yes - go to AC 8
+- no - go to AC 4
+
+#### AC 4.1
+
+Insert a new record in the [files](../../database/files/files.md) table with the following values:  
+path = null  
+source_url = normalizedUrl  
+status = "CR"  
+
+#### AC 4.2
+
+Insert a new record in the [user_paylist_files](../../database/files/user_paylist_files.md) table with the following values:  
+file_id = <b>file</b>.id  
+user_playlist_id =   
+&emsp; id from [user_playlists](../../database/files/user_playlists.md) where:  
+&emsp; user_id = request.body.user_id  
+&emsp; playlist_id = request.body.playlist_id  
+missing_from_remote = FALSE  
+
+#### AC 5
+
+Request file downloading.  
+Value mapping for the request:  
+file_id = created_file.id  
+url = normalizedUrl  
+uuid = created_file.uuid  
+
+#### AC 6
+
+Create a native tag record in the [tags](../../database/tags/tags.md) table with the following values:  
+file_id = created_file.id   
+source = sourceId  
+status = "CR"  
+is_primary = true
+
+#### AC 7
+
+Request native tag parsing.  
+Value mapping for the request:  
+tag_id = created_tag.id  
+url = normalizedUrl  
+
+#### AC 8
+
+Create a record in the [user_files](../../database/files/user_files.md) table with the following values:  
+user_id = request.user.id  
+file_id = (created_file / found_file).id  
+
+#### AC 9
+
+Create a record in the [tag_mappings](../../database/tags/tag_mappings.md) table with the following values:  
+user_id = request.user.id  
+file_id = (created_file / found_file).id  
+all tags = sourceId  
+
+### AC 10
+
+For each record in the [devices](../../database/users/devices.md) table fulfilling following filter:  
+user_id = request.user.id  
+  
+Create a record in the [file_synchronization](../../database/files/file_synchronization.md) table with the following values:  
+device_id = record.id  
+user_file_id = created_user_file.id  
 
 # File deletion  
 

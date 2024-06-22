@@ -171,7 +171,11 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
         '400':
           description: File already exists
           content:
