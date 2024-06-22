@@ -57,4 +57,5 @@ export abstract class iFileDatabase {
     fileId: string,
     userId: string
   ): Promise<UserFileDTO | null>;
+  public abstract getUserFileId(userId: string): Promise<string>;
 }

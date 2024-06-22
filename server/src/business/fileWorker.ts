@@ -62,24 +62,47 @@ export class FileWorker {
       await this.tagDb.insertTag(
         TagDTO.allFromOneSource('0', file.id, true, sourceId, Status.Created)
       );
-      const userPlaylistFileId = await this.playlistDb.getDefaultUserPlaylistId(
-        user.id
-      );
-      await this.playlistDb.insertUserPaylistFiles(userPlaylistFileId, file.id);
       await this.requestFileProcessing(file!, user.id);
     }
 
-    if (await this.db.doesUserFileExist(user.id, file!.id)) {
+    const userPlaylistFileId = await this.playlistDb.getDefaultUserPlaylistId(
+      user.id
+    );
+
+    const playlistFile = await this.playlistDb.getUserPlaylistFile(
+      file!.id,
+      user.id,
+      userPlaylistFileId
+    );
+
+    if (playlistFile) {
       throw new ProcessingError('File already exists');
     }
 
+    await this.playlistDb.insertUserPaylistFiles(userPlaylistFileId, file.id);
+
+    const processAndTagUserFile = async (
+      user: User,
+      file: FileDTO,
+      sourceId: string,
+      userFileId: string
+    ): Promise<File> => {
+      await this.tagDb.insertTagMapping(
+        TagMappingDTO.allFromOneSource(user.id, file.id, sourceId)
+      );
+      await this.db.insertSynchronizationRecords(user.id, userFileId);
+      const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
+      return new TaggedFileMapper().toEntity(taggedFile!);
+    };
+
+    if (await this.db.doesUserFileExist(user.id, file!.id)) {
+      const userFileId = await this.db.getUserFileId(user.id);
+      return processAndTagUserFile(user, file!, sourceId, userFileId);
+    }
+
     const userFileId = await this.db.insertUserFile(user.id, file!.id);
-    await this.tagDb.insertTagMapping(
-      TagMappingDTO.allFromOneSource(user.id, file!.id, sourceId)
-    );
-    await this.db.insertSynchronizationRecords(user.id, userFileId);
-    const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
-    return new TaggedFileMapper().toEntity(taggedFile!);
+
+    return processAndTagUserFile(user, file!, sourceId, userFileId);
   };
 
   public requestFileProcessing = async (

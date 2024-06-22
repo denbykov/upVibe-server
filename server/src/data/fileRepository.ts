@@ -358,4 +358,17 @@ export class FileRepository implements iFileDatabase {
       client.release();
     }
   };
+
+  public getUserFileId = async (userId: string): Promise<string> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getUserFileId');
+      const queryResult = await client.query(query, [userId]);
+      return queryResult.rows[0].id;
+    } catch (err) {
+      throw new Error(`FilesRepository.getUserFileId: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
 }
