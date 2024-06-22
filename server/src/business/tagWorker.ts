@@ -95,22 +95,22 @@ export class TagWorker {
       throw new ProcessingError('File not found');
     }
     const customId = await this.sourceDb.getCustomSourceId();
-    const getTag = await this.db.getTagByFile(fileId, customId);
+    const existingTag = await this.db.getTagByFile(fileId, customId);
 
-    const result = getTag
+    const result = existingTag
       ? await this.db.updateTag(
           new TagDTO(
-            getTag.id,
-            getTag.fileId,
-            getTag.isPrimary,
-            getTag.source,
-            getTag.status,
+            existingTag.id,
+            existingTag.fileId,
+            existingTag.isPrimary,
+            existingTag.source,
+            existingTag.status,
             customTags.title,
             customTags.artist,
             customTags.album,
             customTags.year,
             customTags.trackNumber,
-            getTag.picturePath
+            existingTag.picturePath
           )
         )
       : await this.db.insertTag(
@@ -136,34 +136,32 @@ export class TagWorker {
     fileId: string,
     userId: string,
     picturePath: string
-  ): Promise<Record<string, string>> => {
+  ): Promise<void> => {
     const userFileRecord = await this.fileDb.getUserFileRecord(fileId, userId);
     if (!userFileRecord) {
       throw new ProcessingError('File not found');
     }
     const customId = await this.sourceDb.getCustomSourceId();
-    const getTag = await this.db.getTagByFile(fileId, customId);
+    const existingTag = await this.db.getTagByFile(fileId, customId);
 
-    if (!getTag) {
+    if (!existingTag) {
       throw new ProcessingError('Tag not found');
     }
 
-    const result = await this.db.updateTag(
+    await this.db.updateTag(
       new TagDTO(
-        getTag.id,
-        getTag.fileId,
-        getTag.isPrimary,
-        getTag.source,
-        getTag.status,
-        getTag.title,
-        getTag.artist,
-        getTag.album,
-        getTag.year,
-        getTag.trackNumber,
+        existingTag.id,
+        existingTag.fileId,
+        existingTag.isPrimary,
+        existingTag.source,
+        existingTag.status,
+        existingTag.title,
+        existingTag.artist,
+        existingTag.album,
+        existingTag.year,
+        existingTag.trackNumber,
         picturePath
       )
     );
-
-    return { picturePath: result.picturePath! };
   };
 }
