@@ -35,7 +35,12 @@ class PlaylistWorker {
     userId: string,
     url: string
   ): Promise<void> => {
-    const normalizedUrl = await this.filePlugin.normalizeUrl(url);
+    let normalizedUrl: string;
+    try {
+      normalizedUrl = this.filePlugin.normalizeUrlPlaylist(url);
+    } catch (error) {
+      throw new ProcessingError('Invalid URL');
+    }
     const existingPlaylist =
       await this.db.getPlaylistBySourceUrl(normalizedUrl);
 
