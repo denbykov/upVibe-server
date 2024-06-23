@@ -466,7 +466,7 @@ source_url = normalizedUrl
 
 Does the record exist?
 - yes - go to AC 3
-- no - go to AC 4
+- no - go to AC 5
 
 #### AC 3
 
@@ -476,7 +476,7 @@ file
 
 Does the record exist?
 - yes - abort the operation and send the "Playlist already added" error  
-- no - go to AC 4
+- no - go to AC 5
 
 #### AC 4
 
