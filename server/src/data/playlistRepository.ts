@@ -1,5 +1,6 @@
 import pg from 'pg';
 
+import { PlaylistDTO } from '@src/dtos/playlistsDTO';
 import { UserPlaylistFileDTO } from '@src/dtos/userPlaylistFileDTO';
 import { iPlaylistDatabase } from '@src/interfaces/iPlaylistDatabase';
 import { SQLManager } from '@src/sqlManager';
@@ -63,6 +64,41 @@ class PlaylistRepository implements iPlaylistDatabase {
     } catch (err) {
       dataLogger.error(err);
       throw err;
+    } finally {
+      client.release();
+    }
+  };
+
+  public getPlaylistsByUserId = async (
+    userId: string
+  ): Promise<PlaylistDTO[]> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getPlaylistsByUserId');
+      dataLogger.debug(query);
+      const result = await client.query(query, [userId]);
+      return result.rows.map((row) => PlaylistDTO.fromJSON(row));
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
+
+  public getPlaylistsByPlaylistId = async (
+    userId: string,
+    playlistId: string
+  ): Promise<PlaylistDTO> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getPlaylistsByPlaylistId');
+      dataLogger.debug(query);
+      const result = await client.query(query, [userId, playlistId]);
+      return PlaylistDTO.fromJSON(result.rows[0]);
+    } catch (err) {
+      dataLogger.error(err);
+      throw new Error('playlist not found');
     } finally {
       client.release();
     }

@@ -24,6 +24,8 @@ import { SQLManager } from '@src/sqlManager';
 import { dataLogger, serverLogger } from '@src/utils/server/logger';
 import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
 
+import { PlaylistRoute } from './routes/playlistRoute';
+
 export class App {
   private readonly app: Express;
   private routes: Array<BaseRoute> = [];
@@ -110,6 +112,16 @@ export class App {
 
     this.routes.push(
       new TagMappingRoute(
+        this.app,
+        this.config,
+        this.dbPool,
+        this.sqlManager,
+        this.pluginManager
+      )
+    );
+
+    this.routes.push(
+      new PlaylistRoute(
         this.app,
         this.config,
         this.dbPool,
