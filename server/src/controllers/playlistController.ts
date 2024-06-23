@@ -52,22 +52,6 @@ class PlaylistController extends BaseController {
       next(error);
     }
   };
-
-  public createPlaylist = async (
-    req: Express.Request,
-    res: Express.Response,
-    next: Express.NextFunction
-  ): Promise<void> => {
-    try {
-      const { user } = req.body;
-      const { name } = req.body;
-      const playlistWorker = this.buildPlaylistWorker();
-      const result = await playlistWorker.createPlaylist(user.id, name);
-      res.status(200).json(result);
-    } catch (error) {
-      next(error);
-    }
-  };
 }
 
 export { PlaylistController };
