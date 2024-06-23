@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { ShortTagDTO } from '@src/dtos/shortTagDTO';
 import { iFileTagger } from '@src/interfaces/iFileTagger';
+import { dataLogger } from '@src/utils/server/logger';
 
 const execAsync = promisify(exec);
 
@@ -38,7 +39,7 @@ async function executeShellScript(
   args: Array<string>
 ): Promise<void> {
   try {
-    console.log(`Executing script: ${script} ${args.join(' ')}`);
+    dataLogger.debug(`Executing script: ${script} ${args.join(' ')}`);
     const { stderr } = await execAsync(`${script} ${args.join(' ')}`);
     if (stderr) {
       throw new Error(`Script returned an error: ${stderr}`);

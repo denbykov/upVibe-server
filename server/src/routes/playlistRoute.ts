@@ -27,7 +27,8 @@ export class PlaylistRoute extends BaseRoute {
     const controller: PlaylistController = new PlaylistController(
       this.config,
       this.dbPool,
-      this.sqlManager
+      this.sqlManager,
+      this.pluginManager
     );
     const playlistURI = `/up-vibe/v1/playlists`;
     const userWorker = new UserWorker(
@@ -52,6 +53,15 @@ export class PlaylistRoute extends BaseRoute {
         ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
         : userManagementMiddleware([GENERAL], userWorker, this.config),
       controller.getPlaylistsByPlaylistId
+    );
+
+    this.app.post(
+      `${playlistURI}`,
+      auth0Middleware(this.config),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
+      controller.createPlaylist
     );
 
     return this.app;

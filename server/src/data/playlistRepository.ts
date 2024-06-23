@@ -1,6 +1,8 @@
 import pg from 'pg';
 
 import { PlaylistDTO } from '@src/dtos/playlistsDTO';
+import { Status } from '@src/dtos/statusDTO';
+import { UserPlaylistDTO } from '@src/dtos/userPlaylistDTO';
 import { UserPlaylistFileDTO } from '@src/dtos/userPlaylistFileDTO';
 import { iPlaylistDatabase } from '@src/interfaces/iPlaylistDatabase';
 import { SQLManager } from '@src/sqlManager';
@@ -99,6 +101,90 @@ class PlaylistRepository implements iPlaylistDatabase {
     } catch (err) {
       dataLogger.error(err);
       throw new Error('playlist not found');
+    } finally {
+      client.release();
+    }
+  };
+
+  public getPlaylistBySourceUrl = async (
+    sourceUrl: string
+  ): Promise<PlaylistDTO | null> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getPlaylistBySourceUrl');
+      dataLogger.debug(query);
+      const result = await client.query(query, [sourceUrl]);
+      if (result.rows.length === 0) {
+        return null;
+      }
+      return PlaylistDTO.fromJSON(result.rows[0]);
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
+
+  public getUserPlaylistByUserId = async (
+    userId: string,
+    playlistId: string
+  ): Promise<UserPlaylistDTO> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getUserPlaylistByUserId');
+      dataLogger.debug(query);
+      const result = await client.query(query, [userId, playlistId]);
+      return UserPlaylistDTO.fromJSON(result.rows[0]);
+    } catch (err) {
+      dataLogger.error(err);
+      throw new Error('playlist not found');
+    } finally {
+      client.release();
+    }
+  };
+
+  public insertPlaylist = async (
+    url: string,
+    sourceId: string,
+    status: Status
+  ): Promise<PlaylistDTO> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('insertPlaylist');
+      dataLogger.debug(query);
+      const result = await client.query(query, [
+        url,
+        sourceId,
+        new Date().toISOString(),
+        status,
+      ]);
+      return PlaylistDTO.fromJSON(result.rows[0]);
+    } catch (err) {
+      dataLogger.error(err);
+      throw new Error('playlist not found');
+    } finally {
+      client.release();
+    }
+  };
+
+  public insertUserPlaylists = async (
+    userId: string,
+    playlistId: string
+  ): Promise<UserPlaylistDTO> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('insertUserPlaylist');
+      dataLogger.debug(query);
+      const result = await client.query(query, [
+        userId,
+        playlistId,
+        new Date().toISOString(),
+      ]);
+      return UserPlaylistDTO.fromJSON(result.rows[0]);
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
     } finally {
       client.release();
     }
