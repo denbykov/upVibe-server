@@ -4,7 +4,6 @@ import { Logger } from 'log4js';
 import path from 'path';
 
 import { Config } from '@src/entities/config';
-import { iFileCoordinatorPlugin } from '@src/interfaces/iFileCoordinatorPlugin';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
 import { iPlaylistPlugin } from '@src/interfaces/iPlaylistPlugin';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
@@ -14,7 +13,6 @@ class PluginManager {
   private config: Config;
   private filePlugin: iFilePlugin | null;
   private tagPlugin: iTagPlugin | null;
-  private fileCoordinatorPlugin: iFileCoordinatorPlugin | null;
   private playlistPlugin: iPlaylistPlugin | null;
   private static instance: PluginManager;
   private dataLogger: Logger;
@@ -26,7 +24,6 @@ class PluginManager {
     this.serverLogger = serverLogger;
     this.filePlugin = null;
     this.tagPlugin = null;
-    this.fileCoordinatorPlugin = null;
     this.playlistPlugin = null;
     if (PluginManager.instance) {
       return PluginManager.instance;
@@ -48,12 +45,11 @@ class PluginManager {
   };
 
   private registerPlugin = (
-    plugin: iFilePlugin | iTagPlugin | iFileCoordinatorPlugin | iPlaylistPlugin
+    plugin: iFilePlugin | iTagPlugin | iPlaylistPlugin
   ): void => {
     const pluginMap = {
       FilePlugin: this.filePlugin,
       TagPlugin: this.tagPlugin,
-      FileCoordinatorPlugin: this.fileCoordinatorPlugin,
       PlaylistPlugin: this.playlistPlugin,
     };
 
@@ -67,9 +63,6 @@ class PluginManager {
         break;
       case 'TagPlugin':
         this.tagPlugin = plugin as iTagPlugin;
-        break;
-      case 'FileCoordinatorPlugin':
-        this.fileCoordinatorPlugin = plugin as iFileCoordinatorPlugin;
         break;
       case 'PlaylistPlugin':
         this.playlistPlugin = plugin as iPlaylistPlugin;
