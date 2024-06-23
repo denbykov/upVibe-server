@@ -54,6 +54,15 @@ export class PlaylistRoute extends BaseRoute {
       controller.getPlaylistsByPlaylistId
     );
 
+    this.app.post(
+      `${playlistURI}`,
+      auth0Middleware(this.config),
+      this.config.appDebug
+        ? userManagementMiddleware([GENERAL, DEBUG], userWorker, this.config)
+        : userManagementMiddleware([GENERAL], userWorker, this.config),
+      controller.createPlaylist
+    );
+
     return this.app;
   }
 }

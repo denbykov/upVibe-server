@@ -16,6 +16,7 @@ import {
   APIRoute,
   BaseRoute,
   FileRoute,
+  PlaylistRoute,
   SourceRoute,
   TagMappingRoute,
   TagRoute,
@@ -23,8 +24,6 @@ import {
 import { SQLManager } from '@src/sqlManager';
 import { dataLogger, serverLogger } from '@src/utils/server/logger';
 import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
-
-import { PlaylistRoute } from './routes/playlistRoute';
 
 export class App {
   private readonly app: Express;
