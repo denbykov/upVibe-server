@@ -10,6 +10,9 @@ export class UserInfoAgent implements iUserInfoAgent {
     this.config = config;
   }
   public getUserInfoByToken = async (token: string): Promise<User | null> => {
+    if (this.config.appDebug) {
+      return new User('0', 'debug', 'debug');
+    }
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${token}`);
     const req = await fetch(`https://${this.config.auth0Domain}/userinfo`, {

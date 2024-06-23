@@ -16,6 +16,7 @@ import {
   APIRoute,
   BaseRoute,
   FileRoute,
+  PlaylistRoute,
   SourceRoute,
   TagMappingRoute,
   TagRoute,
@@ -110,6 +111,16 @@ export class App {
 
     this.routes.push(
       new TagMappingRoute(
+        this.app,
+        this.config,
+        this.dbPool,
+        this.sqlManager,
+        this.pluginManager
+      )
+    );
+
+    this.routes.push(
+      new PlaylistRoute(
         this.app,
         this.config,
         this.dbPool,
