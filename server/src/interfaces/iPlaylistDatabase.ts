@@ -1,4 +1,6 @@
 import { PlaylistDTO } from '@src/dtos/playlistsDTO';
+import { Status } from '@src/dtos/statusDTO';
+import { UserPlaylistDTO } from '@src/dtos/userPlaylistDTO';
 import { UserPlaylistFileDTO } from '@src/dtos/userPlaylistFileDTO';
 
 export abstract class iPlaylistDatabase {
@@ -17,4 +19,20 @@ export abstract class iPlaylistDatabase {
     userId: string,
     playlistId: string
   ): Promise<PlaylistDTO>;
+  public abstract getPlaylistBySourceUrl(
+    sourceUrl: string
+  ): Promise<PlaylistDTO | null>;
+  public abstract getUserPlaylistByUserId(
+    userId: string,
+    playlistId: string
+  ): Promise<UserPlaylistDTO>;
+  public abstract insertPlaylist(
+    url: string,
+    sourceId: string,
+    status: Status
+  ): Promise<PlaylistDTO>;
+  public abstract insertUserPlaylist(
+    userId: string,
+    playlistId: string
+  ): Promise<UserPlaylistDTO>;
 }

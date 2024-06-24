@@ -6,6 +6,7 @@ import path from 'path';
 import { Config } from '@src/entities/config';
 import { iFileCoordinatorPlugin } from '@src/interfaces/iFileCoordinatorPlugin';
 import { iFilePlugin } from '@src/interfaces/iFilePlugin';
+import { iPlaylistPlugin } from '@src/interfaces/iPlaylistPlugin';
 import { iTagPlugin } from '@src/interfaces/iTagPlugin';
 import { parseJSONConfig } from '@src/utils/server/parseJSONConfig';
 
@@ -14,6 +15,7 @@ class PluginManager {
   private filePlugin: iFilePlugin | null;
   private tagPlugin: iTagPlugin | null;
   private fileCoordinatorPlugin: iFileCoordinatorPlugin | null;
+  private playlistPlugin: iPlaylistPlugin | null;
   private static instance: PluginManager;
   private dataLogger: Logger;
   private serverLogger: Logger;
@@ -25,6 +27,7 @@ class PluginManager {
     this.filePlugin = null;
     this.tagPlugin = null;
     this.fileCoordinatorPlugin = null;
+    this.playlistPlugin = null;
     if (PluginManager.instance) {
       return PluginManager.instance;
     }
@@ -39,15 +42,19 @@ class PluginManager {
     if (!this.tagPlugin) {
       throw new Error('TagPlugin not registered');
     }
+    if (!this.playlistPlugin) {
+      throw new Error('PlaylistPlugin not registered');
+    }
   };
 
   private registerPlugin = (
-    plugin: iFilePlugin | iTagPlugin | iFileCoordinatorPlugin
+    plugin: iFilePlugin | iTagPlugin | iFileCoordinatorPlugin | iPlaylistPlugin
   ): void => {
     const pluginMap = {
       FilePlugin: this.filePlugin,
       TagPlugin: this.tagPlugin,
       FileCoordinatorPlugin: this.fileCoordinatorPlugin,
+      PlaylistPlugin: this.playlistPlugin,
     };
 
     if (pluginMap[plugin.pluginName as keyof typeof pluginMap]) {
@@ -63,6 +70,9 @@ class PluginManager {
         break;
       case 'FileCoordinatorPlugin':
         this.fileCoordinatorPlugin = plugin as iFileCoordinatorPlugin;
+        break;
+      case 'PlaylistPlugin':
+        this.playlistPlugin = plugin as iPlaylistPlugin;
         break;
       default:
         throw new Error(`Unknown plugin type ${plugin.pluginName}`);
@@ -104,6 +114,10 @@ class PluginManager {
 
   public getTagPlugin = (): iTagPlugin => {
     return this.tagPlugin!;
+  };
+
+  public getPlaylistPlugin = (): iPlaylistPlugin => {
+    return this.playlistPlugin!;
   };
 }
 
