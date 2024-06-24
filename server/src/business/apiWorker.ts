@@ -9,7 +9,7 @@ export class ApiWorker {
   public getSwaggerSpec = async (): Promise<JSON.JSONObject> => {
     try {
       const swaggerSpec = YAML.parse(
-        await fs.readFile('api/0.0.1.yaml', 'utf8')
+        await fs.readFile('api/2.0.0.yaml', 'utf8')
       );
       return swaggerSpec;
     } catch (error) {

@@ -98,6 +98,7 @@ services:
     container_name: file-coordinator
     volumes:
       - ./services/file-coordinator/config:/opt/upVibe/services/file-coordinator/config
+      - ./services/file-coordinator/plugins:/opt/upVibe/services/file-coordinator/plugins
       - ./services/file-coordinator/logs:/opt/upVibe/services/file-coordinator/logs
     depends_on:
       postgresql:

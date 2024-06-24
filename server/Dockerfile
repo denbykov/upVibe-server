@@ -51,5 +51,6 @@ COPY --from=builder --chown=${USERNAME}:${USER_GID} ${BUILD_LOCATION}/sql ./sql
 COPY --from=builder --chown=${USERNAME}:${USER_GID} ${BUILD_LOCATION}/cert ./cert
 
 RUN npm install --omit=dev --omit=optional
+RUN npm install --os=linux --libc=musl sharp
 
 ENTRYPOINT [ "/bin/bash" ]
