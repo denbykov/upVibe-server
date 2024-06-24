@@ -86,7 +86,7 @@ Does the record exist?
 
 #### AC 3
 
-Try to find a record in the [user_paylist_files](../../database/files/user_paylist_files.md) using following filter:  
+Try to find a record in the [user_paylist_files](../../database/files/user_playlist_files.md) using following filter:  
 file_id = <b>file</b>.id  
 user_playlist_id =   
 &emsp; id from [user_playlists](../../database/files/user_playlists.md) where:  
@@ -129,7 +129,7 @@ url = normalizedUrl
 
 #### AC 8
 
-Insert a new record in the [user_paylist_files](../../database/files/user_paylist_files.md) table with the following values:  
+Insert a new record in the [user_paylist_files](../../database/files/user_playlist_files.md) table with the following values:  
 file_id = <b>file</b>.id  
 user_playlist_id =   
 &emsp; id from [user_playlists](../../database/files/user_playlists.md) where:  
@@ -186,7 +186,7 @@ Does a record exist?
 
 ### AC 2
 
-Remove records from the [user_playlist_files](../../database/files/user_paylist_files.md) for given request.url.playlists where:  
+Remove records from the [user_playlist_files](../../database/files/user_playlist_files.md) for given request.url.playlists where:  
 file_id = request.url.id  
 user_playlist_id = any(  
 &emsp; id from [user_playlists](../../database/files/user_platlists.md) where:  
@@ -282,6 +282,7 @@ For each <b>user_file</b> record perform AC 4
 
 Update the [file_synchronization](../../database/files/file_synchronization.md) table with:  
 is_synchronized = FALSE  
+was_changed = TRUE  
 server_ts = current timestamp  
 where:  
 user_file_id = <b>user_file</b>.id  
@@ -385,7 +386,7 @@ user_file_id = <b>user_file</b>.id
 
 ### AC 1.3
 
-Find records in the [user_playlist_files](../../database/files/user_paylist_files.md) where:  
+Find records in the [user_playlist_files](../../database/files/user_playlist_files.md) where:  
 file_id = request.url.id    
 user_id = request.body.user_id    
 
@@ -397,6 +398,7 @@ Are any records found?
 
 Update the [file_synchronization](../../database/files/file_synchronization.md) table with:  
 is_synchronized = TRUE  
+was_changed = FALSE  
 device_ts = current timestamp  
 where:  
 device_id = request.url.deviceId  

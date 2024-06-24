@@ -13,3 +13,4 @@ This page describes the public.file_synchronization table
 | is_synchronized | BOOLEAN | NOT NULL, DEFAULT FALSE |
 | server_ts | TIMESTAMPTZ | NOT NULL, DEFAULT CURRENT_TIMESTAMP |
 | device_ts | TIMESTAMPTZ |
+| was_changed | BOOLEAN | NOT NULL, DEFAULT FALSE |

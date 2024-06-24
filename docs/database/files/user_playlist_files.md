@@ -2,7 +2,7 @@
 
 This page describes the public.user_playlists table
 
-![alt text](user_paylist_files.png)
+![alt text](user_playlist_files.png)
 
 ## Structure definition
 
