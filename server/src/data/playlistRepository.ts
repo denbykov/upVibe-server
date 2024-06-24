@@ -168,7 +168,7 @@ class PlaylistRepository implements iPlaylistDatabase {
     }
   };
 
-  public insertUserPlaylists = async (
+  public insertUserPlaylist = async (
     userId: string,
     playlistId: string
   ): Promise<UserPlaylistDTO> => {

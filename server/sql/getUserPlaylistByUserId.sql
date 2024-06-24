@@ -5,5 +5,3 @@ FROM
 WHERE
   up.user_id = $1
   AND up.playlist_id = $2
-LIMIT
-  1;

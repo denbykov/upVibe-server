@@ -58,7 +58,7 @@ class PlaylistWorker {
     );
     const source = await this.sourceDb.getSource(sourceId);
     await this.playlistPlugin.parsePlaylist(result.id, source!.description);
-    await this.db.insertUserPlaylists(userId, result.id);
+    await this.db.insertUserPlaylist(userId, result.id);
     return;
   };
 }
