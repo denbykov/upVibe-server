@@ -31,7 +31,7 @@ export abstract class iPlaylistDatabase {
     sourceId: string,
     status: Status
   ): Promise<PlaylistDTO>;
-  public abstract insertUserPlaylists(
+  public abstract insertUserPlaylist(
     userId: string,
     playlistId: string
   ): Promise<UserPlaylistDTO>;
