@@ -160,13 +160,16 @@ export class FileRepository implements iFileDatabase {
   public insertUserFile = async (
     userId: string,
     fileId: string
-  ): Promise<UserFileDTO> => {
+  ): Promise<string> => {
     const client = await this.dbPool.connect();
     try {
       const query =
         'INSERT INTO user_files (user_id, file_id) VALUES ($1, $2) RETURNING id';
       const queryResult = await client.query(query, [userId, fileId]);
-      return UserFileDTO.fromJSON(queryResult.rows[0]);
+      if (queryResult.rows.length === 0) {
+        throw new Error('Failed to insert user file');
+      }
+      return queryResult.rows[0].id;
     } catch (err) {
       dataLogger.error(err);
       throw err;
