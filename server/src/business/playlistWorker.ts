@@ -34,7 +34,7 @@ class PlaylistWorker {
   public createPlaylist = async (
     userId: string,
     url: string
-  ): Promise<void> => {
+  ): Promise<Playlist> => {
     let normalizedUrl: string;
     try {
       normalizedUrl = this.filePlugin.normalizeUrlPlaylist(url);
@@ -59,7 +59,9 @@ class PlaylistWorker {
     const source = await this.sourceDb.getSource(sourceId);
     await this.playlistPlugin.parsePlaylist(result.id, source!.description);
     await this.db.insertUserPlaylist(userId, result.id);
-    return;
+
+    const palylist = await this.db.getPlaylistsByPlaylistId(userId, result.id);
+    return new PlaylistMapper().toEntity(palylist);
   };
 }
 

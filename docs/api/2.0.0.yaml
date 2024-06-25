@@ -565,7 +565,11 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
         '400':
           description: Playlist already exists
           content:
