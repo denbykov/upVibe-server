@@ -19,7 +19,7 @@ export abstract class iFileDatabase {
   public abstract insertUserFile: (
     userId: string,
     fileId: string
-  ) => Promise<UserFileDTO>;
+  ) => Promise<string>;
   public abstract getTaggedFile: (
     id: string,
     deviceId: string,
