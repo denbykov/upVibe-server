@@ -156,11 +156,12 @@ export class FileWorker {
   };
 
   public confirmFile = async (
-    id: string,
+    fileId: string,
     user: User,
     deviceId: string
   ): Promise<void> => {
-    await this.db.confirmFile(id, user.id, deviceId);
+    // await this.db.confirmFile(id, user.id, deviceId);
+    const existFile = await this.db.getUserFile(user.id, fileId);
   };
 
   public tagFile = async (
