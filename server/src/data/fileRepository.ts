@@ -235,16 +235,21 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public insertSynchronizationRecords = async (
+  public insertSynchronizationRecordsByUser = async (
     userId: string,
     userFileId: string
   ): Promise<void> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('insertSynchronizationRecords');
+      const query = this.sqlManager.getQuery(
+        'insertSynchronizationRecordsByUser'
+      );
+      dataLogger.debug(query);
       await client.query(query, [userId, userFileId]);
     } catch (err) {
-      throw new Error(`FilesRepository.insertSynchronizationRecords: ${err}`);
+      throw new Error(
+        `FilesRepository.insertSynchronizationRecordsByUser: ${err}`
+      );
     } finally {
       client.release();
     }
@@ -257,6 +262,7 @@ export class FileRepository implements iFileDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getUserFiles');
+      dataLogger.debug(query);
       const queryResult = await client.query(query, [userId, fileId]);
       return queryResult.rows.map((row) => row.id);
     } catch (err) {
@@ -270,6 +276,7 @@ export class FileRepository implements iFileDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getUserFileIds');
+      dataLogger.debug(query);
       const queryResult = await client.query(query, [userId]);
       return queryResult.rows.map((row) => row.file_id);
     } catch (err) {
@@ -286,6 +293,7 @@ export class FileRepository implements iFileDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('updateSynchronizationRecords');
+      dataLogger.debug(query);
       await client.query(query, [timestamp, userFileId]);
     } catch (err) {
       throw new Error(`FilesRepository.updateSynchronizationRecords: ${err}`);
@@ -302,6 +310,7 @@ export class FileRepository implements iFileDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('confirmFile');
+      dataLogger.debug(query);
       await client.query(query, [
         fileId,
         userId,
@@ -319,6 +328,7 @@ export class FileRepository implements iFileDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getFile');
+      dataLogger.debug(query);
       const queryResult = await client.query(query, [id]);
       if (queryResult.rows.length === 0) {
         return null;
@@ -331,16 +341,21 @@ export class FileRepository implements iFileDatabase {
     }
   };
 
-  public InserSyncrhonizationRecords = async (
+  public inserSyncrhonizationRecordsByDevice = async (
     deviceId: string,
     userFileId: string
   ): Promise<void> => {
     const client = await this.dbPool.connect();
     try {
-      const query = this.sqlManager.getQuery('InserSyncrhonizationRecords');
+      const query = this.sqlManager.getQuery(
+        'inserSyncrhonizationRecordsByDevice'
+      );
+      dataLogger.debug(query);
       await client.query(query, [deviceId, userFileId]);
     } catch (err) {
-      throw new Error(`FilesRepository.InserSyncrhonizationRecords: ${err}`);
+      throw new Error(
+        `FilesRepository.inserSyncrhonizationRecordsByDevice: ${err}`
+      );
     } finally {
       client.release();
     }
@@ -353,6 +368,7 @@ export class FileRepository implements iFileDatabase {
     const client = await this.dbPool.connect();
     try {
       const query = this.sqlManager.getQuery('getUserFileRecord');
+      dataLogger.debug(query);
       const queryResult = await client.query(query, [fileId, userId]);
       if (queryResult.rows.length === 0) {
         return null;

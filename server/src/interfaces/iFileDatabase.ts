@@ -30,11 +30,11 @@ export abstract class iFileDatabase {
     userId: string,
     fileId: string
   ) => Promise<UserFileDTO | null>;
-  public abstract insertSynchronizationRecords: (
+  public abstract insertSynchronizationRecordsByUser: (
     userId: string,
     userFileId: string
   ) => Promise<void>;
-  public abstract InserSyncrhonizationRecords: (
+  public abstract inserSyncrhonizationRecordsByDevice: (
     deviceId: string,
     userFileId: string
   ) => Promise<void>;

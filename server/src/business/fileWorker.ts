@@ -93,7 +93,7 @@ export class FileWorker {
     await this.tagDb.insertTagMapping(
       TagMappingDTO.allFromOneSource(user.id, file.id, sourceId)
     );
-    await this.db.insertSynchronizationRecords(user.id, userFileId);
+    await this.db.insertSynchronizationRecordsByUser(user.id, userFileId);
     const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
     return new TaggedFileMapper().toEntity(taggedFile!);
   };
@@ -178,5 +178,22 @@ export class FileWorker {
     const data = await this.fileTagger.tagFile(file!.path, tag);
 
     return new FileData(`${file!.path}.mp3`, data);
+  };
+
+  public deleteFile = async (
+    fileId: string,
+    userId: string,
+    playlistIds: Array<string>
+  ): Promise<void> => {
+    const existFile = await this.db.getUserFile(userId, fileId);
+    if (!existFile) {
+      throw new ProcessingError('File not found');
+    }
+    await this.playlistDb.deleteUserPlaylistsFile(fileId, userId, playlistIds);
+    await this.db.updateSynchronizationRecords(
+      new Date().toISOString(),
+      existFile.id
+    );
+    return;
   };
 }

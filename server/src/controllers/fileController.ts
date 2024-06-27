@@ -177,6 +177,27 @@ class FileController extends BaseController {
       next(error);
     }
   };
+
+  public deleteFile = async (
+    request: Express.Request,
+    response: Express.Response,
+    next: Express.NextFunction
+  ) => {
+    try {
+      const { user } = request.body;
+      const { playlistIds } = request.query;
+      const { fileId } = request.params;
+      const fileWorker = this.buildFileWorker();
+      await fileWorker.deleteFile(
+        fileId,
+        user.id,
+        playlistIds as Array<string>
+      );
+      return response.status(200).json();
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export { FileController };
