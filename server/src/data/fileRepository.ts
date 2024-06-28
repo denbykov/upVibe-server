@@ -1,6 +1,7 @@
 import pg from 'pg';
 
 import { FileDTO } from '@src/dtos/fileDTO';
+import { FileSynchronizationDTO } from '@src/dtos/fileSynchronizationDTO';
 import { TaggedFileDTO } from '@src/dtos/taggedFileDTO';
 import { UserDTO } from '@src/dtos/userDTO';
 import { UserFileDTO } from '@src/dtos/userFileDTO';
@@ -376,6 +377,118 @@ export class FileRepository implements iFileDatabase {
       return UserFileDTO.fromJSON(queryResult.rows[0]);
     } catch (err) {
       throw new Error(`FilesRepository.getUserFileRecord: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
+
+  public getSyncrhonizationRecordsByDevice = async (
+    deviceId: string,
+    userFileId: string
+  ): Promise<FileSynchronizationDTO> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery(
+        'getSyncrhonizationRecordsByDevice'
+      );
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [deviceId, userFileId]);
+      if (queryResult.rows.length === 0) {
+        throw new Error('Synchronization record not found');
+      }
+      return FileSynchronizationDTO.fromJSON(queryResult.rows[0]);
+    } catch (err) {
+      throw new Error(
+        `FilesRepository.getSyncrhonizationRecordsByDevice: ${err}`
+      );
+    } finally {
+      client.release();
+    }
+  };
+
+  public deleteSyncrhonizationRecordsByDevice = async (
+    deviceId: string,
+    userFileId: string
+  ): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery(
+        'deleteSyncrhonizationRecordsByDevice'
+      );
+      dataLogger.debug(query);
+      await client.query(query, [deviceId, userFileId]);
+    } catch (err) {
+      throw new Error(
+        `FilesRepository.deleteSyncrhonizationRecordsByDevice: ${err}`
+      );
+    } finally {
+      client.release();
+    }
+  };
+
+  public getSyncrhonizationRecordsByUserFile = async (
+    userFileId: string
+  ): Promise<FileSynchronizationDTO> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery(
+        'getSyncrhonizationRecordsByUserFile'
+      );
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [userFileId]);
+      if (queryResult.rows.length === 0) {
+        throw new Error('Synchronization record not found');
+      }
+      return FileSynchronizationDTO.fromJSON(queryResult.rows[0]);
+    } catch (err) {
+      throw new Error(
+        `FilesRepository.getSyncrhonizationRecordsByUserFile: ${err}`
+      );
+    } finally {
+      client.release();
+    }
+  };
+
+  public deleteUserFile = async (
+    userId: string,
+    userFileId: string
+  ): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('deleteUserFile');
+      dataLogger.debug(query);
+      await client.query(query, [userId, userFileId]);
+    } catch (err) {
+      throw new Error(`FilesRepository.deleteUserFile: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
+
+  public getUserFilesByFileId = async (
+    fileId: string
+  ): Promise<Array<UserFileDTO>> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('getUserFilesByFileId');
+      dataLogger.debug(query);
+      const queryResult = await client.query(query, [fileId]);
+      return queryResult.rows.map((row) => UserFileDTO.fromJSON(row));
+    } catch (err) {
+      throw new Error(`FilesRepository.getUserFilesByFileId: ${err}`);
+    } finally {
+      client.release();
+    }
+  };
+
+  public deleteFileById = async (fileId: string): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('deleteFileById');
+      dataLogger.debug(query);
+      await client.query(query, [fileId]);
+    } catch (err) {
+      throw new Error(`FilesRepository.deleteFileById: ${err}`);
     } finally {
       client.release();
     }

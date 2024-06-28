@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import { promises as fs } from 'fs';
 
 import { ProcessingError } from '@src/business/processingError';
 import { FileDTO } from '@src/dtos/fileDTO';
@@ -160,8 +161,48 @@ export class FileWorker {
     user: User,
     deviceId: string
   ): Promise<void> => {
-    // await this.db.confirmFile(id, user.id, deviceId);
     const existFile = await this.db.getUserFile(user.id, fileId);
+    const existSync = await this.db.getSyncrhonizationRecordsByDevice(
+      deviceId,
+      existFile!.id
+    );
+    const existPlaylistFile = await this.playlistDb.getUserPlaylistFile(
+      fileId,
+      user.id,
+      existFile!.id
+    );
+
+    if (existPlaylistFile) {
+      await this.db.updateSynchronizationRecords(
+        new Date().toISOString(),
+        existFile!.id
+      );
+      return;
+    }
+
+    await this.db.deleteSyncrhonizationRecordsByDevice(
+      existSync.deviceId,
+      existSync.userFileId
+    );
+
+    const existSyncByUserFile =
+      await this.db.getSyncrhonizationRecordsByUserFile(existFile!.id);
+
+    if (existSyncByUserFile.isSynchronized) {
+      return;
+    }
+
+    await this.db.deleteUserFile(user.id, existFile!.id);
+    const userFiles = await this.db.getUserFilesByFileId(existFile!.id);
+    if (userFiles.length) {
+      return;
+    }
+    userFiles.forEach(async (userFile) => {
+      await this.db.deleteUserFile(userFile.userId, userFile.fileId);
+      const file = await this.db.getFile(userFile.fileId);
+      await fs.unlink(file!.path);
+      await this.db.deleteFileById(userFile.fileId);
+    });
   };
 
   public tagFile = async (

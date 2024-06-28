@@ -1,4 +1,5 @@
 import { FileDTO } from '@src/dtos/fileDTO';
+import { FileSynchronizationDTO } from '@src/dtos/fileSynchronizationDTO';
 import { TaggedFileDTO } from '@src/dtos/taggedFileDTO';
 import { UserDTO } from '@src/dtos/userDTO';
 import { UserFileDTO } from '@src/dtos/userFileDTO';
@@ -57,4 +58,23 @@ export abstract class iFileDatabase {
     fileId: string,
     userId: string
   ): Promise<UserFileDTO | null>;
+  public abstract getSyncrhonizationRecordsByDevice(
+    deviceId: string,
+    userFileId: string
+  ): Promise<FileSynchronizationDTO>;
+  public abstract deleteSyncrhonizationRecordsByDevice(
+    deviceId: string,
+    userFileId: string
+  ): Promise<void>;
+  public abstract getSyncrhonizationRecordsByUserFile(
+    userFileId: string
+  ): Promise<FileSynchronizationDTO>;
+  public abstract deleteUserFile: (
+    userId: string,
+    userFileId: string
+  ) => Promise<void>;
+  public abstract getUserFilesByFileId: (
+    fileId: string
+  ) => Promise<Array<UserFileDTO>>;
+  public abstract deleteFileById: (fileId: string) => Promise<void>;
 }
