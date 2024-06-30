@@ -67,7 +67,6 @@ FROM
   AND tm.user_id = $1
   INNER JOIN user_files as uf ON f.id = uf.file_id
   LEFT JOIN file_synchronization as fs ON fs.user_file_id = uf.id
-  JOIN user_playlist_files as upf ON uf.file_id = upf.file_id
   JOIN user_playlists as up ON uf.user_id = $1
   JOIN playlists as p ON up.playlist_id = p.id
   AND fs.device_id = $2

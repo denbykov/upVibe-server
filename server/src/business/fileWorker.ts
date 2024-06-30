@@ -96,7 +96,7 @@ export class FileWorker {
     );
     await this.db.insertSynchronizationRecordsByUser(user.id, userFileId);
     const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
-    return new TaggedFileMapper().toEntity(taggedFile!);
+    return new TaggedFileMapper().toEntity(taggedFile![0]);
   };
 
   public requestFileProcessing = async (
@@ -112,13 +112,15 @@ export class FileWorker {
     user: User,
     deviceId: string,
     statuses: Array<string> | null,
-    synchronized: boolean | null
+    synchronized: boolean | null,
+    playlists: Array<string> | null
   ): Promise<Array<File>> => {
     const userFiles = await this.db.getTaggedFilesByUser(
       user,
       deviceId,
       statuses,
-      synchronized
+      synchronized,
+      playlists
     );
 
     const files: Array<File> = userFiles.map((file) => {
@@ -143,7 +145,7 @@ export class FileWorker {
 
     for (const variation of expand) {
       if (variation === 'mapping') {
-        const mappingDTO = await this.tagDb.getTagMapping(user.id, file.id);
+        const mappingDTO = await this.tagDb.getTagMapping(user.id, file[0].id);
         if (!mappingDTO) {
           throw new ProcessingError('Mapping not found');
         }
@@ -153,7 +155,10 @@ export class FileWorker {
       }
     }
 
-    return new GetFileResponse(new TaggedFileMapper().toEntity(file), mapping);
+    return new GetFileResponse(
+      new TaggedFileMapper().toEntity(file[0]),
+      mapping
+    );
   };
 
   public confirmFile = async (

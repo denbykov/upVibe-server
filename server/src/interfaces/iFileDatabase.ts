@@ -9,12 +9,13 @@ export abstract class iFileDatabase {
   public abstract getTaggedFileByUrl: (
     url: string,
     user: UserDTO
-  ) => Promise<TaggedFileDTO | null>;
+  ) => Promise<TaggedFileDTO[] | null>;
   public abstract getTaggedFilesByUser: (
     user: UserDTO,
     deviceId: string,
     statuses: Array<string> | null,
-    synchronized: boolean | null
+    synchronized: boolean | null,
+    playlists: Array<string> | null
   ) => Promise<Array<TaggedFileDTO>>;
   public abstract insertFile: (file: FileDTO) => Promise<FileDTO>;
   public abstract insertUserFile: (
@@ -25,7 +26,7 @@ export abstract class iFileDatabase {
     id: string,
     deviceId: string,
     userId: string
-  ) => Promise<TaggedFileDTO | null>;
+  ) => Promise<TaggedFileDTO[] | null>;
   public abstract doesFileExist(fileId: string): Promise<boolean>;
   public abstract getUserFile: (
     userId: string,
@@ -48,11 +49,6 @@ export abstract class iFileDatabase {
     fileId: string
   ) => Promise<Array<string>>;
   public abstract getUserFileIds: (userId: string) => Promise<Array<string>>;
-  public abstract confirmFile: (
-    fileId: string,
-    userId: string,
-    deviceId: string
-  ) => Promise<void>;
   public abstract getFile(id: string): Promise<FileDTO | null>;
   public abstract getUserFileRecord(
     fileId: string,

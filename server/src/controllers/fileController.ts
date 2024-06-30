@@ -78,8 +78,15 @@ class FileController extends BaseController {
       {
         const { synchronized } = request.query;
         if (synchronized) {
-          synchronizedParam =
-            synchronized!.toString() === 'true' ? true : false;
+          synchronizedParam = JSON.parse(synchronized.toString());
+        }
+      }
+
+      let playlistsParam: Array<string> | null = null;
+      {
+        const { playlists } = request.query;
+        if (playlists) {
+          playlistsParam = playlists.toString().split(',');
         }
       }
 
@@ -89,7 +96,8 @@ class FileController extends BaseController {
         user,
         deviceIdParam,
         statusesParam,
-        synchronizedParam
+        synchronizedParam,
+        playlistsParam
       );
       return response.status(200).json(result);
     } catch (error) {
