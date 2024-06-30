@@ -189,6 +189,24 @@ class PlaylistRepository implements iPlaylistDatabase {
       client.release();
     }
   };
+
+  public deleteUserPlaylistsFile = async (
+    fileId: string,
+    userId: string,
+    playlistIds: Array<string>
+  ): Promise<void> => {
+    const client = await this.dbPool.connect();
+    try {
+      const query = this.sqlManager.getQuery('deleteUserPlaylistsFile');
+      dataLogger.debug(query);
+      await client.query(query, [fileId, userId, [playlistIds]]);
+    } catch (err) {
+      dataLogger.error(err);
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
 }
 
 export { PlaylistRepository };

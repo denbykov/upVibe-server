@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import { promises as fs } from 'fs';
 
 import { ProcessingError } from '@src/business/processingError';
 import { FileDTO } from '@src/dtos/fileDTO';
@@ -93,9 +94,9 @@ export class FileWorker {
     await this.tagDb.insertTagMapping(
       TagMappingDTO.allFromOneSource(user.id, file.id, sourceId)
     );
-    await this.db.insertSynchronizationRecords(user.id, userFileId);
+    await this.db.insertSynchronizationRecordsByUser(user.id, userFileId);
     const taggedFile = await this.db.getTaggedFileByUrl(file.sourceUrl, user);
-    return new TaggedFileMapper().toEntity(taggedFile!);
+    return new TaggedFileMapper().toEntity(taggedFile![0]);
   };
 
   public requestFileProcessing = async (
@@ -111,13 +112,15 @@ export class FileWorker {
     user: User,
     deviceId: string,
     statuses: Array<string> | null,
-    synchronized: boolean | null
+    synchronized: boolean | null,
+    playlists: Array<string> | null
   ): Promise<Array<File>> => {
     const userFiles = await this.db.getTaggedFilesByUser(
       user,
       deviceId,
       statuses,
-      synchronized
+      synchronized,
+      playlists
     );
 
     const files: Array<File> = userFiles.map((file) => {
@@ -142,7 +145,7 @@ export class FileWorker {
 
     for (const variation of expand) {
       if (variation === 'mapping') {
-        const mappingDTO = await this.tagDb.getTagMapping(user.id, file.id);
+        const mappingDTO = await this.tagDb.getTagMapping(user.id, file[0].id);
         if (!mappingDTO) {
           throw new ProcessingError('Mapping not found');
         }
@@ -152,15 +155,59 @@ export class FileWorker {
       }
     }
 
-    return new GetFileResponse(new TaggedFileMapper().toEntity(file), mapping);
+    return new GetFileResponse(
+      new TaggedFileMapper().toEntity(file[0]),
+      mapping
+    );
   };
 
   public confirmFile = async (
-    id: string,
+    fileId: string,
     user: User,
     deviceId: string
   ): Promise<void> => {
-    await this.db.confirmFile(id, user.id, deviceId);
+    const existFile = await this.db.getUserFile(user.id, fileId);
+    const existSync = await this.db.getSyncrhonizationRecordsByDevice(
+      deviceId,
+      existFile!.id
+    );
+    const existPlaylistFile = await this.playlistDb.getUserPlaylistFile(
+      fileId,
+      user.id,
+      existFile!.id
+    );
+
+    if (existPlaylistFile) {
+      await this.db.updateSynchronizationRecords(
+        new Date().toISOString(),
+        existFile!.id
+      );
+      return;
+    }
+
+    await this.db.deleteSyncrhonizationRecordsByDevice(
+      existSync.deviceId,
+      existSync.userFileId
+    );
+
+    const existSyncByUserFile =
+      await this.db.getSyncrhonizationRecordsByUserFile(existFile!.id);
+
+    if (existSyncByUserFile.isSynchronized) {
+      return;
+    }
+
+    await this.db.deleteUserFile(user.id, existFile!.id);
+    const userFiles = await this.db.getUserFilesByFileId(existFile!.id);
+    if (userFiles.length) {
+      return;
+    }
+    userFiles.forEach(async (userFile) => {
+      await this.db.deleteUserFile(userFile.userId, userFile.fileId);
+      const file = await this.db.getFile(userFile.fileId);
+      await fs.unlink(file!.path);
+      await this.db.deleteFileById(userFile.fileId);
+    });
   };
 
   public tagFile = async (
@@ -178,5 +225,22 @@ export class FileWorker {
     const data = await this.fileTagger.tagFile(file!.path, tag);
 
     return new FileData(`${file!.path}.mp3`, data);
+  };
+
+  public deleteFile = async (
+    fileId: string,
+    userId: string,
+    playlistIds: Array<string>
+  ): Promise<void> => {
+    const existFile = await this.db.getUserFile(userId, fileId);
+    if (!existFile) {
+      throw new ProcessingError('File not found');
+    }
+    await this.playlistDb.deleteUserPlaylistsFile(fileId, userId, playlistIds);
+    await this.db.updateSynchronizationRecords(
+      new Date().toISOString(),
+      existFile.id
+    );
+    return;
   };
 }

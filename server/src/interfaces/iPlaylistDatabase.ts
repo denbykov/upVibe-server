@@ -35,4 +35,9 @@ export abstract class iPlaylistDatabase {
     userId: string,
     playlistId: string
   ): Promise<UserPlaylistDTO>;
+  public abstract deleteUserPlaylistsFile(
+    fileId: string,
+    userId: string,
+    playlistIds: Array<string>
+  ): Promise<void>;
 }
